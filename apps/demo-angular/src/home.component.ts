@@ -7,7 +7,28 @@ import { Component } from '@angular/core';
 export class HomeComponent {
 	demos = [
 	{
-		name: 'add a package first'
+		name: 'mlkit-barcode-scanning'
+	},
+	{
+		name: 'mlkit-core'
+	},
+	{
+		name: 'mlkit-digital-ink-recognition'
+	},
+	{
+		name: 'mlkit-face-detection'
+	},
+	{
+		name: 'mlkit-image-labeling'
+	},
+	{
+		name: 'mlkit-object-detection'
+	},
+	{
+		name: 'mlkit-pose-detection'
+	},
+	{
+		name: 'mlkit-text-recognition'
 	}
 ];
 }

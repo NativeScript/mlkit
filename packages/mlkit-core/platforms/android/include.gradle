@@ -1,0 +1,3 @@
+dependencies {
+    implementation 'io.github.triniwiz:fancycamera:3.0.0-alpha23'
+}

@@ -1,0 +1,9 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:ui="@nativescript/mlkit-core"  navigatingTo="navigatingTo" class="page">
+    <Page.actionBar>
+        <ActionBar title="mlkit-core" icon="" class="action-bar">
+        </ActionBar>
+    </Page.actionBar>
+    <StackLayout class="p-20">
+       <ui:MLKitView  detectionType="all" onDetection="{{ onDetection }}"/>
+    </StackLayout>
+</Page>

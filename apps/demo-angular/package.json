@@ -1,7 +1,15 @@
 {
   "main": "./src/main.ts",
   "dependencies": {
-    "@nativescript/core": "file:../../node_modules/@nativescript/core"
+    "@nativescript/core": "file:../../node_modules/@nativescript/core",
+    "@nativescript/mlkit-text-recognition": "file:../../dist/packages/mlkit-text-recognition",
+    "@nativescript/mlkit-core": "file:../../dist/packages/mlkit-core",
+    "@nativescript/mlkit-barcode-scanning": "file:../../dist/packages/mlkit-barcode-scanning",
+    "@nativescript/mlkit-face-detection": "file:../../dist/packages/mlkit-face-detection",
+    "@nativescript/mlkit-image-labeling": "file:../../dist/packages/mlkit-image-labeling",
+    "@nativescript/mlkit-object-detection": "file:../../dist/packages/mlkit-object-detection",
+    "@nativescript/mlkit-digital-ink-recognition": "file:../../dist/packages/mlkit-digital-ink-recognition",
+    "@nativescript/mlkit-pose-detection": "file:../../dist/packages/mlkit-pose-detection"
   },
   "devDependencies": {
     "@nativescript/android": "~8.1.1",

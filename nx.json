@@ -1,31 +1,55 @@
 {
-	"npmScope": "nativescript",
-	"affected": {
-		"defaultBase": "master"
-	},
-	"implicitDependencies": {
-		"workspace.json": "*",
-		"package.json": {
-			"dependencies": "*",
-			"devDependencies": "*"
-		},
-		"tsconfig.base.json": "*",
-		"tslint.json": "*",
-		"nx.json": "*"
-	},
-	"projects": {
-		"demo": {
-			"tags": []
-		},
-		"demo-angular": {
-			"tags": []
-		},
-		"all": {
-			"tags": []
-		}
-	},
-	"workspaceLayout": {
-		"appsDir": "apps",
-		"libsDir": "packages"
-	}
+  "npmScope": "nativescript",
+  "affected": {
+    "defaultBase": "master"
+  },
+  "implicitDependencies": {
+    "workspace.json": "*",
+    "package.json": {
+      "dependencies": "*",
+      "devDependencies": "*"
+    },
+    "tsconfig.base.json": "*",
+    "tslint.json": "*",
+    "nx.json": "*"
+  },
+  "projects": {
+    "demo": {
+      "tags": []
+    },
+    "demo-angular": {
+      "tags": []
+    },
+    "all": {
+      "tags": []
+    },
+    "mlkit-text-recognition": {
+      "tags": []
+    },
+    "mlkit-core": {
+      "tags": []
+    },
+    "mlkit-barcode-scanning": {
+      "tags": []
+    },
+    "mlkit-face-detection": {
+      "tags": []
+    },
+    "mlkit-image-labeling": {
+      "tags": []
+    },
+    "mlkit-object-detection": {
+      "tags": []
+    },
+    "mlkit-digital-ink-recognition": {
+      "tags": []
+    },
+    "mlkit-pose-detection": {
+      "tags": []
+    }
+  },
+  "workspaceLayout": {
+    "appsDir": "apps",
+    "libsDir": "packages"
+  }
 }
