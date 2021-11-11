@@ -19,6 +19,7 @@ const IMAGE_LABELING_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamer
 const OBJECT_DETECTION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.objectdetection?.ObjectDetection);
 const POSE_DETECTION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.posedetection?.PoseDetection);
 
+export { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLablerConfidenceThresholdProperty, objectDetectionClassifyProperty, objectDetectionMultipleProperty } from './common';
 
 export class MLKitView extends MLKitViewBase {
     #camera: io.github.triniwiz.fancycamera.FancyCamera;

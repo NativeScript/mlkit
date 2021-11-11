@@ -613,6 +613,8 @@ class AVCaptureVideoDataOutputSampleBufferDelegateImpl extends NSObject implemen
 }
 
 
+export { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLablerConfidenceThresholdProperty, objectDetectionClassifyProperty, objectDetectionMultipleProperty } from './common';
+
 export class MLKitView extends MLKitViewBase {
     #session: AVCaptureSession;
     #device: AVCaptureDevice;
