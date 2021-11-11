@@ -1,4 +1,4 @@
-import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, MLKitViewBase } from "./common";
+import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLablerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty } from "./common";
 import { Application, Device, Utils, AndroidActivityRequestPermissionsEventData } from '@nativescript/core';
 import lazy from '@nativescript/core/utils/lazy';
 
@@ -38,7 +38,9 @@ export class MLKitView extends MLKitViewBase {
     }
     #barcodeScannerOptions: io.github.triniwiz.fancycamera.barcodescanning.BarcodeScanner.Options;
     #faceDetectionOptions: io.github.triniwiz.fancycamera.facedetection.FaceDetection.Options;
-    
+    #imageLabelerOptions: io.github.triniwiz.fancycamera.imagelabeling.ImageLabeling.Options;
+    #objectDetectionOptions: io.github.triniwiz.fancycamera.objectdetection.ObjectDetection.Options;
+
 
     #getFancyCamera() {
         return (this.#camera as any)?.getChildAt?.(0) as io.github.triniwiz.fancycamera.CameraBase;
@@ -276,6 +278,84 @@ export class MLKitView extends MLKitViewBase {
 
         this.#getFancyCamera().setBarcodeScannerOptions(this.#barcodeScannerOptions);
     }
+
+    [faceDetectionTrackingEnabledProperty.setNative](value) {
+        if (!FACE_DETECTION_SUPPORTED) {
+            return;
+        }
+        if (!this.#faceDetectionOptions) {
+            this.#faceDetectionOptions = new io.github.triniwiz.fancycamera.facedetection.FaceDetection.Options();
+        }
+
+        this.#faceDetectionOptions.setFaceTracking(value);
+
+        this.#getFancyCamera().setFaceDetectionOptions(this.#faceDetectionOptions);
+    }
+
+    [faceDetectionMinFaceSizeProperty.setNative](value) {
+        if (!FACE_DETECTION_SUPPORTED) {
+            return;
+        }
+
+        if (!this.#faceDetectionOptions) {
+            this.#faceDetectionOptions = new io.github.triniwiz.fancycamera.facedetection.FaceDetection.Options();
+        }
+
+        this.#faceDetectionOptions.setMinimumFaceSize(value);
+        this.#getFancyCamera().setFaceDetectionOptions(this.#faceDetectionOptions);
+    }
+
+    [faceDetectionPerformanceModeProperty.setNative](value) {
+        if (!FACE_DETECTION_SUPPORTED) {
+            return;
+        }
+
+        if (!this.#faceDetectionOptions) {
+            this.#faceDetectionOptions = new io.github.triniwiz.fancycamera.facedetection.FaceDetection.Options();
+        }
+
+        this.#faceDetectionOptions.setMinimumFaceSize(value);
+        this.#getFancyCamera().setFaceDetectionOptions(this.#faceDetectionOptions);
+    }
+
+    [imageLablerConfidenceThresholdProperty.setNative](value) {
+        if (!IMAGE_LABELING_SUPPORTED()) {
+            return;
+        }
+        if (!this.#imageLabelerOptions) {
+            this.#imageLabelerOptions = new io.github.triniwiz.fancycamera.imagelabeling.ImageLabeling.Options();
+        }
+
+        this.#imageLabelerOptions.setConfidenceThreshold(value);
+        this.#getFancyCamera().setImageLabelingOptions(this.#imageLabelerOptions);
+    }
+
+    [objectDetectionClassifyProperty.setNative](value) {
+        if (!OBJECT_DETECTION_SUPPORTED()) {
+            return;
+        }
+
+        if (!this.#objectDetectionOptions) {
+            this.#objectDetectionOptions = new io.github.triniwiz.fancycamera.objectdetection.ObjectDetection.Options();
+        }
+
+        this.#objectDetectionOptions.setClassification(value);
+        this.#getFancyCamera().setObjectDetectionOptions(this.#objectDetectionOptions);
+    }
+
+    [objectDetectionMultipleProperty.setNative](value) {
+        if (!OBJECT_DETECTION_SUPPORTED) {
+            return;
+        }
+
+        if (!this.#objectDetectionOptions) {
+            this.#objectDetectionOptions = new io.github.triniwiz.fancycamera.objectdetection.ObjectDetection.Options();
+        }
+
+        this.#objectDetectionOptions.setMultiple(value);
+        this.#getFancyCamera().setObjectDetectionOptions(this.#objectDetectionOptions);
+    }
+
 
     onLoaded() {
         super.onLoaded();

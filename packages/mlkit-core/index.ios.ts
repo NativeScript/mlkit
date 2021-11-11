@@ -1,5 +1,5 @@
 import { Utils } from "@nativescript/core";
-import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, MLKitViewBase } from "./common";
+import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLablerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty } from "./common";
 import '@nativescript/core';
 import lazy from "@nativescript/core/utils/lazy";
 
@@ -12,6 +12,345 @@ const OBJECT_DETECTION_SUPPORTED = lazy(() => typeof MLKObjectDetector);
 const POSE_DETECTION_SUPPORTED = lazy(() => typeof MLKPoseDetector);
 
 
+function getOrientation(deviceOrientation: UIDeviceOrientation, cameraPosition: AVCaptureDevicePosition) {
+    switch (deviceOrientation) {
+        case UIDeviceOrientation.Portrait:
+            return cameraPosition === AVCaptureDevicePosition.Front ? UIImageOrientation.LeftMirrored
+                : UIImageOrientation.Right;
+
+        case UIDeviceOrientation.LandscapeLeft:
+            return cameraPosition === AVCaptureDevicePosition.Front ? UIImageOrientation.DownMirrored
+                : UIImageOrientation.Up;
+        case UIDeviceOrientation.PortraitUpsideDown:
+            return cameraPosition === AVCaptureDevicePosition.Front ? UIImageOrientation.RightMirrored
+                : UIImageOrientation.Left;
+        case UIDeviceOrientation.LandscapeRight:
+            return cameraPosition === AVCaptureDevicePosition.Front ? UIImageOrientation.UpMirrored
+                : UIImageOrientation.Down;
+        case UIDeviceOrientation.Unknown:
+        case UIDeviceOrientation.FaceUp:
+        case UIDeviceOrientation.FaceDown:
+            return UIImageOrientation.Up;
+    }
+}
+
+function getBounds(frame: CGRect) {
+    return {
+        origin: {
+            left: frame.origin.x,
+            top: frame.origin.y,
+            right: frame.origin.x + frame.size.width,
+            bottom: frame.origin.y + frame.size.height
+        },
+        size: {
+            width: frame.size.width,
+            height: frame.size.height
+        }
+    }
+}
+
+function getEncryptionType(type: number) {
+    switch (type) {
+        case MLKBarcodeWiFiEncryptionTypeOpen:
+            return 'open';
+        case MLKBarcodeWiFiEncryptionTypeWEP:
+            return 'wep';
+        case MLKBarcodeWiFiEncryptionTypeWPA:
+            return 'wpa';
+        case MLKBarcodeWiFiEncryptionTypeUnknown:
+            return 'unknown';
+    }
+}
+
+function getPhoneType(type: number) {
+    switch (type) {
+        case MLKBarcodePhoneTypeFax:
+            return "fax";
+        case MLKBarcodePhoneTypeHome:
+            return "home";
+        case MLKBarcodePhoneTypeMobile:
+            return "mobile";
+        case MLKBarcodePhoneTypeUnknown:
+            return "unknown";
+        case MLKBarcodePhoneTypeWork:
+            return "work";
+    }
+}
+
+function getEmailType(type: number) {
+    switch (type) {
+        case MLKBarcodeEmailTypeHome:
+            return 'home';
+        case MLKBarcodeEmailTypeUnknown:
+            return 'unknown';
+        case MLKBarcodeEmailTypeWork:
+            return 'work';
+    }
+}
+
+function getContactInfoType(type: number) {
+    switch (type) {
+        case MLKBarcodeAddressTypeHome:
+            return 'home';
+        case MLKBarcodeAddressTypeUnknown:
+            return 'unknown';
+        case MLKBarcodeAddressTypeWork:
+            return 'work';
+    }
+}
+
+function getContactInfoEmailType(type: number) {
+    switch (type) {
+        case MLKBarcodeEmailTypeHome:
+            return 'home';
+        case MLKBarcodeEmailTypeUnknown:
+            return 'unknown';
+        case MLKBarcodeEmailTypeWork:
+            return 'work';
+    }
+}
+
+function getContactInfoAddresses(addresses: NSArray<MLKBarcodeAddress>) {
+    const result = [];
+    const addressLines = [];
+
+    addresses.enumerateObjectsUsingBlock(address => {
+        address.addressLines.enumerateObjectsUsingBlock(line => {
+            addressLines.push(line);
+        })
+        result.push({
+            addressLines: addressLines,
+            type: getContactInfoType(address.type)
+        })
+    });
+    return result;
+}
+
+function getContactInfoEmails(emails: NSArray<MLKBarcodeEmail>) {
+    const result = [];
+
+    emails.enumerateObjectsUsingBlock(email => {
+        result.push({
+            address: email.address,
+            body: email.body,
+            subject: email.subject,
+            type: getContactInfoEmailType(email.type)
+        })
+    });
+    return result;
+}
+
+function getContactInfoPhones(phones: NSArray<MLKBarcodePhone>) {
+    const result = [];
+    phones.enumerateObjectsUsingBlock(phone => {
+        result.push({
+            number: phone.number,
+            type: getPhoneType(phone.type)
+        })
+    })
+    return result;
+}
+
+function toPrimitiveArray<T>(array: NSArray<any>) {
+    const result: T[] = [];
+    array.enumerateObjectsUsingBlock(value => {
+        result.push(value);
+    })
+    return result;
+}
+
+function getPoints(points: NSArray<NSValue>) {
+    const result = [];
+    points.enumerateObjectsUsingBlock(point => {
+        result.push({
+            x: point.CGPointValue.x,
+            y: point.CGPointValue.y
+        })
+    })
+    return result;
+}
+
+function fromBarCodeFormat(format: MLKBarcodeFormat) {
+    const result = [];
+    if (format === MLKBarcodeFormat.All) {
+        result.push(BarcodeFormats.ALL);
+        return result;
+    }
+
+    if ((format & MLKBarcodeFormat.Aztec) === MLKBarcodeFormat.Aztec) {
+        result.push(BarcodeFormats.AZTEC);
+    } else if ((format & MLKBarcodeFormat.CodaBar) === MLKBarcodeFormat.CodaBar) {
+        result.push(BarcodeFormats.CODABAR);
+    } else if ((format & MLKBarcodeFormat.Code128) === MLKBarcodeFormat.Code128) {
+        result.push(BarcodeFormats.CODE_128);
+    } else if ((format & MLKBarcodeFormat.Code39) === MLKBarcodeFormat.Code39) {
+        result.push(BarcodeFormats.CODE_39);
+    } else if ((format & MLKBarcodeFormat.Code93) === MLKBarcodeFormat.Code93) {
+        result.push(BarcodeFormats.CODE_93);
+    } else if ((format & MLKBarcodeFormat.DataMatrix) === MLKBarcodeFormat.DataMatrix) {
+        result.push(BarcodeFormats.DATA_MATRIX);
+    } else if ((format & MLKBarcodeFormat.EAN13) === MLKBarcodeFormat.EAN13) {
+        result.push(BarcodeFormats.EAN_13);
+    } else if ((format & MLKBarcodeFormat.EAN8) === MLKBarcodeFormat.EAN8) {
+        result.push(BarcodeFormats.EAN_8);
+    } else if ((format & MLKBarcodeFormat.ITF) === MLKBarcodeFormat.ITF) {
+        result.push(BarcodeFormats.ITF);
+    } else if ((format & MLKBarcodeFormat.PDF417) === MLKBarcodeFormat.PDF417) {
+        result.push(BarcodeFormats.PDF417);
+    } else if ((format & MLKBarcodeFormat.QRCode) === MLKBarcodeFormat.QRCode) {
+        result.push(BarcodeFormats.QR_CODE);
+    } else if ((format & MLKBarcodeFormat.UPCA) === MLKBarcodeFormat.UPCA) {
+        result.push(BarcodeFormats.UPC_A);
+    } else if ((format & MLKBarcodeFormat.UPCE) === MLKBarcodeFormat.UPCE) {
+        result.push(BarcodeFormats.UPC_E);
+    }
+    if (format === 0) {
+        result.push(BarcodeFormats.UNKOWN)
+    }
+    return result;
+}
+
+
+function getValueType(type: number) {
+    switch (type) {
+        case MLKBarcodeValueTypeCalendarEvent:
+            return "calender";
+        case MLKBarcodeValueTypeContactInfo:
+            return "contactInfo";
+        case MLKBarcodeValueTypeDriversLicense:
+            return "driverLicense";
+        case MLKBarcodeValueTypeEmail:
+            return "email";
+        case MLKBarcodeValueTypeGeographicCoordinates:
+            return "geo";
+        case MLKBarcodeValueTypeISBN:
+            return "isbn";
+        case MLKBarcodeValueTypePhone:
+            return "phone";
+        case MLKBarcodeValueTypeProduct:
+            return "product";
+        case MLKBarcodeValueTypeSMS:
+            return "sms";
+        case MLKBarcodeValueTypeText:
+            return "text";
+        case MLKBarcodeValueTypeURL:
+            return "url";
+        case MLKBarcodeValueTypeWiFi:
+            return "wifi";
+        case MLKBarcodeValueTypeUnknown:
+            return "unknown";
+
+    }
+}
+
+function getObjectLabel(value) {
+    switch (value) {
+        case MLKDetectedObjectLabelFashionGood:
+            return "fashionGood";
+        case MLKDetectedObjectLabelFood:
+            return "food";
+        case MLKDetectedObjectLabelHomeGood:
+            return "homeGood";
+        case MLKDetectedObjectLabelPlant:
+            return "plant";
+        case MLKDetectedObjectLabelPlace:
+            return "place";
+        default:
+            return "unknown";
+    }
+}
+
+
+function getObjectIndex(value) {
+    switch (value) {
+        case MLKDetectedObjectLabelIndexFashionGood:
+            return "fashionGoodIndex";
+        case MLKDetectedObjectLabelIndexFood:
+            return "foodIndex";
+        case MLKDetectedObjectLabelIndexHomeGood:
+            return "homeGoodIndex";
+        case MLKDetectedObjectLabelIndexPlace:
+            return "placeIndex";
+        case MLKDetectedObjectLabelIndexPlant:
+            return "plantIndex";
+        default:
+            return "unknownIndex";
+    }
+}
+
+
+function getPoseType(type) {
+    switch (type) {
+        case MLKPoseLandmarkTypeLeftAnkle:
+            return "leftAnkle"
+        case MLKPoseLandmarkTypeLeftEar:
+            return "leftEar"
+        case MLKPoseLandmarkTypeLeftElbow:
+            return "leftElbow"
+        case MLKPoseLandmarkTypeLeftEye:
+            return "leftEye"
+        case MLKPoseLandmarkTypeLeftEyeInner:
+            return "leftEyeInner"
+        case MLKPoseLandmarkTypeLeftEyeOuter:
+            return "leftEyeOuter"
+        case MLKPoseLandmarkTypeLeftHeel:
+            return "leftHeel"
+        case MLKPoseLandmarkTypeLeftHip:
+            return "leftHip"
+        case MLKPoseLandmarkTypeLeftIndexFinger:
+            return "leftIndex"
+        case MLKPoseLandmarkTypeLeftKnee:
+            return "leftKnee"
+        case MLKPoseLandmarkTypeLeftPinkyFinger:
+            return "leftPinky"
+        case MLKPoseLandmarkTypeLeftShoulder:
+            return "leftShoulder"
+        case MLKPoseLandmarkTypeLeftThumb:
+            return "leftThumb"
+        case MLKPoseLandmarkTypeLeftToe:
+            return "leftToe"
+        case MLKPoseLandmarkTypeLeftWrist:
+            return "leftWrist"
+        case MLKPoseLandmarkTypeMouthLeft:
+            return "mouthLeft"
+        case MLKPoseLandmarkTypeMouthRight:
+            return "mouthRight"
+        case MLKPoseLandmarkTypeNose:
+            return "nose"
+        case MLKPoseLandmarkTypeRightAnkle:
+            return "rightAnkle"
+        case MLKPoseLandmarkTypeRightEar:
+            return "rightEar"
+        case MLKPoseLandmarkTypeRightElbow:
+            return "rightElbow"
+        case MLKPoseLandmarkTypeRightEye:
+            return "rightEye"
+        case MLKPoseLandmarkTypeRightEyeInner:
+            return "rightEyeInner"
+        case MLKPoseLandmarkTypeRightEyeOuter:
+            return "rightEyeOuter"
+        case MLKPoseLandmarkTypeRightHeel:
+            return "rightHeel"
+        case MLKPoseLandmarkTypeRightHip:
+            return "rightHip"
+        case MLKPoseLandmarkTypeRightIndexFinger:
+            return "rightIndex"
+        case MLKPoseLandmarkTypeRightKnee:
+            return "rightKnee"
+        case MLKPoseLandmarkTypeRightPinkyFinger:
+            return "rightPinky"
+        case MLKPoseLandmarkTypeRightShoulder:
+            return "rightShoulder"
+        case MLKPoseLandmarkTypeRightThumb:
+            return "rightThumb"
+        case MLKPoseLandmarkTypeRightToe:
+            return "rightToe"
+        case MLKPoseLandmarkTypeRightWrist:
+            return "rightWrist"
+        default:
+            return "unknown"
+    }
+}
 
 @ObjCClass(AVCaptureVideoDataOutputSampleBufferDelegate)
 @NativeClass()
@@ -28,9 +367,247 @@ class AVCaptureVideoDataOutputSampleBufferDelegateImpl extends NSObject implemen
         const owner = this._owner?.get?.();
         if (owner) {
             detector = owner.dectectionType;
-            if (detector === DetectionType.None) {
+            if (detector === DetectionType.None || !owner.onDetection) {
                 return;
             }
+
+            const image = MLKVisionImage.alloc().initWithBuffer(sampleBuffer);
+            if (!image) {
+                return;
+            }
+            image.orientation = getOrientation(
+                UIDevice.currentDevice.orientation,
+                owner._device.position
+            );
+
+            if (detector === DetectionType.Barcode && BARCODE_SCANNER_SUPPORTED()) {
+                const barcode = owner._barcodeScanner.resultsInImageError(image);
+                if (barcode) {
+                    const barcodes = [];
+                    barcode.enumerateObjectsUsingBlock(code => {
+                        barcodes.push({
+                            calendarEvent: {
+                                description: code.calendarEvent.eventDescription,
+                                location: code.calendarEvent.location,
+                                organizer: code.calendarEvent.organizer,
+                                status: code.calendarEvent.status,
+                                summary: code.calendarEvent.summary,
+                                start: code.calendarEvent.start,
+                                end: code.calendarEvent.end
+                            },
+                            contactInfo: {
+                                addresses: getContactInfoAddresses(code.contactInfo.addresses),
+                                emails: getContactInfoEmails(code.contactInfo.emails),
+                                jobTitle: code.contactInfo.jobTitle,
+                                name: {
+                                    first: code.contactInfo.name.first,
+                                    formattedName: code.contactInfo.name.formattedName,
+                                    last: code.contactInfo.name.last,
+                                    middle: code.contactInfo.name.middle,
+                                    prefix: code.contactInfo.name.prefix,
+                                    pronunciation: code.contactInfo.name.pronunciation,
+                                    suffix: code.contactInfo.name.suffix,
+                                },
+                                organization: code.contactInfo.organization,
+                                phones: getContactInfoPhones(code.contactInfo.phones),
+                                urls: toPrimitiveArray<string>(code.contactInfo.urls)
+                            },
+                            bounds: getBounds(code.frame),
+                            points: getPoints(code.cornerPoints),
+                            displayValue: code.displayValue,
+                            driverLicense: {
+                                documentType: code.driverLicense.documentType,
+                                firstName: code.driverLicense.firstName,
+                                middleName: code.driverLicense.middleName,
+                                lastName: code.driverLicense.lastName,
+                                gender: code.driverLicense.gender,
+                                addressStreet: code.driverLicense.addressStreet,
+                                addressCity: code.driverLicense.addressCity,
+                                addressState: code.driverLicense.addressState,
+                                addressZip: code.driverLicense.addressZip,
+                                licenseNumber: code.driverLicense.licenseNumber,
+                                issueDate: code.driverLicense.issuingDate,
+                                expiryDate: code.driverLicense.expiryDate,
+                                birthDate: code.driverLicense.birthDate,
+                                issuingCountry: code.driverLicense.issuingCountry
+                            },
+                            email: {
+                                address: code.email.address,
+                                subject: code.email.subject,
+                                body: code.email.body,
+                                type: getEmailType(code.email.type)
+                            },
+                            format: fromBarCodeFormat(code.format),
+                            geoPoint: {
+                                lat: code.geoPoint.latitude,
+                                lon: code.geoPoint.longitude
+                            },
+                            phone: {
+                                number: code.phone.number,
+                                type: getPhoneType(code.phone.type)
+                            },
+                            rawBytes: code.rawData,
+                            rawValue: code.rawValue,
+                            sms: {
+                                message: code.sms.message,
+                                phoneNumber: code.sms.phoneNumber
+                            },
+                            url: {
+                                title: code.URL.title,
+                                url: code.URL.url
+                            },
+                            valueType: getValueType(code.valueType),
+                            wifi: {
+                                encryptionType: getEncryptionType(code.wifi.type),
+                                password: code.wifi.password,
+                                ssid: code.wifi.ssid
+                            }
+                        })
+                    });
+                    if (barcodes.length) {
+                        owner?.onDetection(barcodes);
+                    }
+                }
+            }
+
+            if (detector === DetectionType.Face && FACE_DETECTION_SUPPORTED()) {
+                const face = owner._faceDetector.resultsInImageError(image);
+                if (face) {
+                    const faces = [];
+                    face.enumerateObjectsUsingBlock(face => {
+                        faces.push({
+                            leftEyeOpenProbability: face.hasLeftEyeOpenProbability,
+                            rightEyeOpenProbability: face.hasRightEyeOpenProbability,
+                            smilingProbability: face.hasSmilingProbability,
+                            bounds: getBounds(face.frame),
+                            headEulerAngleX: face.hasHeadEulerAngleX,
+                            headEulerAngleY: face.hasHeadEulerAngleY,
+                            headEulerAngleZ: face.hasHeadEulerAngleZ,
+                        });
+                    });
+                    if (faces.length) {
+                        owner?.onDetection(faces);
+                    }
+                }
+            }
+
+            if (detector === DetectionType.Pose && POSE_DETECTION_SUPPORTED()) {
+                const pose = owner._poseDetector.resultsInImageError(image);
+                if (pose) {
+                    const poses = [];
+                    pose.enumerateObjectsUsingBlock(val => {
+                        const landMarks = [];
+                        val.landmarks.enumerateObjectsUsingBlock(landMark => {
+                            landMarks.push({
+                                inFrameLikelihood: landMark.inFrameLikelihood,
+                                position: {
+                                    x: landMark.position.x,
+                                    y: landMark.position.y,
+                                    z: landMark.position.z
+                                },
+                                type: getPoseType(landMark.type)
+                            })
+                        })
+                        poses.push({
+                            landMarks
+                        });
+                    });
+                    if (poses.length) {
+                        owner?.onDetection(poses);
+                    }
+                }
+            }
+
+            if (detector === DetectionType.Image && IMAGE_LABELING_SUPPORTED()) {
+                const imagelabeling = owner._imageLabeler.resultsInImageError(image);
+                if (imagelabeling) {
+                    const labels = [];
+                    imagelabeling.enumerateObjectsUsingBlock(label => {
+                        labels.push({
+                            text: label.text,
+                            confidence: label.confidence,
+                            index: label.index
+                        })
+                    })
+                    if (labels.length) {
+                        owner?.onDetection(labels);
+                    }
+                }
+            }
+
+            if (detector === DetectionType.Object && OBJECT_DETECTION_SUPPORTED()) {
+                const object = owner._objectDetector.resultsInImageError(image);
+                if (object) {
+                    const objects = [];
+                    object.enumerateObjectsUsingBlock(obj => {
+                        const labels = [];
+                        obj.labels.enumerateObjectsUsingBlock(label => {
+                            labels.push({
+                                text: getObjectLabel(label.text),
+                                confidence: label.confidence,
+                                index: getObjectIndex(label.index)
+                            })
+                        })
+                        objects.push({
+                            trackingId: obj.trackingID,
+                            bounds: getBounds(obj.frame),
+                        })
+                    });
+                    if (objects.length) {
+                        owner?.onDetection(objects);
+                    }
+                }
+            }
+
+
+            if (detector === DetectionType.Text && TEXT_RECOGNITION_SUPPORTED()) {
+                const text = owner._textRecognizer.resultsInImageError(image);
+                if (text) {
+                    const blocks = [];
+                    text.blocks.enumerateObjectsUsingBlock(block => {
+                        const lines = [];
+                        block.lines.enumerateObjectsUsingBlock(line => {
+                            const elements = [];
+                            line.elements.enumerateObjectsUsingBlock(element => {
+                                elements.push({
+                                    text: element.text,
+                                    bounds: getBounds(element.frame)
+                                });
+                            });
+                            const points = [];
+                            line.cornerPoints.enumerateObjectsUsingBlock(point => {
+                                points.push({
+                                    x: point.CGPointValue.x,
+                                    y: point.CGPointValue.y,
+                                })
+                            });
+                            lines.push({
+                                text: line.text,
+                                points,
+                                bounds: getBounds(line.frame),
+                                elements
+                            })
+                        });
+                        const points = [];
+                        block.cornerPoints.enumerateObjectsUsingBlock(point => {
+                            points.push({
+                                x: point.CGPointValue.x,
+                                y: point.CGPointValue.y,
+                            })
+                        });
+                        blocks.push({
+                            text: block.text,
+                            points,
+                            bounds: getBounds(block.frame),
+                            lines
+                        });
+                    });
+                    if (blocks.length) {
+                        owner?.onDetection(blocks);
+                    }
+                }
+            }
+
         }
     }
 }
@@ -53,6 +630,10 @@ export class MLKitView extends MLKitViewBase {
     #poseDetector: MLKPoseDetector;
     #barcodeScannerOptions: MLKBarcodeScannerOptions;
     #faceDetectorOptions: MLKFaceDetectorOptions;
+    #imageLabelerOptions: MLKImageLabelerOptions;
+    #objectDetectionOptions: MLKObjectDetectorOptions;
+    #poseDetectionOptions: MLKPoseDetectorOptions;
+
     createNativeView() {
         return UIView.new();
     }
@@ -61,6 +642,37 @@ export class MLKitView extends MLKitViewBase {
         super.initNativeView();
         this.#delegate = AVCaptureVideoDataOutputSampleBufferDelegateImpl.initWithOwner(new WeakRef(this));
         this.#outputQueue = dispatch_get_global_queue(qos_class_t.QOS_CLASS_DEFAULT, 0);
+    }
+
+    get _device() {
+        return this.#device;
+    }
+
+    get _textRecognizer(): MLKTextRecognizer {
+        return this.#textRecognizer;
+    }
+
+    get _barcodeScanner(): MLKBarcodeScanner {
+        return this.#barcodeScanner;
+    }
+
+    get _digitalInkRecognizer(): MLKDigitalInkRecognizer {
+        return this.#digitalInkRecognizer;
+    }
+
+    get _faceDetector(): MLKFaceDetector {
+        return this.#faceDetector;
+    }
+
+    get _imageLabeler(): MLKImageLabeler {
+        return this.#imageLabeler;
+    }
+
+    get _objectDetector(): MLKObjectDetector {
+        return this.#objectDetector;
+    }
+    get _poseDetector(): MLKPoseDetector {
+        return this.#poseDetector;
     }
 
 
@@ -98,20 +710,15 @@ export class MLKitView extends MLKitViewBase {
         }
 
         if (typeof MLKImageLabeler && !this.#imageLabeler && (this.dectectionType === DetectionType.Image || this.dectectionType === DetectionType.All)) {
-            const opt = MLKCommonImageLabelerOptions.new();
-            this.#imageLabeler = MLKImageLabeler.imageLabelerWithOptions(opt);
+            this.#setImageLabeler()
         }
 
-
         if (typeof MLKObjectDetector && !this.#objectDetector && (this.dectectionType === DetectionType.Object || this.dectectionType === DetectionType.All)) {
-            const opts = MLKCommonObjectDetectorOptions.new();
-            this.#objectDetector = MLKObjectDetector.objectDetectorWithOptions(opts);
+            this.#setupObjectDetection();
         }
 
         if (typeof MLKPoseDetector && !this.#poseDetector && (this.dectectionType === DetectionType.Pose || this.dectectionType === DetectionType.All)) {
-            const opts = MLKCommonPoseDetectorOptions.new();
-            opts.detectorMode = MLKPoseDetectorModeStream;
-            this.#poseDetector = MLKPoseDetector.poseDetectorWithOptions(opts);
+            this.#setPoseDetection();
         }
 
     }
@@ -190,6 +797,18 @@ export class MLKitView extends MLKitViewBase {
         this.#barcodeScanner = MLKBarcodeScanner.barcodeScannerWithOptions(this.#barcodeScannerOptions);
     }
 
+    [faceDetectionTrackingEnabledProperty.setNative](value) {
+        this.#setupFaceDetector();
+    }
+
+    [faceDetectionMinFaceSizeProperty.setNative](value) {
+        this.#setupFaceDetector();
+    }
+
+    [faceDetectionPerformanceModeProperty.setNative](value) {
+        this.#setupFaceDetector();
+    }
+
     #setupFaceDetector() {
         if (!FACE_DETECTION_SUPPORTED) {
             return;
@@ -203,6 +822,60 @@ export class MLKitView extends MLKitViewBase {
         this.#faceDetectorOptions.trackingEnabled = this.faceDetectionTrackingEnabled;
         this.#faceDetectorOptions.minFaceSize = this.faceDetectionMinFaceSize;
         this.#faceDetector = MLKFaceDetector.faceDetectorWithOptions(this.#faceDetectorOptions);
+    }
+
+    [imageLablerConfidenceThresholdProperty.setNative](value) {
+        this.#setImageLabeler();
+    }
+
+    #setImageLabeler() {
+        if (!IMAGE_LABELING_SUPPORTED) {
+            return;
+        }
+        if (!this.#imageLabelerOptions) {
+            this.#imageLabelerOptions = MLKImageLabelerOptions.new();
+        }
+        this.#imageLabelerOptions.confidenceThreshold = this.imageLablerConfidenceThreshold;
+        this.#imageLabeler = MLKImageLabeler.imageLabelerWithOptions(this.#imageLabelerOptions);
+    }
+
+
+    [objectDetectionClassifyProperty.setNative](value) {
+        this.#setupObjectDetection();
+    }
+
+    [objectDetectionMultipleProperty.setNative](value) {
+        this.#setupObjectDetection();
+    }
+
+    #setupObjectDetection() {
+        if (!OBJECT_DETECTION_SUPPORTED) {
+            return;
+        }
+        if (!this.#objectDetectionOptions) {
+            this.#objectDetectionOptions = MLKObjectDetectorOptions.new();
+        }
+
+        this.#objectDetectionOptions.detectorMode = MLKObjectDetectorModeStream;
+
+        this.#objectDetectionOptions.shouldEnableMultipleObjects = this.objectDetectionMultiple;
+        this.#objectDetectionOptions.shouldEnableClassification = this.objectDetectionClassify;
+
+        this.#objectDetector = MLKObjectDetector.objectDetectorWithOptions(this.#objectDetectionOptions);
+    }
+
+
+    #setPoseDetection() {
+        if (!POSE_DETECTION_SUPPORTED) {
+            return;
+        }
+        if (!this.#poseDetectionOptions) {
+            this.#poseDetectionOptions = MLKPoseDetectorOptions.new();
+        }
+
+        this.#poseDetectionOptions.detectorMode = MLKPoseDetectorModeStream;
+
+        this.#poseDetector = MLKPoseDetector.poseDetectorWithOptions(this.#poseDetectionOptions);
     }
 
 

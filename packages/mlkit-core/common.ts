@@ -33,7 +33,8 @@ export enum BarcodeFormats {
     UPC_A = 'upc_a',
     UPC_E = 'upc_e',
     PDF417 = 'pdf417',
-    AZTEC = 'aztec'
+    AZTEC = 'aztec',
+    UNKOWN = 'unknown'
 }
 
 
@@ -50,6 +51,9 @@ export class MLKitViewBase extends ContainerView {
     faceDetectionPerformanceMode: FaceDetectionPerformanceMode;
     faceDetectionTrackingEnabled: boolean;
     faceDetectionMinFaceSize: number;
+    imageLablerConfidenceThreshold: number;
+    objectDetectionMultiple: boolean;
+    objectDetectionClassify: boolean;
     onDetection: (data) => void;
 }
 
@@ -87,10 +91,9 @@ export const faceDetectionTrackingEnabledProperty = new Property<MLKitViewBase, 
     name: 'faceDetectionTrackingEnabled',
     defaultValue: false,
     valueConverter: booleanConverter
-})
+});
 
 faceDetectionTrackingEnabledProperty.register(MLKitViewBase);
-
 
 
 export const faceDetectionMinFaceSizeProperty = new Property<MLKitViewBase, number>({
@@ -99,4 +102,31 @@ export const faceDetectionMinFaceSizeProperty = new Property<MLKitViewBase, numb
 })
 
 faceDetectionMinFaceSizeProperty.register(MLKitViewBase);
+
+
+export const imageLablerConfidenceThresholdProperty = new Property<MLKitViewBase, number>({
+    name: 'imageLablerConfidenceThreshold',
+    defaultValue: 0.5
+});
+
+imageLablerConfidenceThresholdProperty.register(MLKitViewBase);
+
+export const objectDetectionMultipleProperty = new Property<MLKitViewBase, boolean>({
+    name: 'objectDetectionMultiple',
+    defaultValue: false,
+    valueConverter: booleanConverter
+});
+
+objectDetectionMultipleProperty.register(MLKitViewBase);
+
+
+export const objectDetectionClassifyProperty = new Property<MLKitViewBase, boolean>({
+    name: 'objectDetectionClassify',
+    defaultValue: false,
+    valueConverter: booleanConverter
+});
+
+objectDetectionClassifyProperty.register(MLKitViewBase);
+
+
 
