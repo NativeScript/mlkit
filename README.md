@@ -1,30 +1,11 @@
-**=== IMPORTANT**
-
-# :rotating_light: Important - read first!
-
-**Use this template on GitHub:**
-1. Hit the "Use this template" button
-2. Follow GitHub instructions (set repo name, visibility, description) & clone your new repo
-3. Setup workspace: `npm run setup`
-4. Configure your npm scope: `npm run config`
-
-**Use this template outside of GitHub:**
-
-1. Download a zip of this repo
-2. Unzip and name the folder appropriately (perhaps the name of the npm scope you intend to manage here)
-3. Setup workspace: `npm run setup`
-4. Configure your npm scope: `npm run config`
-
----
-
-# @nativescript/\* plugins
-
-```
-npm run setup
-npm start
-```
-
-- @nativescript
+- [@nativescript/mlkit-barcode-scanning](packages/mlkit-barcode-scanning/README.md)
+- [@nativescript/mlkit-core](packages/mlkit-core/README.md)
+- [@nativescript/mlkit-digital-ink-recognition](packages/mlkit-digital-ink-recognition/README.md)
+- [@nativescript/mlkit-face-detection](packages/mlkit-face-detection/README.md)
+- [@nativescript/mlkit-image-labeling](packages/mlkit-image-labeling/README.md)
+- [@nativescript/mlkit-object-detection](packages/mlkit-object-detection/README.md)
+- [@nativescript/mlkit-pose-detection](packages/mlkit-pose-detection/README.md)
+- [@nativescript/mlkit-text-recognition](packages/mlkit-text-recognition/README.md)
 
 # How to use?
 

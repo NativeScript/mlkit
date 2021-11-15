@@ -63,6 +63,62 @@ module.exports = {
 		// packages
 		// build output is always in dist/packages
 		'@nativescript': {
+			// @nativescript/mlkit-text-recognition
+			'mlkit-text-recognition': {
+				build: {
+					script: 'nx run mlkit-text-recognition:build.all',
+					description: '@nativescript/mlkit-text-recognition: Build',
+				},
+			},
+			// @nativescript/mlkit-core
+			'mlkit-core': {
+				build: {
+					script: 'nx run mlkit-core:build.all',
+					description: '@nativescript/mlkit-core: Build',
+				},
+			},
+			// @nativescript/mlkit-barcode-scanning
+			'mlkit-barcode-scanning': {
+				build: {
+					script: 'nx run mlkit-barcode-scanning:build.all',
+					description: '@nativescript/mlkit-barcode-scanning: Build',
+				},
+			},
+			// @nativescript/mlkit-face-detection
+			'mlkit-face-detection': {
+				build: {
+					script: 'nx run mlkit-face-detection:build.all',
+					description: '@nativescript/mlkit-face-detection: Build',
+				},
+			},
+			// @nativescript/mlkit-image-labeling
+			'mlkit-image-labeling': {
+				build: {
+					script: 'nx run mlkit-image-labeling:build.all',
+					description: '@nativescript/mlkit-image-labeling: Build',
+				},
+			},
+			// @nativescript/mlkit-object-detection
+			'mlkit-object-detection': {
+				build: {
+					script: 'nx run mlkit-object-detection:build.all',
+					description: '@nativescript/mlkit-object-detection: Build',
+				},
+			},
+			// @nativescript/mlkit-digital-ink-recognition
+			'mlkit-digital-ink-recognition': {
+				build: {
+					script: 'nx run mlkit-digital-ink-recognition:build.all',
+					description: '@nativescript/mlkit-digital-ink-recognition: Build',
+				},
+			},
+			// @nativescript/mlkit-pose-detection
+			'mlkit-pose-detection': {
+				build: {
+					script: 'nx run mlkit-pose-detection:build.all',
+					description: '@nativescript/mlkit-pose-detection: Build',
+				},
+			},
 			'build-all': {
 				script: 'nx run all:build',
 				description: 'Build all packages',
@@ -73,6 +129,38 @@ module.exports = {
 			description: '_____________  Focus (VS Code supported)  _____________',
 		},
 		focus: {
+			'mlkit-text-recognition': {
+				script: 'nx run mlkit-text-recognition:focus',
+				description: 'Focus on @nativescript/mlkit-text-recognition',
+			},
+			'mlkit-core': {
+				script: 'nx run mlkit-core:focus',
+				description: 'Focus on @nativescript/mlkit-core',
+			},
+			'mlkit-barcode-scanning': {
+				script: 'nx run mlkit-barcode-scanning:focus',
+				description: 'Focus on @nativescript/mlkit-barcode-scanning',
+			},
+			'mlkit-face-detection': {
+				script: 'nx run mlkit-face-detection:focus',
+				description: 'Focus on @nativescript/mlkit-face-detection',
+			},
+			'mlkit-image-labeling': {
+				script: 'nx run mlkit-image-labeling:focus',
+				description: 'Focus on @nativescript/mlkit-image-labeling',
+			},
+			'mlkit-object-detection': {
+				script: 'nx run mlkit-object-detection:focus',
+				description: 'Focus on @nativescript/mlkit-object-detection',
+			},
+			'mlkit-digital-ink-recognition': {
+				script: 'nx run mlkit-digital-ink-recognition:focus',
+				description: 'Focus on @nativescript/mlkit-digital-ink-recognition',
+			},
+			'mlkit-pose-detection': {
+				script: 'nx run mlkit-pose-detection:focus',
+				description: 'Focus on @nativescript/mlkit-pose-detection',
+			},
 			reset: {
 				script: 'nx run all:focus',
 				description: 'Reset Focus',

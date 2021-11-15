@@ -6,6 +6,14 @@
     <ScrollView class="h-full">
       <StackLayout>
         <Button text="add a package first" tap="{{ viewDemo }}" class="btn btn-primary view-demo"/>
+<Button text="mlkit-text-recognition" tap="{{ viewDemo }}" class="btn btn-primary view-demo"/>
+<Button text="mlkit-core" tap="{{ viewDemo }}" class="btn btn-primary view-demo"/>
+<Button text="mlkit-barcode-scanning" tap="{{ viewDemo }}" class="btn btn-primary view-demo"/>
+<Button text="mlkit-face-detection" tap="{{ viewDemo }}" class="btn btn-primary view-demo"/>
+<Button text="mlkit-image-labeling" tap="{{ viewDemo }}" class="btn btn-primary view-demo"/>
+<Button text="mlkit-object-detection" tap="{{ viewDemo }}" class="btn btn-primary view-demo"/>
+<Button text="mlkit-digital-ink-recognition" tap="{{ viewDemo }}" class="btn btn-primary view-demo"/>
+<Button text="mlkit-pose-detection" tap="{{ viewDemo }}" class="btn btn-primary view-demo"/>
       </StackLayout>
     </ScrollView>
   </StackLayout>

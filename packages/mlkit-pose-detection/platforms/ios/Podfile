@@ -1,0 +1,7 @@
+platform :ios, '10.0'
+
+ if defined?($NSMLKitPoseDetectionAccurate)
+    pod 'GoogleMLKit/PoseDetectionAccurate', '2.3.0'
+  else
+    pod 'GoogleMLKit/PoseDetection', '2.3.0'
+  end

@@ -20,13 +20,15 @@
         "ios": {
           "executor": "@nativescript/nx:build",
           "options": {
-            "platform": "ios"
+            "platform": "ios",
+            "noHmr": true
           }
         },
         "android": {
           "executor": "@nativescript/nx:build",
           "options": {
-            "platform": "android"
+            "platform": "android",
+            "noHmr": true
           }
         },
         "clean": {
@@ -78,14 +80,23 @@
       "projectType": "application",
       "targets": {
         "build": {
+          "executor": "@nrwl/workspace:run-commands",
           "outputs": [
             "dist/packages"
           ],
           "options": {
-            "commands": [],
+            "commands": [
+              "nx run mlkit-text-recognition:build.all",
+              "nx run mlkit-core:build.all",
+              "nx run mlkit-barcode-scanning:build.all",
+              "nx run mlkit-face-detection:build.all",
+              "nx run mlkit-image-labeling:build.all",
+              "nx run mlkit-object-detection:build.all",
+              "nx run mlkit-digital-ink-recognition:build.all",
+              "nx run mlkit-pose-detection:build.all"
+            ],
             "parallel": false
-          },
-          "executor": "@nrwl/workspace:run-commands"
+          }
         },
         "focus": {
           "outputs": [
@@ -101,6 +112,366 @@
         }
       },
       "sourceRoot": ""
+    },
+    "mlkit-text-recognition": {
+      "root": "packages/mlkit-text-recognition",
+      "projectType": "library",
+      "sourceRoot": "packages/mlkit-text-recognition",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/packages/mlkit-text-recognition",
+            "tsConfig": "packages/mlkit-text-recognition/tsconfig.json",
+            "packageJson": "packages/mlkit-text-recognition/package.json",
+            "main": "packages/mlkit-text-recognition/index.d.ts",
+            "assets": [
+              "packages/mlkit-text-recognition/*.md",
+              "packages/mlkit-text-recognition/index.d.ts",
+              "LICENSE",
+              {
+                "glob": "**/*",
+                "input": "packages/mlkit-text-recognition/platforms/",
+                "output": "./platforms/"
+              }
+            ]
+          }
+        },
+        "build.all": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run mlkit-text-recognition:build",
+              "node tools/scripts/build-finish.ts mlkit-text-recognition"
+            ],
+            "parallel": false
+          }
+        },
+        "focus": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx g @nativescript/plugin-tools:focus-packages mlkit-text-recognition"
+            ],
+            "parallel": false
+          }
+        }
+      }
+    },
+    "mlkit-core": {
+      "root": "packages/mlkit-core",
+      "projectType": "library",
+      "sourceRoot": "packages/mlkit-core",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/packages/mlkit-core",
+            "tsConfig": "packages/mlkit-core/tsconfig.json",
+            "packageJson": "packages/mlkit-core/package.json",
+            "main": "packages/mlkit-core/index.d.ts",
+            "assets": [
+              "packages/mlkit-core/*.md",
+              "packages/mlkit-core/index.d.ts",
+              "LICENSE",
+              {
+                "glob": "**/*",
+                "input": "packages/mlkit-core/platforms/",
+                "output": "./platforms/"
+              }
+            ]
+          }
+        },
+        "build.all": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run mlkit-core:build",
+              "node tools/scripts/build-finish.ts mlkit-core"
+            ],
+            "parallel": false
+          }
+        },
+        "focus": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx g @nativescript/plugin-tools:focus-packages mlkit-core"
+            ],
+            "parallel": false
+          }
+        }
+      }
+    },
+    "mlkit-barcode-scanning": {
+      "root": "packages/mlkit-barcode-scanning",
+      "projectType": "library",
+      "sourceRoot": "packages/mlkit-barcode-scanning",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/packages/mlkit-barcode-scanning",
+            "tsConfig": "packages/mlkit-barcode-scanning/tsconfig.json",
+            "packageJson": "packages/mlkit-barcode-scanning/package.json",
+            "main": "packages/mlkit-barcode-scanning/index.d.ts",
+            "assets": [
+              "packages/mlkit-barcode-scanning/*.md",
+              "packages/mlkit-barcode-scanning/index.d.ts",
+              "LICENSE",
+              {
+                "glob": "**/*",
+                "input": "packages/mlkit-barcode-scanning/platforms/",
+                "output": "./platforms/"
+              }
+            ]
+          }
+        },
+        "build.all": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run mlkit-barcode-scanning:build",
+              "node tools/scripts/build-finish.ts mlkit-barcode-scanning"
+            ],
+            "parallel": false
+          }
+        },
+        "focus": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx g @nativescript/plugin-tools:focus-packages mlkit-barcode-scanning"
+            ],
+            "parallel": false
+          }
+        }
+      }
+    },
+    "mlkit-face-detection": {
+      "root": "packages/mlkit-face-detection",
+      "projectType": "library",
+      "sourceRoot": "packages/mlkit-face-detection",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/packages/mlkit-face-detection",
+            "tsConfig": "packages/mlkit-face-detection/tsconfig.json",
+            "packageJson": "packages/mlkit-face-detection/package.json",
+            "main": "packages/mlkit-face-detection/index.d.ts",
+            "assets": [
+              "packages/mlkit-face-detection/*.md",
+              "packages/mlkit-face-detection/index.d.ts",
+              "LICENSE",
+              {
+                "glob": "**/*",
+                "input": "packages/mlkit-face-detection/platforms/",
+                "output": "./platforms/"
+              }
+            ]
+          }
+        },
+        "build.all": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run mlkit-face-detection:build",
+              "node tools/scripts/build-finish.ts mlkit-face-detection"
+            ],
+            "parallel": false
+          }
+        },
+        "focus": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx g @nativescript/plugin-tools:focus-packages mlkit-face-detection"
+            ],
+            "parallel": false
+          }
+        }
+      }
+    },
+    "mlkit-image-labeling": {
+      "root": "packages/mlkit-image-labeling",
+      "projectType": "library",
+      "sourceRoot": "packages/mlkit-image-labeling",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/packages/mlkit-image-labeling",
+            "tsConfig": "packages/mlkit-image-labeling/tsconfig.json",
+            "packageJson": "packages/mlkit-image-labeling/package.json",
+            "main": "packages/mlkit-image-labeling/index.d.ts",
+            "assets": [
+              "packages/mlkit-image-labeling/*.md",
+              "packages/mlkit-image-labeling/index.d.ts",
+              "LICENSE",
+              {
+                "glob": "**/*",
+                "input": "packages/mlkit-image-labeling/platforms/",
+                "output": "./platforms/"
+              }
+            ]
+          }
+        },
+        "build.all": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run mlkit-image-labeling:build",
+              "node tools/scripts/build-finish.ts mlkit-image-labeling"
+            ],
+            "parallel": false
+          }
+        },
+        "focus": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx g @nativescript/plugin-tools:focus-packages mlkit-image-labeling"
+            ],
+            "parallel": false
+          }
+        }
+      }
+    },
+    "mlkit-object-detection": {
+      "root": "packages/mlkit-object-detection",
+      "projectType": "library",
+      "sourceRoot": "packages/mlkit-object-detection",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/packages/mlkit-object-detection",
+            "tsConfig": "packages/mlkit-object-detection/tsconfig.json",
+            "packageJson": "packages/mlkit-object-detection/package.json",
+            "main": "packages/mlkit-object-detection/index.d.ts",
+            "assets": [
+              "packages/mlkit-object-detection/*.md",
+              "packages/mlkit-object-detection/index.d.ts",
+              "LICENSE",
+              {
+                "glob": "**/*",
+                "input": "packages/mlkit-object-detection/platforms/",
+                "output": "./platforms/"
+              }
+            ]
+          }
+        },
+        "build.all": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run mlkit-object-detection:build",
+              "node tools/scripts/build-finish.ts mlkit-object-detection"
+            ],
+            "parallel": false
+          }
+        },
+        "focus": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx g @nativescript/plugin-tools:focus-packages mlkit-object-detection"
+            ],
+            "parallel": false
+          }
+        }
+      }
+    },
+    "mlkit-digital-ink-recognition": {
+      "root": "packages/mlkit-digital-ink-recognition",
+      "projectType": "library",
+      "sourceRoot": "packages/mlkit-digital-ink-recognition",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/packages/mlkit-digital-ink-recognition",
+            "tsConfig": "packages/mlkit-digital-ink-recognition/tsconfig.json",
+            "packageJson": "packages/mlkit-digital-ink-recognition/package.json",
+            "main": "packages/mlkit-digital-ink-recognition/index.d.ts",
+            "assets": [
+              "packages/mlkit-digital-ink-recognition/*.md",
+              "packages/mlkit-digital-ink-recognition/index.d.ts",
+              "LICENSE",
+              {
+                "glob": "**/*",
+                "input": "packages/mlkit-digital-ink-recognition/platforms/",
+                "output": "./platforms/"
+              }
+            ]
+          }
+        },
+        "build.all": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run mlkit-digital-ink-recognition:build",
+              "node tools/scripts/build-finish.ts mlkit-digital-ink-recognition"
+            ],
+            "parallel": false
+          }
+        },
+        "focus": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx g @nativescript/plugin-tools:focus-packages mlkit-digital-ink-recognition"
+            ],
+            "parallel": false
+          }
+        }
+      }
+    },
+    "mlkit-pose-detection": {
+      "root": "packages/mlkit-pose-detection",
+      "projectType": "library",
+      "sourceRoot": "packages/mlkit-pose-detection",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/packages/mlkit-pose-detection",
+            "tsConfig": "packages/mlkit-pose-detection/tsconfig.json",
+            "packageJson": "packages/mlkit-pose-detection/package.json",
+            "main": "packages/mlkit-pose-detection/index.d.ts",
+            "assets": [
+              "packages/mlkit-pose-detection/*.md",
+              "packages/mlkit-pose-detection/index.d.ts",
+              "LICENSE",
+              {
+                "glob": "**/*",
+                "input": "packages/mlkit-pose-detection/platforms/",
+                "output": "./platforms/"
+              }
+            ]
+          }
+        },
+        "build.all": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run mlkit-pose-detection:build",
+              "node tools/scripts/build-finish.ts mlkit-pose-detection"
+            ],
+            "parallel": false
+          }
+        },
+        "focus": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx g @nativescript/plugin-tools:focus-packages mlkit-pose-detection"
+            ],
+            "parallel": false
+          }
+        }
+      }
     }
   },
   "cli": {

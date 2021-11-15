@@ -1,0 +1,3 @@
+dependencies {
+    implementation 'io.github.triniwiz.fancycamera:poseDetection:1.0.0-alpha0'
+}

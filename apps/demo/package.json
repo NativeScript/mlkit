@@ -4,7 +4,15 @@
   "license": "SEE LICENSE IN <your-license-filename>",
   "repository": "<fill-your-repository-here>",
   "dependencies": {
-    "@nativescript/core": "file:../../node_modules/@nativescript/core"
+    "@nativescript/core": "file:../../node_modules/@nativescript/core",
+    "@nativescript/mlkit-barcode-scanning": "file:../../packages/mlkit-barcode-scanning",
+    "@nativescript/mlkit-core": "file:../../packages/mlkit-core",
+    "@nativescript/mlkit-digital-ink-recognition": "file:../../packages/mlkit-digital-ink-recognition",
+    "@nativescript/mlkit-face-detection": "file:../../packages/mlkit-face-detection",
+    "@nativescript/mlkit-image-labeling": "file:../../packages/mlkit-image-labeling",
+    "@nativescript/mlkit-object-detection": "file:../../packages/mlkit-object-detection",
+    "@nativescript/mlkit-pose-detection": "file:../../packages/mlkit-pose-detection",
+    "@nativescript/mlkit-text-recognition": "file:../../packages/mlkit-text-recognition"
   },
   "devDependencies": {
     "@nativescript/android": "~8.1.1",
