@@ -247,7 +247,6 @@ class TNSBarcodeScanner: NSObject {
     
     static func createCalenderEvent(_ event: BarcodeCalendarEvent?) -> TNSCalenderEvent? {
         guard event != nil else {return nil}
-        
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
         

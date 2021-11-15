@@ -1,5 +1,5 @@
 import { Utils } from "@nativescript/core";
-import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, onDetectionProperty } from "./common";
+import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, onDetectionProperty } from "./common";
 import '@nativescript/core';
 import lazy from "@nativescript/core/utils/lazy";
 
@@ -99,13 +99,50 @@ export class MLKitView extends MLKitViewBase {
         );
     }
 
-    _onScanCallback(result: string) {
+
+    [detectionTypeProperty.setNative](value) {
+        let type = 8 /* None */
+        switch (value) {
+            case DetectionType.All:
+                type = 7;
+                break;
+            case DetectionType.Barcode:
+                type = 0;
+                break;
+            case DetectionType.DigitalInk:
+                type = 1
+                break;
+            case DetectionType.Face:
+                type = 2
+                break;
+            case DetectionType.Image:
+                type = 3
+                break;
+            case DetectionType.Object:
+                type = 4
+                break;
+            case DetectionType.Pose:
+                type = 5
+                break;
+            case DetectionType.Text:
+                type = 6
+                break;
+            default:
+                type = 8;
+                break;
+        }
+
+        this.#mlkitHelper.detectorType = type;
+    }
+
+
+    _onScanCallback(result: string, type) {
         if (this.detectionType === DetectionType.None || !this.onDetection) {
             return;
         }
         try {
             const data = JSON.parse(result);
-            this?.onDetection(data);
+            this?.onDetection(data, type);
         } catch (e) { }
     }
 

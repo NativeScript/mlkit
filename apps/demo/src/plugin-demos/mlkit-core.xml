@@ -3,8 +3,11 @@
         <ActionBar title="mlkit-core" icon="" class="action-bar">
         </ActionBar>
     </Page.actionBar>
-    <GridLayout class="p-20">
-       <ui:MLKitView  loaded="{{ onLoaded }}" cameraPosition="back" detectionType="all" onDetection="{{ onDetection }}"/>
-       <Button text="Toggle Camera" tap="{{ toggleCamera }}" />
+    <GridLayout rows="*,auto,auto,auto,auto" height="100%">
+       <ui:MLKitView height="100%" rowSpan="3"  loaded="{{ onLoaded }}" cameraPosition="back" detectionType="{{ detectorType }}" onDetection="{{ onDetection }}"/>
+       <Button row="1" height="40" text="Toggle Camera" tap="{{ toggleCamera }}" />
+       <Button row="2" height="40" text="Request Camera Permission" tap="{{ requestPermission }}" />
+       <Label row="3" text="{{'Detecting ' + detectorType }}"/>
+       <Button row="4" height="40" text="Change Detector Type" tap="{{ changeType }}" />
     </GridLayout>
 </Page>

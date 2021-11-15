@@ -108,10 +108,124 @@ func createPoints(_ points: [NSValue]?) -> [TNSPoint]? {
 }
 
 
+
+
+@objc(TNSMLKitDetectionType)
+enum TNSMLKitDetectionType: Int, RawRepresentable {
+    case Barcode
+    case DigitalInk
+    case Face
+    case Image
+    case Object
+    case Pose
+    case Text
+    case All
+    case None
+    public typealias RawValue = UInt32
+    
+    public var rawValue: RawValue {
+        switch self {
+        case .Barcode:
+            return 0
+        case .DigitalInk:
+            return 1
+        case .Face:
+            return 2
+        case .Image:
+            return 3
+        case .Object:
+            return 4
+        case .Pose:
+            return 5
+        case .Text:
+            return 6
+        case .All:
+            return 7
+        case .None:
+            return 8
+        }
+    }
+    
+    
+    public init?(rawValue: RawValue) {
+        switch rawValue {
+        case 0:
+            self = .Barcode
+        case 1:
+            self = .DigitalInk
+        case 2:
+            self = .Face
+        case 3:
+            self = .Image
+        case 4:
+            self = .Object
+        case 5:
+            self = .Pose
+        case 6:
+            self = .Text
+        case 7:
+            self = .All
+        case 8:
+            self = .None
+        default:
+            return nil
+        }
+    }
+    
+    
+    public init?(string: String) {
+        switch string {
+        case "barcode":
+            self = .Barcode
+        case "digitalInk":
+            self = .DigitalInk
+        case "face":
+            self = .Face
+        case "image":
+            self = .Image
+        case "object":
+            self = .Object
+        case "pose":
+            self = .Pose
+        case  "text":
+            self = .Text
+        case "all":
+            self = .All
+        case "none":
+            self = .None
+        default:
+            return nil
+        }
+    }
+    
+    func string() -> String {
+        switch(self){case .Barcode:
+            return "barcode"
+        case .DigitalInk:
+            return "digitalInk"
+        case .Face:
+            return "face"
+        case .Image:
+            return "image"
+        case .Object:
+            return "object"
+        case .Pose:
+            return "pose"
+        case .Text:
+            return "text"
+        case .All:
+            return "all"
+        case .None:
+            return "none"
+        }
+    }
+}
+
+
 @objc(TNSMLKitHelper)
 @objcMembers
 public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
-    var onScanCallback: ((String) -> Void)?
+    var onScanCallback: ((String, String) -> Void)?
     var onError: ((NSError) -> Void)?
     private var _output = AVCaptureVideoDataOutput()
     let queue = DispatchQueue(label: "TNSMLKitHelper")
@@ -133,6 +247,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
     }
     let session = AVCaptureSession()
     let encoder = JSONEncoder()
+    var detectorType = TNSMLKitDetectionType.All
     
     
 #if canImport(MLKitBarcodeScanning)
@@ -359,96 +474,120 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
             
             
 #if canImport(MLKitBarcodeScanning)
-            do {
-                let result = try self.barcodeScanner!.results(in: image)
-                let barCodes = handleBarcodeScanner(result)
-                if(!barCodes.isEmpty) {
-                    let response = toJSON(barCodes)
-                    if(response != nil){
-                        onScanCallback?(response!)
+            if(detectorType == .Barcode || detectorType == .All){
+                do {
+                    let result = try self.barcodeScanner?.results(in: image)
+                    if(result != nil){
+                        let barCodes = handleBarcodeScanner(result!)
+                        if(!barCodes.isEmpty) {
+                            let response = toJSON(barCodes)
+                            if(response != nil){
+                                onScanCallback?(response!, TNSMLKitDetectionType.Barcode.string())
+                            }
+                        }
                     }
-                }
-            } catch {}
+                } catch {}
+            }
 #endif
             
             
 #if canImport(MLKitFaceDetection)
-            do {
-                let result = try self.faceDetector!.results(in: image)
-                let faces = handleFaceDetection(result)
-                
-                if(!faces.isEmpty) {
-                    let response = toJSON(faces)
-                    if response != nil {
-                        onScanCallback?(response!)
+            if(detectorType == .Face || detectorType == .All){
+                do {
+                    let result = try self.faceDetector?.results(in: image)
+                    if(result != nil){
+                        let faces = handleFaceDetection(result!)
+                        
+                        if(!faces.isEmpty) {
+                            let response = toJSON(faces)
+                            if response != nil {
+                                onScanCallback?(response!, TNSMLKitDetectionType.Face.string())
+                            }
+                        }
                     }
-                }
-            } catch {}
+                } catch {}
+            }
 #endif
             
             
             
 #if canImport(MLKitPoseDetection)
-            do {
-                let result = try self.poseDetector!.results(in: image)
-                let poses = handlePoseDetection(result)
-                
-                if(!poses.isEmpty) {
-                    let response = toJSON(poses)
-                    if response != nil {
-                        onScanCallback?(response!)
+            if(detectorType == .Pose || detectorType == .All){
+                do {
+                    let result = try self.poseDetector?.results(in: image)
+                    if(result != nil){
+                        let poses = handlePoseDetection(result!)
+                        
+                        if(!poses.isEmpty) {
+                            let response = toJSON(poses)
+                            if response != nil {
+                                onScanCallback?(response!, TNSMLKitDetectionType.Pose.string())
+                            }
+                        }
                     }
-                }
-            } catch {}
+                } catch {}
+            }
 #endif
             
             
             
 #if canImport(MLKitImageLabeling)
-            do {
-                let result = try self.imageLabeler!.results(in: image)
-                let labels = handleImageLabeling(result)
-                
-                if(!labels.isEmpty) {
-                    let response = toJSON(labels)
-                    if response != nil {
-                        onScanCallback?(response!)
+            if(detectorType == .Image || detectorType == .All){
+                do {
+                    let result = try self.imageLabeler?.results(in: image)
+                    if(result != nil){
+                        let labels = handleImageLabeling(result!)
+                        
+                        if(!labels.isEmpty) {
+                            let response = toJSON(labels)
+                            if response != nil {
+                                onScanCallback?(response!, TNSMLKitDetectionType.Image.string())
+                            }
+                        }
                     }
-                }
-            } catch {}
+                } catch {}
+            }
 #endif
             
             
             
 #if canImport(MLKitObjectDetection)
-            do {
-                let result = try self.objectDetector!.results(in: image)
-                let objects = handleObjectDetection(result)
-                
-                if(!objects.isEmpty) {
-                    let response = toJSON(objects)
-                    if response != nil {
-                        onScanCallback?(response!)
+            if(detectorType == .Object || detectorType == .All){
+                do {
+                    let result = try self.objectDetector?.results(in: image)
+                    if(result != nil){
+                        let objects = handleObjectDetection(result!)
+                        
+                        if(!objects.isEmpty) {
+                            let response = toJSON(objects)
+                            if response != nil {
+                                onScanCallback?(response!, TNSMLKitDetectionType.Object.string())
+                            }
+                        }
                     }
-                }
-            } catch {}
+                } catch {}
+            }
 #endif
             
             
             
             
 #if canImport(MLKitTextRecognition)
-            do {
-                let result = try self.textRecognizer!.results(in: image)
-                let texts = handleTextRecognition(result)
-                
-                if(!texts.isEmpty) {
-                    let response = toJSON(texts)
-                    if response != nil {
-                        onScanCallback?(response!)
+            if(detectorType == .Text || detectorType == .All){
+                do {
+                    let result = try self.textRecognizer?.results(in: image)
+                    if(result != nil){
+                        let texts = handleTextRecognition(result!)
+                        
+                        if(!texts.isEmpty) {
+                            let response = toJSON(texts)
+                            if response != nil {
+                                onScanCallback?(response!, TNSMLKitDetectionType.Text.string())
+                            }
+                        }
                     }
-                }
-            } catch {}
+                } catch {}
+            }
 #endif
             
         }

@@ -1,0 +1,16 @@
+{
+	"name": "@nativescript/mlkit-core-angular",
+	"ngPackage": {
+		"lib": {
+			"entryFile": "index.ts",
+			"umdModuleIds": {
+				"@nativescript/core": "ns-core",
+				"@nativescript/angular": "ns-angular",
+				"@nativescript/mlkit-core": "ns-mlkit-core"
+			}
+		},
+		"allowedNonPeerDependencies": [
+			"."
+		]
+	}
+}

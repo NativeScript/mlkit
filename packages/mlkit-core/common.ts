@@ -10,7 +10,6 @@ export enum DetectionType {
     Text = "text",
     All = "all",
     None = "none"
-
 }
 
 export enum CameraPosition {
@@ -54,7 +53,9 @@ export class MLKitViewBase extends ContainerView {
     imageLabelerConfidenceThreshold: number;
     objectDetectionMultiple: boolean;
     objectDetectionClassify: boolean;
-    onDetection: (data) => void;
+    onDetection: (data: {
+        [key: string]: any;
+    }, type: DetectionType) => void;
 }
 
 export const onDetectionProperty = new Property<MLKitViewBase, (data: { [key: string]: any }) => void>({

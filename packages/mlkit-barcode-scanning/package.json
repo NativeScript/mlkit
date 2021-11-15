@@ -1,7 +1,7 @@
 {
     "name": "@nativescript/mlkit-barcode-scanning",
-    "version": "1.0.0",
-    "description": "Add a plugin description",
+    "version": "1.0.0-alpha.0",
+    "description": "NativeScript MLKit Barcode Scanner module",
     "main": "index",
     "typings": "index.d.ts",
     "nativescript": {

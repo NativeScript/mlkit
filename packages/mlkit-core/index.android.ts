@@ -1,4 +1,4 @@
-import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLablerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, onDetectionProperty } from "./common";
+import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, onDetectionProperty } from "./common";
 import { Application, Device, Utils, AndroidActivityRequestPermissionsEventData } from '@nativescript/core';
 import lazy from '@nativescript/core/utils/lazy';
 
@@ -86,13 +86,48 @@ export class MLKitView extends MLKitViewBase {
         return this.#hasCamera;
     }
 
+    [detectionTypeProperty.setNative](value) {
+        let type = DetectorType_None();
+        switch (value) {
+            case DetectionType.All:
+                type = DetectorType_All();
+                break;
+            case DetectionType.Barcode:
+                type = DetectorType_Barcode();
+                break;
+            case DetectionType.DigitalInk:
+                type = DetectorType_DigitalInk();
+                break;
+            case DetectionType.Face:
+                type = DetectorType_Face();
+                break;
+            case DetectionType.Image:
+                type = DetectorType_Image();
+                break;
+            case DetectionType.Object:
+                type = DetectorType_Object();
+                break;
+            case DetectionType.Pose:
+                type = DetectorType_Pose();
+                break;
+            case DetectionType.Text:
+                type = DetectorType_Text();
+                break;
+            default:
+                type = DetectorType_None();
+                break;
+        }
+
+        this.#camera.setDetectorType(type);
+    }
+
     [onDetectionProperty.setNative](value) {
         const ref = new WeakRef(this);
         if (!this.#onTextListener && (this.detectionType === DetectionType.Text || this.detectionType === DetectionType.All)) {
             this.#onTextListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                 onSuccess(param0: string) {
                     try {
-                        ref?.get?.().onDetection?.(JSON.parse(param0));
+                        ref?.get?.().onDetection?.(JSON.parse(param0), DetectionType.Text);
                     } catch (e) { }
                 },
                 onError(param0: string, param1: java.lang.Exception) {
@@ -106,7 +141,7 @@ export class MLKitView extends MLKitViewBase {
             this.#onBarcodeListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                 onSuccess(param0: string) {
                     try {
-                        ref?.get?.().onDetection?.(JSON.parse(param0));
+                        ref?.get?.().onDetection?.(JSON.parse(param0), DetectionType.Barcode);
                     } catch (e) { }
                 },
                 onError(param0: string, param1: java.lang.Exception) {
@@ -135,7 +170,7 @@ export class MLKitView extends MLKitViewBase {
             this.#onFaceListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                 onSuccess(param0: string) {
                     try {
-                        ref?.get?.().onDetection?.(JSON.parse(param0));
+                        ref?.get?.().onDetection?.(JSON.parse(param0), DetectionType.Face);
                     } catch (e) { }
                 },
                 onError(param0: string, param1: java.lang.Exception) {
@@ -149,7 +184,7 @@ export class MLKitView extends MLKitViewBase {
             this.#onImageListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                 onSuccess(param0: string) {
                     try {
-                        ref?.get?.().onDetection?.(JSON.parse(param0));
+                        ref?.get?.().onDetection?.(JSON.parse(param0), DetectionType.Image);
                     } catch (e) { }
                 },
                 onError(param0: string, param1: java.lang.Exception) {
@@ -163,7 +198,7 @@ export class MLKitView extends MLKitViewBase {
             this.#onObjectListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                 onSuccess(param0: string) {
                     try {
-                        ref?.get?.().onDetection?.(JSON.parse(param0));
+                        ref?.get?.().onDetection?.(JSON.parse(param0), DetectionType.Object);
                     } catch (e) { }
                 },
                 onError(param0: string, param1: java.lang.Exception) {
@@ -177,7 +212,7 @@ export class MLKitView extends MLKitViewBase {
             this.#onPoseListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                 onSuccess(param0: string) {
                     try {
-                        ref?.get?.().onDetection?.(JSON.parse(param0));
+                        ref?.get?.().onDetection?.(JSON.parse(param0), DetectionType.Pose);
                     } catch (e) { }
                 },
                 onError(param0: string, param1: java.lang.Exception) {
@@ -186,36 +221,6 @@ export class MLKitView extends MLKitViewBase {
             });
             this.#camera.setOnPoseDetectedListener(this.#onPoseListener);
         }
-
-        let type = DetectorType_None();
-        switch (this.detectionType) {
-            case DetectionType.All:
-                type = DetectorType_All();
-                break;
-            case DetectionType.Barcode:
-                type = DetectorType_Barcode();
-                break;
-            case DetectionType.DigitalInk:
-                type = DetectorType_DigitalInk();
-                break;
-            case DetectionType.Face:
-                type = DetectorType_Face();
-                break;
-            case DetectionType.Image:
-                type = DetectorType_Image();
-                break;
-            case DetectionType.Object:
-                type = DetectorType_Object();
-                break;
-            case DetectionType.Pose:
-                type = DetectorType_Pose();
-                break;
-            case DetectionType.Text:
-                type = DetectorType_Text();
-                break;
-        }
-
-        this.#camera.setDetectorType(type);
     }
 
     [barcodeFormatsProperty.setNative](value: BarcodeFormats[]) {
@@ -310,7 +315,7 @@ export class MLKitView extends MLKitViewBase {
         this.#getFancyCamera().setFaceDetectionOptions(this.#faceDetectionOptions);
     }
 
-    [imageLablerConfidenceThresholdProperty.setNative](value) {
+    [imageLabelerConfidenceThresholdProperty.setNative](value) {
         if (!IMAGE_LABELING_SUPPORTED()) {
             return;
         }
