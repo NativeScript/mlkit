@@ -46,16 +46,21 @@ export enum FaceDetectionPerformanceMode {
 @CSSType('MLKitView')
 export class MLKitViewBase extends ContainerView {
     cameraPosition: CameraPosition;
-    dectectionType: DetectionType;
-    barcodeFormats: BarcodeFormats;
+    detectionType: DetectionType;
+    barcodeFormats: BarcodeFormats[];
     faceDetectionPerformanceMode: FaceDetectionPerformanceMode;
     faceDetectionTrackingEnabled: boolean;
     faceDetectionMinFaceSize: number;
-    imageLablerConfidenceThreshold: number;
+    imageLabelerConfidenceThreshold: number;
     objectDetectionMultiple: boolean;
     objectDetectionClassify: boolean;
     onDetection: (data) => void;
 }
+
+export const onDetectionProperty = new Property<MLKitViewBase, (data: { [key: string]: any }) => void>({
+    name: 'onDetection'
+});
+onDetectionProperty.register(MLKitViewBase);
 
 export const cameraPositionProperty = new Property<MLKitViewBase, CameraPosition>({
     name: 'cameraPosition',
@@ -65,15 +70,15 @@ export const cameraPositionProperty = new Property<MLKitViewBase, CameraPosition
 cameraPositionProperty.register(MLKitViewBase);
 
 export const detectionTypeProperty = new Property<MLKitViewBase, DetectionType>({
-    name: 'dectectionType',
+    name: 'detectionType',
     defaultValue: DetectionType.None
 });
 
 detectionTypeProperty.register(MLKitViewBase);
 
-export const barcodeFormatsProperty = new Property<MLKitViewBase, BarcodeFormats>({
+export const barcodeFormatsProperty = new Property<MLKitViewBase, BarcodeFormats[]>({
     name: 'barcodeFormats',
-    defaultValue: BarcodeFormats.ALL
+    defaultValue: [BarcodeFormats.ALL]
 })
 
 barcodeFormatsProperty.register(MLKitViewBase);
@@ -104,12 +109,12 @@ export const faceDetectionMinFaceSizeProperty = new Property<MLKitViewBase, numb
 faceDetectionMinFaceSizeProperty.register(MLKitViewBase);
 
 
-export const imageLablerConfidenceThresholdProperty = new Property<MLKitViewBase, number>({
-    name: 'imageLablerConfidenceThreshold',
+export const imageLabelerConfidenceThresholdProperty = new Property<MLKitViewBase, number>({
+    name: 'imageLabelerConfidenceThreshold',
     defaultValue: 0.5
 });
 
-imageLablerConfidenceThresholdProperty.register(MLKitViewBase);
+imageLabelerConfidenceThresholdProperty.register(MLKitViewBase);
 
 export const objectDetectionMultipleProperty = new Property<MLKitViewBase, boolean>({
     name: 'objectDetectionMultiple',

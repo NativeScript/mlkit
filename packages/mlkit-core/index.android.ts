@@ -1,4 +1,4 @@
-import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLablerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty } from "./common";
+import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLablerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, onDetectionProperty } from "./common";
 import { Application, Device, Utils, AndroidActivityRequestPermissionsEventData } from '@nativescript/core';
 import lazy from '@nativescript/core/utils/lazy';
 
@@ -19,12 +19,11 @@ const IMAGE_LABELING_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamer
 const OBJECT_DETECTION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.objectdetection?.ObjectDetection);
 const POSE_DETECTION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.posedetection?.PoseDetection);
 
-export { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLablerConfidenceThresholdProperty, objectDetectionClassifyProperty, objectDetectionMultipleProperty } from './common';
+export { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, objectDetectionClassifyProperty, objectDetectionMultipleProperty } from './common';
 
 export class MLKitView extends MLKitViewBase {
     #camera: io.github.triniwiz.fancycamera.FancyCamera;
     static #hasCamera: boolean;
-    #onDetection: (data: { [key: string]: any }) => void;
     #onTextListener: io.github.triniwiz.fancycamera.ImageAnalysisCallback;
     #onBarcodeListener: io.github.triniwiz.fancycamera.ImageAnalysisCallback;
     #onDigitalInkListener: io.github.triniwiz.fancycamera.ImageAnalysisCallback;
@@ -87,11 +86,9 @@ export class MLKitView extends MLKitViewBase {
         return this.#hasCamera;
     }
 
-    //@ts-ignore
-    set onDetection(value) {
-        this.#onDetection = value;
+    [onDetectionProperty.setNative](value) {
         const ref = new WeakRef(this);
-        if (!this.#onTextListener && (this.dectectionType === DetectionType.Text || this.dectectionType === DetectionType.All)) {
+        if (!this.#onTextListener && (this.detectionType === DetectionType.Text || this.detectionType === DetectionType.All)) {
             this.#onTextListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                 onSuccess(param0: string) {
                     try {
@@ -105,7 +102,7 @@ export class MLKitView extends MLKitViewBase {
             this.#camera.setOnTextRecognitionListener(this.#onTextListener);
         }
 
-        if (!this.#onBarcodeListener && (this.dectectionType === DetectionType.Barcode || this.dectectionType === DetectionType.All)) {
+        if (!this.#onBarcodeListener && (this.detectionType.includes(DetectionType.Barcode) || this.detectionType.includes(DetectionType.All))) {
             this.#onBarcodeListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                 onSuccess(param0: string) {
                     try {
@@ -120,7 +117,7 @@ export class MLKitView extends MLKitViewBase {
         }
 
         // todo
-        if (!this.#onDigitalInkListener && (this.dectectionType === DetectionType.DigitalInk || this.dectectionType === DetectionType.All)) {
+        if (!this.#onDigitalInkListener && (this.detectionType === DetectionType.DigitalInk || this.detectionType === DetectionType.All)) {
             /* this.#onDigitalInkListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                  onSuccess(param0: string) {
                      try {
@@ -133,7 +130,7 @@ export class MLKitView extends MLKitViewBase {
              }); */
         }
 
-        if (!this.#onFaceListener && (this.dectectionType === DetectionType.Face || this.dectectionType === DetectionType.All)) {
+        if (!this.#onFaceListener && (this.detectionType === DetectionType.Face || this.detectionType === DetectionType.All)) {
             this.#faceDetectionOptions = new io.github.triniwiz.fancycamera.facedetection.FaceDetection.Options();
             this.#onFaceListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                 onSuccess(param0: string) {
@@ -148,7 +145,7 @@ export class MLKitView extends MLKitViewBase {
             this.#camera.setOnFacesDetectedListener(this.#onFaceListener);
         }
 
-        if (!this.#onImageListener && (this.dectectionType === DetectionType.Image || this.dectectionType === DetectionType.All)) {
+        if (!this.#onImageListener && (this.detectionType === DetectionType.Image || this.detectionType === DetectionType.All)) {
             this.#onImageListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                 onSuccess(param0: string) {
                     try {
@@ -162,7 +159,7 @@ export class MLKitView extends MLKitViewBase {
             this.#camera.setOnImageLabelingListener(this.#onImageListener);
         }
 
-        if (!this.#onObjectListener && (this.dectectionType === DetectionType.Object || this.dectectionType === DetectionType.All)) {
+        if (!this.#onObjectListener && (this.detectionType === DetectionType.Object || this.detectionType === DetectionType.All)) {
             this.#onObjectListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                 onSuccess(param0: string) {
                     try {
@@ -176,7 +173,7 @@ export class MLKitView extends MLKitViewBase {
             this.#camera.setOnObjectDetectedListener(this.#onObjectListener);
         }
 
-        if (!this.#onPoseListener && (this.dectectionType === DetectionType.Pose || this.dectectionType === DetectionType.All)) {
+        if (!this.#onPoseListener && (this.detectionType === DetectionType.Pose || this.detectionType === DetectionType.All)) {
             this.#onPoseListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                 onSuccess(param0: string) {
                     try {
@@ -191,7 +188,7 @@ export class MLKitView extends MLKitViewBase {
         }
 
         let type = DetectorType_None();
-        switch (this.dectectionType) {
+        switch (this.detectionType) {
             case DetectionType.All:
                 type = DetectorType_All();
                 break;
@@ -219,13 +216,7 @@ export class MLKitView extends MLKitViewBase {
         }
 
         this.#camera.setDetectorType(type);
-
     }
-
-    get onDetection() {
-        return this.#onDetection;
-    }
-
 
     [barcodeFormatsProperty.setNative](value: BarcodeFormats[]) {
         if (!BARCODE_SCANNER_SUPPORTED()) {

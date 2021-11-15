@@ -3,7 +3,8 @@
         <ActionBar title="mlkit-core" icon="" class="action-bar">
         </ActionBar>
     </Page.actionBar>
-    <StackLayout class="p-20">
-       <ui:MLKitView  detectionType="all" onDetection="{{ onDetection }}"/>
-    </StackLayout>
+    <GridLayout class="p-20">
+       <ui:MLKitView  loaded="{{ onLoaded }}" cameraPosition="back" detectionType="all" onDetection="{{ onDetection }}"/>
+       <Button text="Toggle Camera" tap="{{ toggleCamera }}" />
+    </GridLayout>
 </Page>
