@@ -41,7 +41,7 @@ import { MLKitModule } from '@nativescript/mlkit-core/angular';
 <MLKitView
 cameraPosition="back"
 detectionType="all" 
-(detection)="onDetection"
+(detection)="onDetection($event)"
 ></MLKitView>
 ```
 
@@ -54,12 +54,12 @@ import MLKit from '@nativescript/mlkit-core/vue'
 Vue.use(MLKit)
 ```
 
-```xml
+```html
 <MLKitView
 cameraPosition="back"
 detectionType="all" 
 @detection="onDetection"
-></MLKitView>
+/>
 ```
 
 ### Optional modules
