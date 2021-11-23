@@ -124,10 +124,9 @@
             "outputPath": "dist/packages/mlkit-text-recognition",
             "tsConfig": "packages/mlkit-text-recognition/tsconfig.json",
             "packageJson": "packages/mlkit-text-recognition/package.json",
-            "main": "packages/mlkit-text-recognition/index.d.ts",
+            "main": "packages/mlkit-text-recognition/index.ts",
             "assets": [
               "packages/mlkit-text-recognition/*.md",
-              "packages/mlkit-text-recognition/index.d.ts",
               "LICENSE",
               {
                 "glob": "**/*",
@@ -214,10 +213,9 @@
             "outputPath": "dist/packages/mlkit-barcode-scanning",
             "tsConfig": "packages/mlkit-barcode-scanning/tsconfig.json",
             "packageJson": "packages/mlkit-barcode-scanning/package.json",
-            "main": "packages/mlkit-barcode-scanning/index.d.ts",
+            "main": "packages/mlkit-barcode-scanning/index.ts",
             "assets": [
               "packages/mlkit-barcode-scanning/*.md",
-              "packages/mlkit-barcode-scanning/index.d.ts",
               "LICENSE",
               {
                 "glob": "**/*",
@@ -259,10 +257,9 @@
             "outputPath": "dist/packages/mlkit-face-detection",
             "tsConfig": "packages/mlkit-face-detection/tsconfig.json",
             "packageJson": "packages/mlkit-face-detection/package.json",
-            "main": "packages/mlkit-face-detection/index.d.ts",
+            "main": "packages/mlkit-face-detection/index.ts",
             "assets": [
               "packages/mlkit-face-detection/*.md",
-              "packages/mlkit-face-detection/index.d.ts",
               "LICENSE",
               {
                 "glob": "**/*",
@@ -304,10 +301,9 @@
             "outputPath": "dist/packages/mlkit-image-labeling",
             "tsConfig": "packages/mlkit-image-labeling/tsconfig.json",
             "packageJson": "packages/mlkit-image-labeling/package.json",
-            "main": "packages/mlkit-image-labeling/index.d.ts",
+            "main": "packages/mlkit-image-labeling/index.ts",
             "assets": [
               "packages/mlkit-image-labeling/*.md",
-              "packages/mlkit-image-labeling/index.d.ts",
               "LICENSE",
               {
                 "glob": "**/*",
@@ -349,10 +345,9 @@
             "outputPath": "dist/packages/mlkit-object-detection",
             "tsConfig": "packages/mlkit-object-detection/tsconfig.json",
             "packageJson": "packages/mlkit-object-detection/package.json",
-            "main": "packages/mlkit-object-detection/index.d.ts",
+            "main": "packages/mlkit-object-detection/index.ts",
             "assets": [
               "packages/mlkit-object-detection/*.md",
-              "packages/mlkit-object-detection/index.d.ts",
               "LICENSE",
               {
                 "glob": "**/*",
@@ -394,10 +389,9 @@
             "outputPath": "dist/packages/mlkit-digital-ink-recognition",
             "tsConfig": "packages/mlkit-digital-ink-recognition/tsconfig.json",
             "packageJson": "packages/mlkit-digital-ink-recognition/package.json",
-            "main": "packages/mlkit-digital-ink-recognition/index.d.ts",
+            "main": "packages/mlkit-digital-ink-recognition/index.ts",
             "assets": [
               "packages/mlkit-digital-ink-recognition/*.md",
-              "packages/mlkit-digital-ink-recognition/index.d.ts",
               "LICENSE",
               {
                 "glob": "**/*",
@@ -439,10 +433,9 @@
             "outputPath": "dist/packages/mlkit-pose-detection",
             "tsConfig": "packages/mlkit-pose-detection/tsconfig.json",
             "packageJson": "packages/mlkit-pose-detection/package.json",
-            "main": "packages/mlkit-pose-detection/index.d.ts",
+            "main": "packages/mlkit-pose-detection/index.ts",
             "assets": [
               "packages/mlkit-pose-detection/*.md",
-              "packages/mlkit-pose-detection/index.d.ts",
               "LICENSE",
               {
                 "glob": "**/*",

@@ -15,7 +15,7 @@ ns plugin add @nativescript/mlkit-core
 <ui:MLKitView
   cameraPosition="back"
    detectionType="all" 
-   onDetection="onDetection"
+   detection="onDetection"
 />
 ```
 
@@ -37,11 +37,11 @@ import { MLKitModule } from '@nativescript/mlkit-core/angular';
 ```
 
 
-```xml
+```html
 <MLKitView
 cameraPosition="back"
 detectionType="all" 
-onDetection="onDetection"
+(detection)="onDetection"
 ></MLKitView>
 ```
 
@@ -58,7 +58,7 @@ Vue.use(MLKit)
 <MLKitView
 cameraPosition="back"
 detectionType="all" 
-onDetection="onDetection"
+@detection="onDetection"
 ></MLKitView>
 ```
 
@@ -73,10 +73,10 @@ ns plugin add @nativescript/mlkit-barcode-scanning
 ```
 
 ```ts
-import { DetectionType } from '@nativescript/mlkit-core';
+import { DetectionType, DetectionEvent } from '@nativescript/mlkit-core';
 import { BarcodeResult } from '@nativescript/mlkit-barcode-scanning';
-onDetection(data, type){
-    if(type === DetectionType.Barcode){
+onDetection(event: DetectionEvent){
+    if(event.type === DetectionType.Barcode){
         const barcode: BarcodeResult = data;
     }
 }
@@ -89,10 +89,10 @@ ns plugin add @nativescript/mlkit-face-detection
 ```
 
 ```ts
-import { DetectionType } from '@nativescript/mlkit-core';
+import { DetectionType, DetectionEvent } from '@nativescript/mlkit-core';
 import { FaceResult } from '@nativescript/mlkit-face-detection';
-onDetection(data, type){
-    if(type === DetectionType.Face){
+onDetection(event: DetectionEvent){
+    if(event.type === DetectionType.Face){
         const faces: FaceResult[] = data;
     }
 }
@@ -106,10 +106,10 @@ ns plugin add @nativescript/mlkit-image-labeling
 ```
 
 ```ts
-import { DetectionType } from '@nativescript/mlkit-core';
+import { DetectionType, DetectionEvent } from '@nativescript/mlkit-core';
 import { ImageLabelingResult } from '@nativescript/mlkit-image-labeling';
-onDetection(data, type){
-    if(type === DetectionType.Image){
+onDetection(event: DetectionEvent){
+    if(event.type === DetectionType.Image){
         const labels: ImageLabelingResult[] = data;
     }
 }
@@ -123,10 +123,10 @@ ns plugin add @nativescript/mlkit-object-detection
 ```
 
 ```ts
-import { DetectionType } from '@nativescript/mlkit-core';
+import { DetectionType, DetectionEvent } from '@nativescript/mlkit-core';
 import { ObjectResult } from '@nativescript/mlkit-object-detection'
-onDetection(data, type){
-    if(type === DetectionType.Object){
+onDetection(event: DetectionEvent){
+    if(event.type === DetectionType.Object){
         const objects: ObjectResult[] = data;
     }
 }
@@ -139,10 +139,10 @@ ns plugin add @nativescript/mlkit-pose-detection
 ```
 
 ```ts
-import { DetectionType } from '@nativescript/mlkit-core';
+import { DetectionType, DetectionEvent } from '@nativescript/mlkit-core';
 import { PoseResult } from '@nativescript/mlkit-pose-detection';
-onDetection(data, type){
-    if(type === DetectionType.Pose){
+onDetection(event: DetectionEvent){
+    if(event.type === DetectionType.Pose){
         const poses: PoseResult[] = data;
     }
 }
@@ -156,10 +156,10 @@ ns plugin add @nativescript/mlkit-text-recognition
 ```
 
 ```ts
-import { DetectionType } from '@nativescript/mlkit-core';
+import { DetectionType, DetectionEvent } from '@nativescript/mlkit-core';
 import { TextResult } from '@nativescript/mlkit-text-recognition';
-onDetection(data, type){
-    if(type === DetectionType.Text){
+onDetection(event: DetectionEvent){
+    if(event.type === DetectionType.Text){
         const text: TextResult[] = data;
     }
 }

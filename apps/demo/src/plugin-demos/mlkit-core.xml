@@ -4,7 +4,7 @@
         </ActionBar>
     </Page.actionBar>
     <GridLayout rows="*,auto,auto,auto,auto" height="100%">
-       <ui:MLKitView height="100%" rowSpan="3"  loaded="{{ onLoaded }}" cameraPosition="back" detectionType="{{ detectorType }}" onDetection="{{ onDetection }}"/>
+       <ui:MLKitView height="100%" rowSpan="3"  loaded="{{ onLoaded }}" cameraPosition="back" detectionType="{{ detectorType }}" detection="{{ onDetection }}"/>
        <Button row="1" height="40" text="Toggle Camera" tap="{{ toggleCamera }}" />
        <Button row="2" height="40" text="Request Camera Permission" tap="{{ requestPermission }}" />
        <Label row="3" text="{{'Detecting ' + detectorType }}"/>

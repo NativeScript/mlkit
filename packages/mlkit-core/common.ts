@@ -44,6 +44,7 @@ export enum FaceDetectionPerformanceMode {
 
 @CSSType('MLKitView')
 export class MLKitViewBase extends ContainerView {
+    public static detectionEvent = 'detection';
     cameraPosition: CameraPosition;
     detectionType: DetectionType;
     barcodeFormats: BarcodeFormats[];
@@ -53,15 +54,7 @@ export class MLKitViewBase extends ContainerView {
     imageLabelerConfidenceThreshold: number;
     objectDetectionMultiple: boolean;
     objectDetectionClassify: boolean;
-    onDetection: (data: {
-        [key: string]: any;
-    }, type: DetectionType) => void;
 }
-
-export const onDetectionProperty = new Property<MLKitViewBase, (data: { [key: string]: any }) => void>({
-    name: 'onDetection'
-});
-onDetectionProperty.register(MLKitViewBase);
 
 export const cameraPositionProperty = new Property<MLKitViewBase, CameraPosition>({
     name: 'cameraPosition',

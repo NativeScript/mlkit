@@ -1,4 +1,4 @@
-import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, onDetectionProperty } from "./common";
+import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty } from "./common";
 import { Application, Device, Utils, AndroidActivityRequestPermissionsEventData } from '@nativescript/core';
 import lazy from '@nativescript/core/utils/lazy';
 
@@ -117,17 +117,31 @@ export class MLKitView extends MLKitViewBase {
                 type = DetectorType_None();
                 break;
         }
-
         this.#camera.setDetectorType(type);
+        this.#setListeners();
     }
 
-    [onDetectionProperty.setNative](value) {
+    initNativeView() {
+        super.initNativeView();
+        this.#setListeners();
+    }
+
+    #setListeners() {
         const ref = new WeakRef(this);
         if (!this.#onTextListener && (this.detectionType === DetectionType.Text || this.detectionType === DetectionType.All)) {
             this.#onTextListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                 onSuccess(param0: string) {
+                    const hasListener = ref?.get?.().hasListeners?.(MLKitView.detectionEvent);
+                    if (!hasListener) {
+                        return;
+                    }
                     try {
-                        ref?.get?.().onDetection?.(JSON.parse(param0), DetectionType.Text);
+                        ref?.get?.().notify?.({
+                            eventName: MLKitView.detectionEvent,
+                            object: ref?.get?.(),
+                            data: JSON.parse(param0),
+                            type: DetectionType.Text
+                        });
                     } catch (e) { }
                 },
                 onError(param0: string, param1: java.lang.Exception) {
@@ -140,8 +154,17 @@ export class MLKitView extends MLKitViewBase {
         if (!this.#onBarcodeListener && (this.detectionType.includes(DetectionType.Barcode) || this.detectionType.includes(DetectionType.All))) {
             this.#onBarcodeListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                 onSuccess(param0: string) {
+                    const hasListener = ref?.get?.().hasListeners?.(MLKitView.detectionEvent);
+                    if (!hasListener) {
+                        return;
+                    }
                     try {
-                        ref?.get?.().onDetection?.(JSON.parse(param0), DetectionType.Barcode);
+                        ref?.get?.().notify?.({
+                            eventName: MLKitView.detectionEvent,
+                            object: ref?.get?.(),
+                            data: JSON.parse(param0),
+                            type: DetectionType.Barcode
+                        });
                     } catch (e) { }
                 },
                 onError(param0: string, param1: java.lang.Exception) {
@@ -155,8 +178,17 @@ export class MLKitView extends MLKitViewBase {
         if (!this.#onDigitalInkListener && (this.detectionType === DetectionType.DigitalInk || this.detectionType === DetectionType.All)) {
             /* this.#onDigitalInkListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                  onSuccess(param0: string) {
+                       const hasListener = ref?.get?.().hasListeners?.(MLKitView.detectionEvent);
+                    if(!hasListener){
+                        return;
+                    }
                      try {
-                         ref?.get?.().onDetection?.(JSON.parse(param0));
+                         ref?.get?.().notify?.({
+                            eventName: MLKitView.detectionEvent,
+                            object: ref?.get?.(),
+                            data: JSON.parse(param0),
+                            type: DetectionType.DigitalInk
+                        });
                      } catch (e) { }
                   },
                  onError(param0: string, param1: java.lang.Exception) {
@@ -169,8 +201,17 @@ export class MLKitView extends MLKitViewBase {
             this.#faceDetectionOptions = new io.github.triniwiz.fancycamera.facedetection.FaceDetection.Options();
             this.#onFaceListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                 onSuccess(param0: string) {
+                    const hasListener = ref?.get?.().hasListeners?.(MLKitView.detectionEvent);
+                    if (!hasListener) {
+                        return;
+                    }
                     try {
-                        ref?.get?.().onDetection?.(JSON.parse(param0), DetectionType.Face);
+                        ref?.get?.().notify?.({
+                            eventName: MLKitView.detectionEvent,
+                            object: ref?.get?.(),
+                            data: JSON.parse(param0),
+                            type: DetectionType.Face
+                        });
                     } catch (e) { }
                 },
                 onError(param0: string, param1: java.lang.Exception) {
@@ -183,8 +224,17 @@ export class MLKitView extends MLKitViewBase {
         if (!this.#onImageListener && (this.detectionType === DetectionType.Image || this.detectionType === DetectionType.All)) {
             this.#onImageListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                 onSuccess(param0: string) {
+                    const hasListener = ref?.get?.().hasListeners?.(MLKitView.detectionEvent);
+                    if (!hasListener) {
+                        return;
+                    }
                     try {
-                        ref?.get?.().onDetection?.(JSON.parse(param0), DetectionType.Image);
+                        ref?.get?.().notify?.({
+                            eventName: MLKitView.detectionEvent,
+                            object: ref?.get?.(),
+                            data: JSON.parse(param0),
+                            type: DetectionType.Image
+                        });
                     } catch (e) { }
                 },
                 onError(param0: string, param1: java.lang.Exception) {
@@ -197,8 +247,17 @@ export class MLKitView extends MLKitViewBase {
         if (!this.#onObjectListener && (this.detectionType === DetectionType.Object || this.detectionType === DetectionType.All)) {
             this.#onObjectListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                 onSuccess(param0: string) {
+                    const hasListener = ref?.get?.().hasListeners?.(MLKitView.detectionEvent);
+                    if (!hasListener) {
+                        return;
+                    }
                     try {
-                        ref?.get?.().onDetection?.(JSON.parse(param0), DetectionType.Object);
+                        ref?.get?.().notify?.({
+                            eventName: MLKitView.detectionEvent,
+                            object: ref?.get?.(),
+                            data: JSON.parse(param0),
+                            type: DetectionType.Object
+                        });
                     } catch (e) { }
                 },
                 onError(param0: string, param1: java.lang.Exception) {
@@ -211,8 +270,17 @@ export class MLKitView extends MLKitViewBase {
         if (!this.#onPoseListener && (this.detectionType === DetectionType.Pose || this.detectionType === DetectionType.All)) {
             this.#onPoseListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
                 onSuccess(param0: string) {
+                    const hasListener = ref?.get?.().hasListeners?.(MLKitView.detectionEvent);
+                    if (!hasListener) {
+                        return;
+                    }
                     try {
-                        ref?.get?.().onDetection?.(JSON.parse(param0), DetectionType.Pose);
+                        ref?.get?.().notify?.({
+                            eventName: MLKitView.detectionEvent,
+                            object: ref?.get?.(),
+                            data: JSON.parse(param0),
+                            type: DetectionType.Pose
+                        });
                     } catch (e) { }
                 },
                 onError(param0: string, param1: java.lang.Exception) {
@@ -233,7 +301,7 @@ export class MLKitView extends MLKitViewBase {
         let formats;
         if (Array.isArray(value)) {
             if (value.indexOf(BarcodeFormats.ALL)) {
-                formats = Array.create('io.github.triniwiz.fancycamera.barcodescanning.BarcodeScanner.BarcodeFormat', 1);
+                formats = Array.create('io.github.triniwiz.fancycamera.barcodescanning.BarcodeScanner$BarcodeFormat', 1);
                 formats[0] = io.github.triniwiz.fancycamera.barcodescanning.BarcodeScanner.BarcodeFormat.ALL;
             } else {
                 formats = value.map(format => {

@@ -1,6 +1,6 @@
 import { Observable, EventData, Page, Dialogs } from '@nativescript/core';
 import { DemoSharedMlkitCore } from '@demo/shared';
-import { DetectionType, MLKitView } from '@nativescript/mlkit-core';
+import { DetectionType, MLKitView, DetectionEvent } from '@nativescript/mlkit-core';
 import { BarcodeResult } from '@nativescript/mlkit-barcode-scanning';
 import { FaceResult } from '@nativescript/mlkit-face-detection';
 import { ImageLabelingResult } from '@nativescript/mlkit-image-labeling';
@@ -20,8 +20,8 @@ export class DemoModel extends DemoSharedMlkitCore {
 		this.camera = args.object;
 	}
 
-	onDetection(data, type: DetectionType) {
-		console.log('onDetection', data, type);
+	onDetection(event: DetectionEvent) {
+		console.log('onDetection', event.data, event.type);
 	}
 
 	toggleCamera() {
