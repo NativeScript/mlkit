@@ -134,6 +134,25 @@ export enum ValueType {
     Unknown = "unknown"
 }
 
+export enum BarcodeFormats {
+    ALL = 'all',
+    CODE_128 = 'code_128',
+    CODE_39 = 'code_39',
+    CODE_93 = 'code_93',
+    CODABAR = 'codabar',
+    DATA_MATRIX = 'data_matrix',
+    EAN_13 = 'ean_13',
+    EAN_8 = 'ean_8',
+    ITF = 'itf',
+    QR_CODE = 'qr_code',
+    UPC_A = 'upc_a',
+    UPC_E = 'upc_e',
+    PDF417 = 'pdf417',
+    AZTEC = 'aztec',
+    UNKOWN = 'unknown'
+}
+
+
 
 export interface BarcodeResult {
     calendarEvent?: CalenderEvent
@@ -143,7 +162,7 @@ export interface BarcodeResult {
     displayValue?: string
     driverLicense?: DriverLicense
     email?: Email
-    format: BarcodeScanner.BarcodeFormat
+    format: BarcodeFormats
     geoPoint?: GeoPoint
     phone?: Phone
     rawBytes?: any[]

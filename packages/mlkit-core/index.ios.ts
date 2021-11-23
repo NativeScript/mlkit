@@ -1,7 +1,8 @@
 import { Utils } from "@nativescript/core";
-import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, onDetectionProperty } from "./common";
+import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty } from "./common";
 import '@nativescript/core';
 import lazy from "@nativescript/core/utils/lazy";
+import { DetectionEvent } from ".";
 
 
 const BARCODE_SCANNER_SUPPORTED = lazy(() => typeof MLKBarcodeScanner);
@@ -10,7 +11,7 @@ const FACE_DETECTION_SUPPORTED = lazy(() => typeof MLKFaceDetector);
 const IMAGE_LABELING_SUPPORTED = lazy(() => typeof MLKImageLabeler);
 const OBJECT_DETECTION_SUPPORTED = lazy(() => typeof MLKObjectDetector);
 const POSE_DETECTION_SUPPORTED = lazy(() => typeof MLKPoseDetector);
-
+const DIGITALINK_RECOGNITION_SUPPORTED = lazy(() => typeof MLKDigitalInkRecognizer);
 
 export { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty as imageLablerConfidenceThresholdProperty, objectDetectionClassifyProperty, objectDetectionMultipleProperty } from './common';
 
@@ -132,53 +133,65 @@ export class MLKitView extends MLKitViewBase {
                 break;
         }
 
+        this.#setupDetectors();
         this.#mlkitHelper.detectorType = type;
     }
 
 
-    _onScanCallback(result: string, type) {
-        if (this.detectionType === DetectionType.None || !this.onDetection) {
-            return;
-        }
-        try {
-            const data = JSON.parse(result);
-            this?.onDetection(data, type);
-        } catch (e) { }
-    }
-
-
-    [onDetectionProperty.setNative](value) {
+    #setupDetectors() {
         if (TEXT_RECOGNITION_SUPPORTED() && !this.#textRecognizer && (this.detectionType === DetectionType.Text || this.detectionType === DetectionType.All)) {
             this.#textRecognizer = MLKTextRecognizer.textRecognizer();
             this.#mlkitHelper.textRecognizer = this.#textRecognizer;
         }
 
-        if (typeof MLKBarcodeScanner && !this.#barcodeScanner && (this.detectionType === DetectionType.Barcode || this.detectionType === DetectionType.All)) {
+        if (BARCODE_SCANNER_SUPPORTED() && !this.#barcodeScanner && (this.detectionType === DetectionType.Barcode || this.detectionType === DetectionType.All)) {
             this.#setupBarcodeScanner(this.barcodeFormats);
         }
 
         // TODO
-        if (typeof MLKDigitalInkRecognizer && !this.#digitalInkRecognizer && (this.detectionType === DetectionType.DigitalInk || this.detectionType === DetectionType.All)) {
+        if (DIGITALINK_RECOGNITION_SUPPORTED() && !this.#digitalInkRecognizer && (this.detectionType === DetectionType.DigitalInk || this.detectionType === DetectionType.All)) {
             // MLKDigitalInkRecognizer.digitalInkRecognizerWithOptions()
         }
 
 
-        if (typeof MLKFaceDetector && !this.#faceDetector && (this.detectionType === DetectionType.Face || this.detectionType === DetectionType.All)) {
+        if (FACE_DETECTION_SUPPORTED() && !this.#faceDetector && (this.detectionType === DetectionType.Face || this.detectionType === DetectionType.All)) {
             this.#setupFaceDetector();
         }
 
-        if (typeof MLKImageLabeler && !this.#imageLabeler && (this.detectionType === DetectionType.Image || this.detectionType === DetectionType.All)) {
+        if (IMAGE_LABELING_SUPPORTED() && !this.#imageLabeler && (this.detectionType === DetectionType.Image || this.detectionType === DetectionType.All)) {
             this.#setImageLabeler()
         }
 
-        if (typeof MLKObjectDetector && !this.#objectDetector && (this.detectionType === DetectionType.Object || this.detectionType === DetectionType.All)) {
+        if (OBJECT_DETECTION_SUPPORTED() && !this.#objectDetector && (this.detectionType === DetectionType.Object || this.detectionType === DetectionType.All)) {
             this.#setupObjectDetection();
         }
 
-        if (typeof MLKPoseDetector && !this.#poseDetector && (this.detectionType === DetectionType.Pose || this.detectionType === DetectionType.All)) {
+        if (POSE_DETECTION_SUPPORTED() && !this.#poseDetector && (this.detectionType === DetectionType.Pose || this.detectionType === DetectionType.All)) {
             this.#setPoseDetection();
         }
     }
+
+
+    initNativeView() {
+        super.initNativeView();
+        this.#setupDetectors();
+    }
+
+    _onScanCallback(result: string, type) {
+        if (this.detectionType === DetectionType.None || !this.hasListeners(MLKitView.detectionEvent)) {
+            return;
+        }
+        try {
+            const data = JSON.parse(result);
+            this.notify(<DetectionEvent>{
+                eventName: MLKitView.detectionEvent,
+                object: this,
+                data,
+                type
+            })
+        } catch (e) { }
+    }
+
 
     [barcodeFormatsProperty.setNative](value: BarcodeFormats[]) {
         this.#setupBarcodeScanner(value);
