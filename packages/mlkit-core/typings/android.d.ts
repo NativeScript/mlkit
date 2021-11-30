@@ -22,6 +22,7 @@ declare module io {
 					public static class: java.lang.Class<io.github.triniwiz.fancycamera.Camera>;
 					public getDisplayRatio(): string;
 					public cameraRecording(): boolean;
+					public setPause(param0: boolean): void;
 					public getAllowExifRotation(): boolean;
 					public setMaxVideoFrameRate(param0: number): void;
 					public getDisableHEVC(): boolean;
@@ -82,6 +83,7 @@ declare module io {
 					public toggleCamera(): void;
 					public stopRecording(): void;
 					public constructor(param0: globalAndroid.content.Context, param1: globalAndroid.util.AttributeSet, param2: number);
+					public getPause(): boolean;
 					public hasFlash(): boolean;
 					public constructor(param0: globalAndroid.content.Context);
 					public setDetectorType(param0: io.github.triniwiz.fancycamera.DetectorType): void;
@@ -106,6 +108,7 @@ declare module io {
 					public static class: java.lang.Class<io.github.triniwiz.fancycamera.Camera2>;
 					public getDisplayRatio(): string;
 					public cameraRecording(): boolean;
+					public setPause(param0: boolean): void;
 					public getAllowExifRotation(): boolean;
 					public setMaxVideoFrameRate(param0: number): void;
 					public getDisableHEVC(): boolean;
@@ -159,6 +162,7 @@ declare module io {
 					public toggleCamera(): void;
 					public stopRecording(): void;
 					public constructor(param0: globalAndroid.content.Context, param1: globalAndroid.util.AttributeSet, param2: number);
+					public getPause(): boolean;
 					public hasFlash(): boolean;
 					public constructor(param0: globalAndroid.content.Context);
 					public setDetectorType(param0: io.github.triniwiz.fancycamera.DetectorType): void;
@@ -184,6 +188,7 @@ declare module io {
 					public static Companion: io.github.triniwiz.fancycamera.CameraBase.Companion;
 					public setFaceDetectionOptions(param0: any): void;
 					public setMTimerTask$fancycamera_release(param0: java.util.TimerTask): void;
+					public setPause(param0: boolean): void;
 					public getAllowExifRotation(): boolean;
 					public setOnBarcodeScanningListener$fancycamera_release(param0: io.github.triniwiz.fancycamera.ImageAnalysisCallback): void;
 					public setCurrentOrientation(param0: number): void;
@@ -323,6 +328,7 @@ declare module io {
 					public requestStoragePermission(): void;
 					public toggleCamera(): void;
 					public constructor(param0: globalAndroid.content.Context, param1: globalAndroid.util.AttributeSet, param2: number);
+					public getPause(): boolean;
 					public setOnPoseDetectedListener(param0: io.github.triniwiz.fancycamera.ImageAnalysisCallback): void;
 					public setMDuration$fancycamera_release(param0: number): void;
 					public setOnImageLabelingListener$fancycamera_release(param0: io.github.triniwiz.fancycamera.ImageAnalysisCallback): void;
@@ -569,6 +575,7 @@ declare module io {
 				export class FancyCamera {
 					public static class: java.lang.Class<io.github.triniwiz.fancycamera.FancyCamera>;
 					public static Companion: io.github.triniwiz.fancycamera.FancyCamera.Companion;
+					public setPause(param0: boolean): void;
 					public getAllowExifRotation(): boolean;
 					public getCameraOrientation(): io.github.triniwiz.fancycamera.CameraOrientation;
 					public setMaxVideoFrameRate(param0: number): void;
@@ -635,6 +642,7 @@ declare module io {
 					public setRatio(param0: string): void;
 					public toggleCamera(): void;
 					public stopRecording(): void;
+					public getPause(): boolean;
 					public setCameraOrientation(param0: io.github.triniwiz.fancycamera.CameraOrientation): void;
 					public setOnPoseDetectedListener(param0: io.github.triniwiz.fancycamera.ImageAnalysisCallback): void;
 					public constructor(param0: globalAndroid.content.Context);

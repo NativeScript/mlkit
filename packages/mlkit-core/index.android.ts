@@ -1,4 +1,4 @@
-import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty } from "./common";
+import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, pauseProperty, torchOnProperty } from "./common";
 import { Application, Device, Utils, AndroidActivityRequestPermissionsEventData } from '@nativescript/core';
 import lazy from '@nativescript/core/utils/lazy';
 
@@ -19,6 +19,10 @@ const IMAGE_LABELING_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamer
 const OBJECT_DETECTION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.objectdetection?.ObjectDetection);
 const POSE_DETECTION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.posedetection?.PoseDetection);
 
+
+const TORCH_MODE_ON = lazy(() => io.github.triniwiz.fancycamera.CameraFlashMode.TORCH);
+const TORCH_MODE_OFF = lazy(() => io.github.triniwiz.fancycamera.CameraFlashMode.OFF);
+
 export { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, objectDetectionClassifyProperty, objectDetectionMultipleProperty } from './common';
 
 export class MLKitView extends MLKitViewBase {
@@ -32,6 +36,9 @@ export class MLKitView extends MLKitViewBase {
     #onObjectListener: io.github.triniwiz.fancycamera.ImageAnalysisCallback;
     #onPoseListener: io.github.triniwiz.fancycamera.ImageAnalysisCallback;
     #permissionHandler = (args: AndroidActivityRequestPermissionsEventData) => {
+        if (this.pause) {
+            return;
+        }
         this.#camera.onPermissionHandler(
             args.requestCode, args.permissions, args.grantResults
         )
@@ -84,6 +91,22 @@ export class MLKitView extends MLKitViewBase {
             }
         }
         return this.#hasCamera;
+    }
+
+    [torchOnProperty.setNative](value: boolean) {
+        if (this.#camera) {
+            if (value) {
+                this.#camera.setFlashMode(TORCH_MODE_ON());
+            } else {
+                this.#camera.setFlashMode(TORCH_MODE_OFF());
+            }
+        }
+    }
+
+    [pauseProperty.setNative](value: boolean) {
+        if (this.#camera) {
+            this.#camera.setPause(value);
+        }
     }
 
     [detectionTypeProperty.setNative](value) {

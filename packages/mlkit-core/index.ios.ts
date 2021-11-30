@@ -1,5 +1,5 @@
 import { Utils } from "@nativescript/core";
-import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty } from "./common";
+import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, pauseProperty, torchOnProperty } from "./common";
 import '@nativescript/core';
 import lazy from "@nativescript/core/utils/lazy";
 import { DetectionEvent } from ".";
@@ -98,6 +98,15 @@ export class MLKitView extends MLKitViewBase {
         return UIImagePickerController.isSourceTypeAvailable(
             UIImagePickerControllerSourceType.Camera
         );
+    }
+
+
+    [torchOnProperty.setNative](value: boolean) {
+       this.#mlkitHelper.torch = value;
+    }
+
+    [pauseProperty.setNative](value: boolean) {
+        this.#mlkitHelper.pause = value;
     }
 
 

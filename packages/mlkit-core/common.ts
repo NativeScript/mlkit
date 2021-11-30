@@ -54,6 +54,8 @@ export class MLKitViewBase extends ContainerView {
     imageLabelerConfidenceThreshold: number;
     objectDetectionMultiple: boolean;
     objectDetectionClassify: boolean;
+    torchOn: boolean;
+    pause: boolean;
 }
 
 export const cameraPositionProperty = new Property<MLKitViewBase, CameraPosition>({
@@ -128,4 +130,20 @@ export const objectDetectionClassifyProperty = new Property<MLKitViewBase, boole
 objectDetectionClassifyProperty.register(MLKitViewBase);
 
 
+export const torchOnProperty = new Property<MLKitViewBase, boolean>({
+    name: 'torchOn',
+    defaultValue: false,
+    valueConverter: booleanConverter
+});
 
+torchOnProperty.register(MLKitViewBase);
+
+
+
+export const pauseProperty = new Property<MLKitViewBase, boolean>({
+    name: 'pause',
+    defaultValue: false,
+    valueConverter: booleanConverter
+});
+
+pauseProperty.register(MLKitViewBase);

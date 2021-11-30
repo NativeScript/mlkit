@@ -15,7 +15,7 @@ export function navigatingTo(args: EventData) {
 export class DemoModel extends DemoSharedMlkitCore {
 	camera: MLKitView;
 	detectorType = "all";
-
+	isPaused = false;
 	onLoaded(args) {
 		this.camera = args.object;
 	}
@@ -52,6 +52,11 @@ export class DemoModel extends DemoSharedMlkitCore {
 				this.set('detectorType', value);
 			}
 		})
+	}
+
+	togglePause(args) {
+		this.camera.pause = !this.camera.pause;
+		this.set('isPaused', this.camera.pause);
 	}
 }
 

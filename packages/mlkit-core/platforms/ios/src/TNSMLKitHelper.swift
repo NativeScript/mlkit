@@ -249,6 +249,33 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
     let encoder = JSONEncoder()
     var detectorType = TNSMLKitDetectionType.All
     
+    public var flashMode: Bool {
+        didSet {
+            if(flashMode){
+                self.videoInput?.device.torchMode = .auto
+            }else {
+                self.videoInput?.device.torchMode = .on
+            }
+        }
+    }
+    
+    
+    public var pause: Bool {
+        didSet {
+            sessionQueue.async {
+                if(self.isSessionSetup){
+                    if(self.pause && self.session.isRunning){
+                        self.session.stopRunning()
+                    }
+                    
+                    if(!self.pause && !self.session.isRunning){
+                        self.session.startRunning()
+                    }
+                }
+            }
+        }
+    }
+    
     
 #if canImport(MLKitBarcodeScanning)
     var barcodeScanner: BarcodeScanner?
@@ -322,7 +349,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
         setCamera()
     }
     private func setCamera(){
-        sessionQueue.async {
+        sessionQueue.async { [self] in
             if(self.isSessionSetup){
                 let wasRunning = self.session.isRunning
                 
@@ -341,6 +368,12 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                     return
                 }
                 
+                if(self.flashMode){
+                    videoInput?.device.torchMode = .auto
+                }else {
+                    videoInput?.device.torchMode = .on
+                }
+                
                 
                 if(wasRunning){
                     self.session.stopRunning()
@@ -356,7 +389,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                 if(self.session.canAddInput(videoInput!)){
                     self.session.addInput(videoInput!)
                 }
-                if(wasRunning){
+                if(wasRunning && !self.pause){
                     self.session.startRunning()
                 }
             }
