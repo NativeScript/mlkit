@@ -1,6 +1,6 @@
-import { Observable, EventData, Page, Dialogs } from '@nativescript/core';
+import { Observable, EventData, Page, Dialogs, ImageSource } from '@nativescript/core';
 import { DemoSharedMlkitCore } from '@demo/shared';
-import { DetectionType, MLKitView, DetectionEvent } from '@nativescript/mlkit-core';
+import { DetectionType, MLKitView, DetectionEvent, detectWithStillImage } from '@nativescript/mlkit-core';
 import { BarcodeResult } from '@nativescript/mlkit-barcode-scanning';
 import { FaceResult } from '@nativescript/mlkit-face-detection';
 import { ImageLabelingResult } from '@nativescript/mlkit-image-labeling';
@@ -57,6 +57,20 @@ export class DemoModel extends DemoSharedMlkitCore {
 	togglePause(args) {
 		this.camera.pause = !this.camera.pause;
 		this.set('isPaused', this.camera.pause);
+	}
+
+	async processStill(args) {
+		try {
+			const src = await ImageSource.fromUrl('https://www.jqueryscript.net/images/jQuery-Plugin-To-Generate-International-Article-Number-Barcode-EAN13.jpg');
+			
+			console.log(src.android)
+			const result = await detectWithStillImage(src, {
+				detectorType: DetectionType.Barcode
+			});
+			console.log('processStill', result.barcode[0]);
+		} catch (e) {
+			console.log(e);
+		}
 	}
 }
 

@@ -1,6 +1,7 @@
 import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, pauseProperty, torchOnProperty } from "./common";
-import { Application, Device, Utils, AndroidActivityRequestPermissionsEventData } from '@nativescript/core';
+import { Application, Device, Utils, AndroidActivityRequestPermissionsEventData, ImageSource } from '@nativescript/core';
 import lazy from '@nativescript/core/utils/lazy';
+import { StillImageDetectionOptions } from ".";
 
 const DetectorType_All = lazy(() => io.github.triniwiz.fancycamera.DetectorType.All);
 const DetectorType_Barcode = lazy(() => io.github.triniwiz.fancycamera.DetectorType.Barcode);
@@ -11,6 +12,7 @@ const DetectorType_None = lazy(() => io.github.triniwiz.fancycamera.DetectorType
 const DetectorType_Object = lazy(() => io.github.triniwiz.fancycamera.DetectorType.Object);
 const DetectorType_Pose = lazy(() => io.github.triniwiz.fancycamera.DetectorType.Pose);
 const DetectorType_Text = lazy(() => io.github.triniwiz.fancycamera.DetectorType.Text);
+const DetectorType_Selfie = lazy(() => (io as any).github.triniwiz.fancycamera.DetectorType.Selfie);
 
 const BARCODE_SCANNER_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.barcodescanning?.BarcodeScanner);
 const TEXT_RECOGNITION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.textrecognition?.TextRecognition);
@@ -135,6 +137,9 @@ export class MLKitView extends MLKitViewBase {
                 break;
             case DetectionType.Text:
                 type = DetectorType_Text();
+                break;
+            case DetectionType.Selfie:
+                type = DetectorType_Selfie();
                 break;
             default:
                 type = DetectorType_None();
@@ -490,4 +495,93 @@ export class MLKitView extends MLKitViewBase {
     hasCameraPermission(): boolean {
         return this.#camera.hasCameraPermission();
     }
+}
+
+export function detectWithStillImage(image: any, options?: StillImageDetectionOptions) {
+    return new Promise((resolve, reject) => {
+        let nativeImage;
+        let rotation = 0;
+        if (image instanceof ImageSource) {
+            nativeImage = image.android;
+            rotation = image.rotationAngle;
+        } else if (image instanceof android.graphics.Bitmap) {
+            nativeImage = image;
+        } else {
+            reject('Please use a valid Image');
+        }
+
+
+
+        let type = 9 /* None */
+        switch (options?.detectorType) {
+            case DetectionType.All:
+                type = 7;
+                break;
+            case DetectionType.Barcode:
+                type = 0;
+                break;
+            case DetectionType.DigitalInk:
+                type = 1
+                break;
+            case DetectionType.Face:
+                type = 2
+                break;
+            case DetectionType.Image:
+                type = 3
+                break;
+            case DetectionType.Object:
+                type = 4
+                break;
+            case DetectionType.Pose:
+                type = 5
+                break;
+            case DetectionType.Text:
+                type = 6
+                break;
+            case DetectionType.Selfie:
+                type = 8;
+                break;
+            default:
+                type = 9;
+                break;
+        }
+
+
+        (io as any).github.triniwiz.fancycamera.ML.processImage(nativeImage, rotation || 0, JSON.stringify({
+            ...{
+                barcodeScanning: {
+                    barcodeFormat: [0]
+                },
+                faceDetection: {},
+                imageLabeling: {},
+                objectDetection: {},
+                selfieSegmentation: {}
+            }, ...options, ...{ detectorType: type }
+        }), new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
+            onSuccess(param0: any) {
+                const results = {}
+                const size = param0.size();
+                for (let i = 0; i < size; i++) {
+                    const item = param0.get(i);
+                    const type = item[0];
+                    const result = item[1];
+                    try {
+                        if (type.toString() === DetectionType.Selfie) {
+                            results[type] = {
+                                width: result.geWidth(),
+                                height: result.getHeight(),
+                                buffer: (ArrayBuffer as any).from(result.getBuffer())
+                            }
+                        } else {
+                            results[type] = JSON.parse(result.toString());
+                        }
+                    } catch (e) { }
+                }
+                resolve(results);
+            },
+            onError(param0: string, param1: java.lang.Exception) {
+                reject(param0)
+            }
+        }))
+    })
 }

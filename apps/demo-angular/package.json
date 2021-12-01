@@ -9,7 +9,8 @@
     "@nativescript/mlkit-image-labeling": "file:../../dist/packages/mlkit-image-labeling",
     "@nativescript/mlkit-object-detection": "file:../../dist/packages/mlkit-object-detection",
     "@nativescript/mlkit-digital-ink-recognition": "file:../../dist/packages/mlkit-digital-ink-recognition",
-    "@nativescript/mlkit-pose-detection": "file:../../dist/packages/mlkit-pose-detection"
+    "@nativescript/mlkit-pose-detection": "file:../../dist/packages/mlkit-pose-detection",
+    "@nativescript/mlkit-selfie-segmentation": "file:../../dist/packages/mlkit-selfie-segmentation"
   },
   "devDependencies": {
     "@nativescript/android": "~8.1.1",

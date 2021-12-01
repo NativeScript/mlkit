@@ -12,10 +12,11 @@
     "@nativescript/mlkit-image-labeling": "file:../../packages/mlkit-image-labeling",
     "@nativescript/mlkit-object-detection": "file:../../packages/mlkit-object-detection",
     "@nativescript/mlkit-pose-detection": "file:../../packages/mlkit-pose-detection",
+    "@nativescript/mlkit-selfie-segmentation": "file:../../packages/mlkit-selfie-segmentation",
     "@nativescript/mlkit-text-recognition": "file:../../packages/mlkit-text-recognition"
   },
   "devDependencies": {
-    "@nativescript/android": "~8.1.1",
+    "@nativescript/android": "8.1.1",
     "@nativescript/ios": "~8.1.0"
   }
 }

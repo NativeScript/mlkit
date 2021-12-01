@@ -14,6 +14,7 @@ const routes: Routes = [
 	{ path: 'mlkit-image-labeling', loadChildren: () => import('./plugin-demos/mlkit-image-labeling.module').then(m => m.MlkitImageLabelingModule) },
 	{ path: 'mlkit-object-detection', loadChildren: () => import('./plugin-demos/mlkit-object-detection.module').then(m => m.MlkitObjectDetectionModule) },
 	{ path: 'mlkit-pose-detection', loadChildren: () => import('./plugin-demos/mlkit-pose-detection.module').then(m => m.MlkitPoseDetectionModule) },
+	{ path: 'mlkit-selfie-segmentation', loadChildren: () => import('./plugin-demos/mlkit-selfie-segmentation.module').then(m => m.MlkitSelfieSegmentationModule) },
 	{ path: 'mlkit-text-recognition', loadChildren: () => import('./plugin-demos/mlkit-text-recognition.module').then(m => m.MlkitTextRecognitionModule) }
 ];
 

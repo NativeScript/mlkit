@@ -28,6 +28,9 @@ export class HomeComponent {
 		name: 'mlkit-pose-detection'
 	},
 	{
+		name: 'mlkit-selfie-segmentation'
+	},
+	{
 		name: 'mlkit-text-recognition'
 	}
 ];

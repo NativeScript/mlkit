@@ -30,6 +30,10 @@ import MLKitObjectDetection
 import MLKitPoseDetection
 #endif
 
+#if canImport(MLKitSegmentationSelfie)
+import MLKitSegmentationSelfie
+#endif
+
 
 
 @objc(TNSMLKitHelperCameraPosition)
@@ -120,6 +124,7 @@ enum TNSMLKitDetectionType: Int, RawRepresentable {
     case Pose
     case Text
     case All
+    case Selfie
     case None
     public typealias RawValue = UInt32
     
@@ -141,8 +146,10 @@ enum TNSMLKitDetectionType: Int, RawRepresentable {
             return 6
         case .All:
             return 7
-        case .None:
+        case .Selfie:
             return 8
+        case .None:
+            return 9
         }
     }
     
@@ -166,6 +173,8 @@ enum TNSMLKitDetectionType: Int, RawRepresentable {
         case 7:
             self = .All
         case 8:
+            self = .Selfie
+        case 9:
             self = .None
         default:
             return nil
@@ -191,6 +200,8 @@ enum TNSMLKitDetectionType: Int, RawRepresentable {
             self = .Text
         case "all":
             self = .All
+        case "selfie":
+            self = .Selfie
         case "none":
             self = .None
         default:
@@ -215,6 +226,8 @@ enum TNSMLKitDetectionType: Int, RawRepresentable {
             return "text"
         case .All:
             return "all"
+        case .Selfie:
+            return "selfie"
         case .None:
             return "none"
         }
@@ -225,7 +238,7 @@ enum TNSMLKitDetectionType: Int, RawRepresentable {
 @objc(TNSMLKitHelper)
 @objcMembers
 public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
-    var onScanCallback: ((String, String) -> Void)?
+    var onScanCallback: ((Any, String) -> Void)?
     var onError: ((NSError) -> Void)?
     private var _output = AVCaptureVideoDataOutput()
     let queue = DispatchQueue(label: "TNSMLKitHelper")
@@ -249,7 +262,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
     let encoder = JSONEncoder()
     var detectorType = TNSMLKitDetectionType.All
     
-    public var flashMode: Bool {
+    public var flashMode: Bool = false {
         didSet {
             if(flashMode){
                 self.videoInput?.device.torchMode = .auto
@@ -260,7 +273,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
     }
     
     
-    public var pause: Bool {
+    public var pause: Bool = false {
         didSet {
             sessionQueue.async {
                 if(self.isSessionSetup){
@@ -311,7 +324,9 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
     var poseDetector: PoseDetector?
 #endif
     
-    
+#if canImport(MLKitSegmentationSelfie)
+    var selfieSegmentor: Segmenter?
+#endif
     
     
     public override init() {
@@ -622,6 +637,36 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                 } catch {}
             }
 #endif
+            
+            
+            
+#if canImport(MLKitSegmentationSelfie)
+            if(detectorType == .Selfie || detectorType == .All){
+                do {
+                    let result = try self.selfieSegmentor?.results(in: image)
+                    if(result != nil){
+                        let mask = result!
+                        let maskWidth = CVPixelBufferGetWidth(mask.buffer)
+                        let maskHeight = CVPixelBufferGetHeight(mask.buffer)
+
+                        CVPixelBufferLockBaseAddress(mask.buffer, CVPixelBufferLockFlags.readOnly)
+                        let maskBytesPerRow = CVPixelBufferGetBytesPerRow(mask.buffer)
+                        let maskAddress =
+                            CVPixelBufferGetBaseAddress(mask.buffer)!.bindMemory(
+                                to: Float32.self, capacity: maskBytesPerRow * maskHeight)
+                        let data = Data(bytes: maskAddress, count: maskBytesPerRow * maskHeight)
+                        var ret: [String: Any] = [:]
+                        ret["width"] = maskWidth
+                        ret["height"] = maskHeight
+                        ret["data"] = data
+                        onScanCallback?(ret, TNSMLKitDetectionType.Selfie.string())
+                    
+                    }
+                }catch {}
+            }
+#endif
+            
+            
             
         }
         

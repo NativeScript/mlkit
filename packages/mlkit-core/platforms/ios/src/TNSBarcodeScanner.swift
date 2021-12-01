@@ -87,6 +87,41 @@ enum BarcodeFormats: String, Codable {
         }
     }
     
+    var format: BarcodeFormat {
+        switch(self){
+        case .ALL:
+            return .all
+        case .CODE_128:
+            return .code128
+        case .CODE_39:
+            return .code39
+        case .CODE_93:
+            return .code93
+        case .CODABAR:
+            return .codaBar
+        case .DATA_MATRIX:
+            return .dataMatrix
+        case .EAN_13:
+            return .EAN13
+        case .EAN_8:
+            return .EAN8
+        case .ITF:
+            return .ITF
+        case .QR_CODE:
+            return .qrCode
+        case .UPC_A:
+            return .UPCA
+        case .UPC_E:
+            return .UPCE
+        case .PDF417:
+            return .PDF417
+        case .AZTEC:
+            return .aztec
+        case .UNKOWN:
+            return BarcodeFormat(rawValue: 0)
+        }
+    }
+    
     typealias RawValue = String
     
     case ALL

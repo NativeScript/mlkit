@@ -3,7 +3,7 @@
         <ActionBar title="mlkit-core" icon="" class="action-bar">
         </ActionBar>
     </Page.actionBar>
-    <GridLayout rows="*,auto,auto,auto,auto,auto,auto" height="100%">
+    <GridLayout rows="*,auto,auto,auto,auto,auto,auto,auto" height="100%">
        <ui:MLKitView pause="true" height="100%" rowSpan="3"  loaded="{{ onLoaded }}" cameraPosition="back" detectionType="{{ detectorType }}" detection="{{ onDetection }}"/>
        <Button row="1" height="40" text="Toggle Camera" tap="{{ toggleCamera }}" />
        <Button row="2" height="40" text="Request Camera Permission" tap="{{ requestPermission }}" />
@@ -11,5 +11,6 @@
        <Button row="4" height="40" text="Change Detector Type" tap="{{ changeType }}" />
        <Label row="5" text="{{'isPaused : ' + isPaused }}"/>
        <Button row="6" height="40" text="Toggle Pause" tap="{{ togglePause }}" />
+       <Button row="7" height="40" text="Process Still imAGE" tap="{{ processStill }}" />
     </GridLayout>
 </Page>

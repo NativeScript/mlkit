@@ -5,6 +5,7 @@
 - [@nativescript/mlkit-image-labeling](packages/mlkit-image-labeling/README.md)
 - [@nativescript/mlkit-object-detection](packages/mlkit-object-detection/README.md)
 - [@nativescript/mlkit-pose-detection](packages/mlkit-pose-detection/README.md)
+- [@nativescript/mlkit-selfie-segmentation](packages/mlkit-selfie-segmentation/README.md)
 - [@nativescript/mlkit-text-recognition](packages/mlkit-text-recognition/README.md)
 
 # How to use?

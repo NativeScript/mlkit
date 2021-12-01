@@ -46,6 +46,9 @@
     },
     "mlkit-pose-detection": {
       "tags": []
+    },
+    "mlkit-selfie-segmentation": {
+      "tags": []
     }
   },
   "workspaceLayout": {

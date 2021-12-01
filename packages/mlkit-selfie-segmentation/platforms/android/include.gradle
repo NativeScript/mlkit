@@ -1,0 +1,3 @@
+dependencies {
+    implementation 'io.github.triniwiz.fancycamera:selfieSegmentation:1.0.0-alpha.2'
+}

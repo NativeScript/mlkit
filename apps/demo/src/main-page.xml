@@ -14,6 +14,7 @@
 <Button text="mlkit-object-detection" tap="{{ viewDemo }}" class="btn btn-primary view-demo"/>
 <Button text="mlkit-digital-ink-recognition" tap="{{ viewDemo }}" class="btn btn-primary view-demo"/>
 <Button text="mlkit-pose-detection" tap="{{ viewDemo }}" class="btn btn-primary view-demo"/>
+<Button text="mlkit-selfie-segmentation" tap="{{ viewDemo }}" class="btn btn-primary view-demo"/>
       </StackLayout>
     </ScrollView>
   </StackLayout>

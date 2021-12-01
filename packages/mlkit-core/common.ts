@@ -9,6 +9,7 @@ export enum DetectionType {
     Pose = "pose",
     Text = "text",
     All = "all",
+    Selfie = "selfie",
     None = "none"
 }
 

@@ -93,7 +93,8 @@
               "nx run mlkit-image-labeling:build.all",
               "nx run mlkit-object-detection:build.all",
               "nx run mlkit-digital-ink-recognition:build.all",
-              "nx run mlkit-pose-detection:build.all"
+              "nx run mlkit-pose-detection:build.all",
+              "nx run mlkit-selfie-segmentation:build.all"
             ],
             "parallel": false
           }
@@ -460,6 +461,50 @@
           "options": {
             "commands": [
               "nx g @nativescript/plugin-tools:focus-packages mlkit-pose-detection"
+            ],
+            "parallel": false
+          }
+        }
+      }
+    },
+    "mlkit-selfie-segmentation": {
+      "root": "packages/mlkit-selfie-segmentation",
+      "projectType": "library",
+      "sourceRoot": "packages/mlkit-selfie-segmentation",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/packages/mlkit-selfie-segmentation",
+            "tsConfig": "packages/mlkit-selfie-segmentation/tsconfig.json",
+            "packageJson": "packages/mlkit-selfie-segmentation/package.json",
+            "main": "packages/mlkit-selfie-segmentation/index.ts",
+            "assets": [
+              "packages/mlkit-selfie-segmentation/*.md",
+              "LICENSE",
+              {
+                "glob": "**/*",
+                "input": "packages/mlkit-selfie-segmentation/platforms/",
+                "output": "./platforms/"
+              }
+            ]
+          }
+        },
+        "build.all": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run mlkit-selfie-segmentation:build",
+              "node tools/scripts/build-finish.ts mlkit-selfie-segmentation"
+            ],
+            "parallel": false
+          }
+        },
+        "focus": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx g @nativescript/plugin-tools:focus-packages mlkit-selfie-segmentation"
             ],
             "parallel": false
           }

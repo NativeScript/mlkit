@@ -1,8 +1,8 @@
-import { Utils } from "@nativescript/core";
+import { ImageSource, Utils } from "@nativescript/core";
 import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, pauseProperty, torchOnProperty } from "./common";
 import '@nativescript/core';
 import lazy from "@nativescript/core/utils/lazy";
-import { DetectionEvent } from ".";
+import { DetectionEvent, StillImageDetectionOptions } from ".";
 
 
 const BARCODE_SCANNER_SUPPORTED = lazy(() => typeof MLKBarcodeScanner);
@@ -12,6 +12,7 @@ const IMAGE_LABELING_SUPPORTED = lazy(() => typeof MLKImageLabeler);
 const OBJECT_DETECTION_SUPPORTED = lazy(() => typeof MLKObjectDetector);
 const POSE_DETECTION_SUPPORTED = lazy(() => typeof MLKPoseDetector);
 const DIGITALINK_RECOGNITION_SUPPORTED = lazy(() => typeof MLKDigitalInkRecognizer);
+const SELFIE_SEGMENTATION_SUPPORTED = lazy(() => typeof MLKSegmenter);
 
 export { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty as imageLablerConfidenceThresholdProperty, objectDetectionClassifyProperty, objectDetectionMultipleProperty } from './common';
 
@@ -28,11 +29,14 @@ export class MLKitView extends MLKitViewBase {
     #imageLabeler: MLKImageLabeler;
     #objectDetector: MLKObjectDetector;
     #poseDetector: MLKPoseDetector;
+    #selfieSegmentor: MLKSegmenter;
     #barcodeScannerOptions: MLKBarcodeScannerOptions;
     #faceDetectorOptions: MLKFaceDetectorOptions;
     #imageLabelerOptions: MLKImageLabelerOptions;
     #objectDetectionOptions: MLKObjectDetectorOptions;
     #poseDetectionOptions: MLKPoseDetectorOptions;
+    #selfieSegmentationOptions: MLKSelfieSegmenterOptions;
+
     #mlkitHelper;
 
     constructor() {
@@ -80,6 +84,10 @@ export class MLKitView extends MLKitViewBase {
         return this.#poseDetector;
     }
 
+    get _selfieSegmentor() {
+        return this.#selfieSegmentor;
+    }
+
 
     [cameraPositionProperty.setNative](value: CameraPosition) {
         switch (value) {
@@ -102,7 +110,7 @@ export class MLKitView extends MLKitViewBase {
 
 
     [torchOnProperty.setNative](value: boolean) {
-       this.#mlkitHelper.torch = value;
+        this.#mlkitHelper.torch = value;
     }
 
     [pauseProperty.setNative](value: boolean) {
@@ -111,7 +119,7 @@ export class MLKitView extends MLKitViewBase {
 
 
     [detectionTypeProperty.setNative](value) {
-        let type = 8 /* None */
+        let type = 9 /* None */
         switch (value) {
             case DetectionType.All:
                 type = 7;
@@ -137,8 +145,11 @@ export class MLKitView extends MLKitViewBase {
             case DetectionType.Text:
                 type = 6
                 break;
-            default:
+            case DetectionType.Selfie:
                 type = 8;
+                break;
+            default:
+                type = 9;
                 break;
         }
 
@@ -178,6 +189,10 @@ export class MLKitView extends MLKitViewBase {
         if (POSE_DETECTION_SUPPORTED() && !this.#poseDetector && (this.detectionType === DetectionType.Pose || this.detectionType === DetectionType.All)) {
             this.#setPoseDetection();
         }
+
+        if (SELFIE_SEGMENTATION_SUPPORTED() && !this.#selfieSegmentor && (this.detectionType === DetectionType.Selfie || this.detectionType === DetectionType.All)) {
+            this.#setSelfieSegmentation();
+        }
     }
 
 
@@ -186,8 +201,8 @@ export class MLKitView extends MLKitViewBase {
         this.#setupDetectors();
     }
 
-    _onScanCallback(result: string, type) {
-        if (this.detectionType === DetectionType.None || !this.hasListeners(MLKitView.detectionEvent)) {
+    _onScanCallback(result: any, type) {
+        if (this.detectionType === DetectionType.None || !this.hasListeners?.(MLKitView.detectionEvent)) {
             return;
         }
         try {
@@ -199,6 +214,20 @@ export class MLKitView extends MLKitViewBase {
                 type
             })
         } catch (e) { }
+    }
+
+    #setSelfieSegmentation() {
+        if (!SELFIE_SEGMENTATION_SUPPORTED()) {
+            return;
+        }
+
+        if (!this.#selfieSegmentationOptions) {
+            this.#selfieSegmentationOptions = MLKSelfieSegmenterOptions.new();
+        }
+
+        this.#selfieSegmentationOptions.shouldEnableRawSizeMask = true;
+        this.#selfieSegmentor = MLKSegmenter.segmenterWithOptions(this.#selfieSegmentationOptions);
+        this.#mlkitHelper.selfieSegmentor = this.#selfieSegmentor;
     }
 
 
@@ -285,7 +314,7 @@ export class MLKitView extends MLKitViewBase {
     }
 
     #setupFaceDetector() {
-        if (!FACE_DETECTION_SUPPORTED) {
+        if (!FACE_DETECTION_SUPPORTED()) {
             return;
         }
 
@@ -307,7 +336,7 @@ export class MLKitView extends MLKitViewBase {
     }
 
     #setImageLabeler() {
-        if (!IMAGE_LABELING_SUPPORTED) {
+        if (!IMAGE_LABELING_SUPPORTED()) {
             return;
         }
         if (!this.#imageLabelerOptions) {
@@ -413,4 +442,79 @@ export class MLKitView extends MLKitViewBase {
     hasCameraPermission(): boolean {
         return AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo) === AVAuthorizationStatus.Authorized
     }
+}
+
+
+export function detectWithStillImage(image: any, options?: StillImageDetectionOptions) {
+    return new Promise((resolve, reject) => {
+        let nativeImage;
+        if (image instanceof ImageSource) {
+            nativeImage = image.ios;
+        } else if (image instanceof UIImage) {
+            nativeImage = image;
+        } else {
+            reject('Please use a valid Image');
+        }
+
+
+
+        let type = 9 /* None */
+        switch (options?.detectorType) {
+            case DetectionType.All:
+                type = 7;
+                break;
+            case DetectionType.Barcode:
+                type = 0;
+                break;
+            case DetectionType.DigitalInk:
+                type = 1
+                break;
+            case DetectionType.Face:
+                type = 2
+                break;
+            case DetectionType.Image:
+                type = 3
+                break;
+            case DetectionType.Object:
+                type = 4
+                break;
+            case DetectionType.Pose:
+                type = 5
+                break;
+            case DetectionType.Text:
+                type = 6
+                break;
+            case DetectionType.Selfie:
+                type = 8;
+                break;
+            default:
+                type = 9;
+                break;
+        }
+
+
+
+        TNSML.processImage(nativeImage, {
+            ...options || {} , detectorType: type
+        } as any, (ret: NSArray<TNSMLResult>) => {
+            const result = {}
+            const count = ret.count;
+            for (let i = 0; i < count; i++) {
+                const item = ret.objectAtIndex(i);
+                try {
+                    if (item.type === DetectionType.Selfie) {
+                        result[item.type] = {
+                            data: interop.bufferFromData(item.result),
+                            width: item.result.width,
+                            height: item.result.height
+                        }
+                    } else {
+                        result[item.type] = JSON.parse(item.result)
+                    }
+                } catch (e) { }
+
+            }
+            resolve(result);
+        })
+    })
 }

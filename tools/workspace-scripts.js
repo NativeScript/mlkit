@@ -119,6 +119,13 @@ module.exports = {
 					description: '@nativescript/mlkit-pose-detection: Build',
 				},
 			},
+			// @nativescript/mlkit-selfie-segmentation
+			'mlkit-selfie-segmentation': {
+				build: {
+					script: 'nx run mlkit-selfie-segmentation:build.all',
+					description: '@nativescript/mlkit-selfie-segmentation: Build',
+				},
+			},
 			'build-all': {
 				script: 'nx run all:build',
 				description: 'Build all packages',
@@ -160,6 +167,10 @@ module.exports = {
 			'mlkit-pose-detection': {
 				script: 'nx run mlkit-pose-detection:focus',
 				description: 'Focus on @nativescript/mlkit-pose-detection',
+			},
+			'mlkit-selfie-segmentation': {
+				script: 'nx run mlkit-selfie-segmentation:focus',
+				description: 'Focus on @nativescript/mlkit-selfie-segmentation',
 			},
 			reset: {
 				script: 'nx run all:focus',

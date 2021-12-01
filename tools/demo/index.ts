@@ -6,4 +6,5 @@ export * from './mlkit-face-detection';
 export * from './mlkit-image-labeling';
 export * from './mlkit-object-detection';
 export * from './mlkit-pose-detection';
+export * from './mlkit-selfie-segmentation';
 export * from './mlkit-text-recognition';
