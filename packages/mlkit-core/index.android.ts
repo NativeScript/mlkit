@@ -328,7 +328,7 @@ export class MLKitView extends MLKitViewBase {
         }
         let formats;
         if (Array.isArray(value)) {
-            if (value.indexOf(BarcodeFormats.ALL)) {
+            if (value.indexOf(BarcodeFormats.ALL) !== -1) {
                 formats = Array.create('io.github.triniwiz.fancycamera.barcodescanning.BarcodeScanner$BarcodeFormat', 1);
                 formats[0] = io.github.triniwiz.fancycamera.barcodescanning.BarcodeScanner.BarcodeFormat.ALL;
             } else {
@@ -369,7 +369,7 @@ export class MLKitView extends MLKitViewBase {
             this.#barcodeScannerOptions.setBarcodeFormat(formats);
         }
 
-        this.#getFancyCamera().setBarcodeScannerOptions(this.#barcodeScannerOptions);
+        this.#camera.setBarcodeScannerOptions(this.#barcodeScannerOptions);
     }
 
     [faceDetectionTrackingEnabledProperty.setNative](value) {
@@ -382,7 +382,7 @@ export class MLKitView extends MLKitViewBase {
 
         this.#faceDetectionOptions.setFaceTracking(value);
 
-        this.#getFancyCamera().setFaceDetectionOptions(this.#faceDetectionOptions);
+        this.#camera.setFaceDetectionOptions(this.#faceDetectionOptions);
     }
 
     [faceDetectionMinFaceSizeProperty.setNative](value) {
@@ -395,7 +395,7 @@ export class MLKitView extends MLKitViewBase {
         }
 
         this.#faceDetectionOptions.setMinimumFaceSize(value);
-        this.#getFancyCamera().setFaceDetectionOptions(this.#faceDetectionOptions);
+        this.#camera.setFaceDetectionOptions(this.#faceDetectionOptions);
     }
 
     [faceDetectionPerformanceModeProperty.setNative](value) {
@@ -408,7 +408,7 @@ export class MLKitView extends MLKitViewBase {
         }
 
         this.#faceDetectionOptions.setMinimumFaceSize(value);
-        this.#getFancyCamera().setFaceDetectionOptions(this.#faceDetectionOptions);
+        this.#camera.setFaceDetectionOptions(this.#faceDetectionOptions);
     }
 
     [imageLabelerConfidenceThresholdProperty.setNative](value) {
@@ -420,7 +420,7 @@ export class MLKitView extends MLKitViewBase {
         }
 
         this.#imageLabelerOptions.setConfidenceThreshold(value);
-        this.#getFancyCamera().setImageLabelingOptions(this.#imageLabelerOptions);
+        this.#camera.setImageLabelingOptions(this.#imageLabelerOptions);
     }
 
     [objectDetectionClassifyProperty.setNative](value) {
@@ -433,7 +433,7 @@ export class MLKitView extends MLKitViewBase {
         }
 
         this.#objectDetectionOptions.setClassification(value);
-        this.#getFancyCamera().setObjectDetectionOptions(this.#objectDetectionOptions);
+        this.#camera.setObjectDetectionOptions(this.#objectDetectionOptions);
     }
 
     [objectDetectionMultipleProperty.setNative](value) {
@@ -446,7 +446,7 @@ export class MLKitView extends MLKitViewBase {
         }
 
         this.#objectDetectionOptions.setMultiple(value);
-        this.#getFancyCamera().setObjectDetectionOptions(this.#objectDetectionOptions);
+        this.#camera.setObjectDetectionOptions(this.#objectDetectionOptions);
     }
 
 

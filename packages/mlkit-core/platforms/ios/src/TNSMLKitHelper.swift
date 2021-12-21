@@ -235,6 +235,57 @@ enum TNSMLKitDetectionType: Int, RawRepresentable {
 }
 
 
+
+
+
+@objc(TNSMLKitTorchMode)
+public enum TNSMLKitTorchMode: Int, RawRepresentable {
+    case Off
+    case On
+    case Auto
+    public typealias RawValue = UInt32
+    
+    public var rawValue: RawValue {
+        switch self {
+        case .Off:
+            return 0
+        case .On:
+            return 1
+        case .Auto:
+            return 2
+        }
+    }
+    
+    
+    public init?(rawValue: RawValue) {
+        switch rawValue {
+        case 0:
+            self = .Off
+        case 1:
+            self = .On
+        case 2:
+            self = .Auto
+        default:
+            return nil
+        }
+    }
+    
+    
+    public init?(string: String) {
+        switch string {
+        case "off":
+            self = .Off
+        case "on":
+            self = .On
+        case "auto":
+            self = .Auto
+        default:
+            return nil
+        }
+    }
+}
+
+
 @objc(TNSMLKitHelper)
 @objcMembers
 public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
@@ -262,12 +313,28 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
     let encoder = JSONEncoder()
     var detectorType = TNSMLKitDetectionType.All
     
-    public var flashMode: Bool = false {
+    public var torchMode: TNSMLKitTorchMode = .Off {
         didSet {
-            if(flashMode){
-                self.videoInput?.device.torchMode = .auto
-            }else {
-                self.videoInput?.device.torchMode = .on
+            guard self.videoInput?.device != nil else {
+                return
+            }
+            
+            switch(torchMode){
+            case .Off:
+                if(self.videoInput!.device.isTorchModeSupported(.off)){
+                    self.videoInput!.device.torchMode = .off
+                }
+                break
+            case .On:
+                if(self.videoInput!.device.isTorchModeSupported(.on)){
+                    self.videoInput!.device.torchMode = .on
+                }
+                break
+            case .Auto:
+                if(self.videoInput!.device.isTorchModeSupported(.auto)){
+                    self.videoInput!.device.torchMode = .auto
+                }
+                break
             }
         }
     }
@@ -383,10 +450,16 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                     return
                 }
                 
-                if(self.flashMode){
-                    videoInput?.device.torchMode = .auto
-                }else {
-                    videoInput?.device.torchMode = .on
+                switch(torchMode){
+                case .Off:
+                    videoInput!.device.torchMode = .off
+                    break
+                case .On:
+                    videoInput!.device.torchMode = .on
+                    break
+                case .Auto:
+                    videoInput!.device.torchMode = .auto
+                    break
                 }
                 
                 

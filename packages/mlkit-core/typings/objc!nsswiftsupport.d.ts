@@ -68,8 +68,6 @@ declare class TNSMLKitHelper extends NSObject implements AVCaptureVideoDataOutpu
 
 	faceDetector: MLKFaceDetector;
 
-	flashMode: boolean;
-
 	imageLabeler: MLKImageLabeler;
 
 	objectDetector: MLKObjectDetector;
@@ -93,6 +91,8 @@ declare class TNSMLKitHelper extends NSObject implements AVCaptureVideoDataOutpu
 	readonly sessionQueue: NSObject;
 
 	textRecognizer: MLKTextRecognizer;
+
+	torchMode: TNSMLKitTorchMode;
 
 	readonly debugDescription: string; // inherited from NSObjectProtocol
 
@@ -148,6 +148,15 @@ declare const enum TNSMLKitHelperCameraPosition {
 	Front = 0,
 
 	Back = 1
+}
+
+declare const enum TNSMLKitTorchMode {
+
+	Off = 0,
+
+	On = 1,
+
+	Auto = 2
 }
 
 declare class TNSMLResult extends NSObject {

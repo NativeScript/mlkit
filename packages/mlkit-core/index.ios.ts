@@ -37,7 +37,7 @@ export class MLKitView extends MLKitViewBase {
     #poseDetectionOptions: MLKPoseDetectorOptions;
     #selfieSegmentationOptions: MLKSelfieSegmenterOptions;
 
-    #mlkitHelper;
+    #mlkitHelper: TNSMLKitHelper;
 
     constructor() {
         super();
@@ -110,7 +110,11 @@ export class MLKitView extends MLKitViewBase {
 
 
     [torchOnProperty.setNative](value: boolean) {
-        this.#mlkitHelper.torch = value;
+        if (value) {
+            this.#mlkitHelper.torchMode = TNSMLKitTorchMode.On;
+        } else {
+            this.#mlkitHelper.torchMode = TNSMLKitTorchMode.Off;
+        }
     }
 
     [pauseProperty.setNative](value: boolean) {
@@ -241,7 +245,7 @@ export class MLKitView extends MLKitViewBase {
         }
         let formats: MLKBarcodeFormat = 0;
         if (Array.isArray(value)) {
-            if (value.indexOf(BarcodeFormats.ALL)) {
+            if (value.indexOf(BarcodeFormats.ALL) !== -1) {
                 formats = MLKBarcodeFormat.All;
             } else {
                 value.forEach(format => {
@@ -409,7 +413,9 @@ export class MLKitView extends MLKitViewBase {
 
     public startPreview(): void {
         this.#mlkitHelper.openCamera();
-        this.#mlkitHelper.startPreview();
+        if (!this.pause) {
+            this.#mlkitHelper.startPreview();
+        }
     }
 
 
@@ -495,7 +501,7 @@ export function detectWithStillImage(image: any, options?: StillImageDetectionOp
 
 
         TNSML.processImage(nativeImage, {
-            ...options || {} , detectorType: type
+            ...options || {}, detectorType: type
         } as any, (ret: NSArray<TNSMLResult>) => {
             const result = {}
             const count = ret.count;

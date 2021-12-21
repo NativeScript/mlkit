@@ -1,3 +1,4 @@
 dependencies {
-    implementation 'io.github.triniwiz.fancycamera:textRecognition:1.0.0-alpha.2'
+    implementation 'io.github.triniwiz.fancycamera:textRecognition:1.0.0-alpha.3'
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:17.0.0'
 }
