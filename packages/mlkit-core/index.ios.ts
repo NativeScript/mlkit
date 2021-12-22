@@ -38,11 +38,33 @@ export class MLKitView extends MLKitViewBase {
     #selfieSegmentationOptions: MLKSelfieSegmenterOptions;
 
     #mlkitHelper: TNSMLKitHelper;
+    _onScanCallback: (result: any, type) => void;
 
     constructor() {
         super();
         this.#mlkitHelper = TNSMLKitHelper.alloc().init();
-        this.#mlkitHelper.onScanCallback = this._onScanCallback;
+
+        const ref = new WeakRef(this);
+        const _onScanCallback = (result: any, type) => {
+            const owner = ref.get?.();
+            if (owner) {
+                if (owner.detectionType === DetectionType.None || !owner.hasListeners?.(MLKitView.detectionEvent)) {
+                    return;
+                }
+                try {
+                    const data = JSON.parse(result);
+                    owner.notify(<DetectionEvent>{
+                        eventName: MLKitView.detectionEvent,
+                        object: owner,
+                        data,
+                        type
+                    })
+                } catch (e) { }
+            }
+        }
+
+        this._onScanCallback = _onScanCallback;
+        this.#mlkitHelper.onScanCallback = _onScanCallback;
     }
 
     createNativeView() {
@@ -51,6 +73,11 @@ export class MLKitView extends MLKitViewBase {
         this.#preview.videoGravity = AVLayerVideoGravityResizeAspect;
         nativeView.layer.insertSublayerAtIndex(this.#preview, 0);
         return nativeView;
+    }
+
+    initNativeView() {
+        super.initNativeView();
+        this.#setupDetectors();
     }
 
     get _device() {
@@ -197,27 +224,6 @@ export class MLKitView extends MLKitViewBase {
         if (SELFIE_SEGMENTATION_SUPPORTED() && !this.#selfieSegmentor && (this.detectionType === DetectionType.Selfie || this.detectionType === DetectionType.All)) {
             this.#setSelfieSegmentation();
         }
-    }
-
-
-    initNativeView() {
-        super.initNativeView();
-        this.#setupDetectors();
-    }
-
-    _onScanCallback(result: any, type) {
-        if (this.detectionType === DetectionType.None || !this.hasListeners?.(MLKitView.detectionEvent)) {
-            return;
-        }
-        try {
-            const data = JSON.parse(result);
-            this.notify(<DetectionEvent>{
-                eventName: MLKitView.detectionEvent,
-                object: this,
-                data,
-                type
-            })
-        } catch (e) { }
     }
 
     #setSelfieSegmentation() {

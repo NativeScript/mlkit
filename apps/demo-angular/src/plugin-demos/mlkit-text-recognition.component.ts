@@ -1,6 +1,5 @@
 import { Component, NgZone } from '@angular/core';
 import { DemoSharedMlkitTextRecognition } from '@demo/shared';
-import { } from '@nativescript/mlkit-text-recognition';
 
 @Component({
 	selector: 'demo-mlkit-text-recognition',

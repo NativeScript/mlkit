@@ -1,6 +1,5 @@
 import { Component, NgZone } from '@angular/core';
 import { DemoSharedMlkitSelfieSegmentation } from '@demo/shared';
-import { } from '@nativescript/mlkit-selfie-segmentation';
 
 @Component({
 	selector: 'demo-mlkit-selfie-segmentation',

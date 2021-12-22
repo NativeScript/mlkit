@@ -1,6 +1,5 @@
 import { Component, NgZone } from '@angular/core';
 import { DemoSharedMlkitPoseDetection } from '@demo/shared';
-import { } from '@nativescript/mlkit-pose-detection';
 
 @Component({
 	selector: 'demo-mlkit-pose-detection',

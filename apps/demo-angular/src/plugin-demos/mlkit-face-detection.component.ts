@@ -1,6 +1,5 @@
 import { Component, NgZone } from '@angular/core';
 import { DemoSharedMlkitFaceDetection } from '@demo/shared';
-import { } from '@nativescript/mlkit-face-detection';
 
 @Component({
 	selector: 'demo-mlkit-face-detection',

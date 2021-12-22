@@ -313,29 +313,43 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
     let encoder = JSONEncoder()
     var detectorType = TNSMLKitDetectionType.All
     
-    public var torchMode: TNSMLKitTorchMode = .Off {
-        didSet {
-            guard self.videoInput?.device != nil else {
+    
+    private func updateTorchMode(_ videoInput: AVCaptureDeviceInput?){
+        do {
+            guard videoInput?.device != nil else {
                 return
+            }
+            
+            try videoInput!.device.lockForConfiguration()
+            
+            defer {
+                videoInput!.device.unlockForConfiguration()
             }
             
             switch(torchMode){
             case .Off:
-                if(self.videoInput!.device.isTorchModeSupported(.off)){
-                    self.videoInput!.device.torchMode = .off
+                if(videoInput!.device.isTorchModeSupported(.off)){
+                    videoInput!.device.torchMode = .off
                 }
                 break
             case .On:
-                if(self.videoInput!.device.isTorchModeSupported(.on)){
-                    self.videoInput!.device.torchMode = .on
+                if(videoInput!.device.isTorchModeSupported(.on)){
+                    videoInput!.device.torchMode = .on
                 }
                 break
             case .Auto:
-                if(self.videoInput!.device.isTorchModeSupported(.auto)){
-                    self.videoInput!.device.torchMode = .auto
+                if(videoInput!.device.isTorchModeSupported(.auto)){
+                    videoInput!.device.torchMode = .auto
                 }
                 break
             }
+            
+        }catch {}
+    }
+    
+    public var torchMode: TNSMLKitTorchMode = .Off {
+        didSet {
+            updateTorchMode(self.videoInput)
         }
     }
     
@@ -407,7 +421,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
     
     public func startPreview(){
         sessionQueue.async {
-            if(self.isSessionSetup && !self.session.isRunning){
+            if(self.isSessionSetup && !self.session.isRunning && !self.pause){
                 self.session.startRunning()
             }
         }
@@ -450,18 +464,8 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                     return
                 }
                 
-                switch(torchMode){
-                case .Off:
-                    videoInput!.device.torchMode = .off
-                    break
-                case .On:
-                    videoInput!.device.torchMode = .on
-                    break
-                case .Auto:
-                    videoInput!.device.torchMode = .auto
-                    break
-                }
-                
+               
+                updateTorchMode(videoInput)
                 
                 if(wasRunning){
                     self.session.stopRunning()
@@ -519,6 +523,8 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
             }
             
             guard self.videoInput != nil else {return}
+            
+            self.updateTorchMode(self.videoInput)
             
             self.session.beginConfiguration()
             self.session.addInput(self.videoInput!)

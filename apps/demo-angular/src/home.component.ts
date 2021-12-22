@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RouterExtensions } from '@nativescript/angular';
 
 @Component({
 	selector: 'demo-home',
@@ -6,32 +7,39 @@ import { Component } from '@angular/core';
 })
 export class HomeComponent {
 	demos = [
-	{
-		name: 'mlkit-barcode-scanning'
-	},
-	{
-		name: 'mlkit-core'
-	},
-	{
-		name: 'mlkit-digital-ink-recognition'
-	},
-	{
-		name: 'mlkit-face-detection'
-	},
-	{
-		name: 'mlkit-image-labeling'
-	},
-	{
-		name: 'mlkit-object-detection'
-	},
-	{
-		name: 'mlkit-pose-detection'
-	},
-	{
-		name: 'mlkit-selfie-segmentation'
-	},
-	{
-		name: 'mlkit-text-recognition'
+		{
+			name: 'mlkit-barcode-scanning'
+		},
+		{
+			name: 'mlkit-core'
+		},
+		{
+			name: 'mlkit-digital-ink-recognition'
+		},
+		{
+			name: 'mlkit-face-detection'
+		},
+		{
+			name: 'mlkit-image-labeling'
+		},
+		{
+			name: 'mlkit-object-detection'
+		},
+		{
+			name: 'mlkit-pose-detection'
+		},
+		{
+			name: 'mlkit-selfie-segmentation'
+		},
+		{
+			name: 'mlkit-text-recognition'
+		}
+	];
+
+	constructor(private router: RouterExtensions) { }
+
+	onTap(event) {
+		const item = this.demos[event.index];
+		this.router.navigate(['/' + item.name]);
 	}
-];
 }

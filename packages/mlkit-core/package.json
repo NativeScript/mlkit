@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/mlkit-core",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "description": "NativeScript MLKit Core",
   "main": "index",
   "typings": "index.d.ts",

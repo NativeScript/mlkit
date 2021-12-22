@@ -1,8 +1,16 @@
 <ActionBar title="mlkit-core" class="action-bar"> </ActionBar>
 <StackLayout class="p-20">
-	<ScrollView class="h-full">
-		<StackLayout>
-			<Button text="Test mlkit-core" (tap)="demoShared.testIt()" class="btn btn-primary"></Button>
-		</StackLayout>
-	</ScrollView>
+	<GridLayout rows="*,auto,auto,auto,auto,auto,auto,auto,auto,auto" height="100%">
+		<MLKitView [torchOn]="torchOn" [pause]="isPaused" height="100%" rowSpan="3" (loaded)="onLoaded($event)" cameraPosition="back"
+			[detectionType]="detectorType" (detection)="onDetection($event)"></MLKitView>
+		<Button row="1" height="40" text="Toggle Camera" (tap)="toggleCamera($event)"></Button>
+		<Button row="2" height="40" text="Request Camera Permission" (tap)="requestPermission($event)"></Button>
+		<Label row="3" [text]="'Detecting ' + detectorType"></Label>
+		<Button row="4" height="40" text="Change Detector Type" (tap)="changeType($event)"></Button>
+		<Label row="5" [text]="'isPaused : ' + isPaused"></Label>
+		<Button row="6" height="40" text="Toggle Pause" (tap)="togglePause($event)"></Button>
+		<Label row="7" [text]="'Torch On : ' + torchOn"></Label>
+		<Button row="8" height="40" text="Toggle Torch" (tap)="toggleTorch($event)"></Button>
+		<Button row="9" height="40" text="Process Still Image" (tap)="processStill($event)"></Button>
+	</GridLayout>
 </StackLayout>
