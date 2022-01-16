@@ -1,4 +1,4 @@
-import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, pauseProperty, torchOnProperty } from "./common";
+import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, pauseProperty, processEveryNthFrameProperty, torchOnProperty } from "./common";
 import { Application, Device, Utils, AndroidActivityRequestPermissionsEventData, ImageSource } from '@nativescript/core';
 import lazy from '@nativescript/core/utils/lazy';
 import { StillImageDetectionOptions } from ".";
@@ -147,6 +147,12 @@ export class MLKitView extends MLKitViewBase {
         }
         this.#camera.setDetectorType(type);
         this.#setListeners();
+    }
+
+    [processEveryNthFrameProperty.setNative](value){
+        if(this.#camera){
+            this.#camera.setProcessEveryNthFrame(value);
+        }
     }
 
     initNativeView() {
@@ -318,6 +324,7 @@ export class MLKitView extends MLKitViewBase {
             this.#camera.setOnPoseDetectedListener(this.#onPoseListener);
         }
     }
+
 
     [barcodeFormatsProperty.setNative](value: BarcodeFormats[]) {
         if (!BARCODE_SCANNER_SUPPORTED()) {

@@ -77,7 +77,7 @@ import { DetectionType, DetectionEvent } from '@nativescript/mlkit-core';
 import { BarcodeResult } from '@nativescript/mlkit-barcode-scanning';
 onDetection(event: DetectionEvent){
     if(event.type === DetectionType.Barcode){
-        const barcode: BarcodeResult = data;
+        const barcode: BarcodeResult[] = event.data;
     }
 }
 ```
@@ -93,7 +93,7 @@ import { DetectionType, DetectionEvent } from '@nativescript/mlkit-core';
 import { FaceResult } from '@nativescript/mlkit-face-detection';
 onDetection(event: DetectionEvent){
     if(event.type === DetectionType.Face){
-        const faces: FaceResult[] = data;
+        const faces: FaceResult[] = event.data;
     }
 }
 ```
@@ -110,7 +110,7 @@ import { DetectionType, DetectionEvent } from '@nativescript/mlkit-core';
 import { ImageLabelingResult } from '@nativescript/mlkit-image-labeling';
 onDetection(event: DetectionEvent){
     if(event.type === DetectionType.Image){
-        const labels: ImageLabelingResult[] = data;
+        const labels: ImageLabelingResult[] = event.data;
     }
 }
 ```
@@ -127,7 +127,7 @@ import { DetectionType, DetectionEvent } from '@nativescript/mlkit-core';
 import { ObjectResult } from '@nativescript/mlkit-object-detection'
 onDetection(event: DetectionEvent){
     if(event.type === DetectionType.Object){
-        const objects: ObjectResult[] = data;
+        const objects: ObjectResult[] = event.data;
     }
 }
 ```
@@ -143,7 +143,7 @@ import { DetectionType, DetectionEvent } from '@nativescript/mlkit-core';
 import { PoseResult } from '@nativescript/mlkit-pose-detection';
 onDetection(event: DetectionEvent){
     if(event.type === DetectionType.Pose){
-        const poses: PoseResult[] = data;
+        const poses: PoseResult = event.data;
     }
 }
 ```
@@ -160,7 +160,7 @@ import { DetectionType, DetectionEvent } from '@nativescript/mlkit-core';
 import { TextResult } from '@nativescript/mlkit-text-recognition';
 onDetection(event: DetectionEvent){
     if(event.type === DetectionType.Text){
-        const text: TextResult[] = data;
+        const text: TextResult = event.data;
     }
 }
 ```

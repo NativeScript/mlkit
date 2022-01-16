@@ -58,6 +58,8 @@ declare class TNSMLKitHelper extends NSObject implements AVCaptureVideoDataOutpu
 
 	static new(): TNSMLKitHelper; // inherited from NSObject
 
+	processEveryNthFrame: boolean;
+
 	barcodeScanner: MLKBarcodeScanner;
 
 	cameraPosition: TNSMLKitHelperCameraPosition;

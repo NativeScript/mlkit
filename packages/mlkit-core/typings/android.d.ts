@@ -186,6 +186,8 @@ declare module io {
 				export abstract class CameraBase {
 					public static class: java.lang.Class<io.github.triniwiz.fancycamera.CameraBase>;
 					public static Companion: io.github.triniwiz.fancycamera.CameraBase.Companion;
+					public setProcessEveryNthFrame(param0: number): void;
+					public getProcessEveryNthFrame(): number;
 					public setFaceDetectionOptions(param0: any): void;
 					public setMTimerTask$fancycamera_release(param0: java.util.TimerTask): void;
 					public setPause(param0: boolean): void;
@@ -592,6 +594,8 @@ declare module io {
 				export class FancyCamera {
 					public static class: java.lang.Class<io.github.triniwiz.fancycamera.FancyCamera>;
 					public static Companion: io.github.triniwiz.fancycamera.FancyCamera.Companion;
+					public setProcessEveryNthFrame(param0: number): void;
+					public getProcessEveryNthFrame(): number;
 					public setFaceDetectionOptions(param0: any): void;
 					public setPause(param0: boolean): void;
 					public getAllowExifRotation(): boolean;

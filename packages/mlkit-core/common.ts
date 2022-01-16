@@ -45,7 +45,7 @@ export enum FaceDetectionPerformanceMode {
 
 @CSSType('MLKitView')
 export class MLKitViewBase extends ContainerView {
-    public static detectionEvent = 'detection';
+    static detectionEvent = 'detection';
     cameraPosition: CameraPosition;
     detectionType: DetectionType;
     barcodeFormats: BarcodeFormats[];
@@ -57,6 +57,7 @@ export class MLKitViewBase extends ContainerView {
     objectDetectionClassify: boolean;
     torchOn: boolean;
     pause: boolean;
+    processEveryNthFrame: number;
 }
 
 export const cameraPositionProperty = new Property<MLKitViewBase, CameraPosition>({
@@ -140,7 +141,6 @@ export const torchOnProperty = new Property<MLKitViewBase, boolean>({
 torchOnProperty.register(MLKitViewBase);
 
 
-
 export const pauseProperty = new Property<MLKitViewBase, boolean>({
     name: 'pause',
     defaultValue: false,
@@ -148,3 +148,10 @@ export const pauseProperty = new Property<MLKitViewBase, boolean>({
 });
 
 pauseProperty.register(MLKitViewBase);
+
+export const processEveryNthFrameProperty = new Property<MLKitViewBase, number>({
+    name: 'processEveryNthFrame',
+    defaultValue: 0
+});
+
+processEveryNthFrameProperty.register(MLKitViewBase);

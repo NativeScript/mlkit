@@ -312,9 +312,14 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
     let session = AVCaptureSession()
     let encoder = JSONEncoder()
     var detectorType = TNSMLKitDetectionType.All
+    var processEveryNthFrame = 0
+    private var currentFrame = 0
     
     
     private func updateTorchMode(_ videoInput: AVCaptureDeviceInput?){
+        if(!session.isRunning){
+            return
+        }
         do {
             guard videoInput?.device != nil else {
                 return
@@ -360,10 +365,12 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                 if(self.isSessionSetup){
                     if(self.pause && self.session.isRunning){
                         self.session.stopRunning()
+                        self.resetCurrentFrame()
                     }
                     
                     if(!self.pause && !self.session.isRunning){
                         self.session.startRunning()
+                        self.updateTorchMode(self.videoInput)
                     }
                 }
             }
@@ -423,6 +430,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
         sessionQueue.async {
             if(self.isSessionSetup && !self.session.isRunning && !self.pause){
                 self.session.startRunning()
+                self.updateTorchMode(self.videoInput)
             }
         }
         
@@ -432,6 +440,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
         sessionQueue.async {
             if(self.isSessionSetup && self.session.isRunning){
                 self.session.stopRunning()
+                self.resetCurrentFrame()
             }
         }
     }
@@ -465,10 +474,9 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                 }
                 
                
-                updateTorchMode(videoInput)
-                
                 if(wasRunning){
                     self.session.stopRunning()
+                    self.resetCurrentFrame()
                 }
                 
                 
@@ -483,6 +491,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                 }
                 if(wasRunning && !self.pause){
                     self.session.startRunning()
+                    updateTorchMode(videoInput)
                 }
             }
         }
@@ -509,11 +518,31 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
         return captureDevice
     }
     
+    
+    public func hasCameraPermission() -> Bool {
+        return AVCaptureDevice.authorizationStatus(for: .video) == .authorized
+    }
+    
+    
+    public func requestCameraPermission(_ callback: @escaping ((Bool) -> Void)) {
+        AVCaptureDevice.requestAccess(for: .video) { result in
+            DispatchQueue.main.async {
+                callback(result)
+            }
+        }
+    }
+
+    
     public func openCamera(){
         sessionQueue.async {
             if(self.isSessionSetup){
                 return
             }
+            
+            if(!self.hasCameraPermission()){
+                return
+            }
+            
             let captureDevice = self.getVideoDevice()
             guard captureDevice != nil else {return}
             do {
@@ -588,13 +617,37 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
             return .up;
         }
     }
+
+
+    private func resetCurrentFrame() {
+        if (isProcessingEveryNthFrame()) {
+            self.currentFrame = 0
+        }
+    }
+
+    private func isProcessingEveryNthFrame() -> Bool {
+        return self.processEveryNthFrame > 0
+    }
+
+    private func incrementCurrentFrame() {
+        if (isProcessingEveryNthFrame()) {
+            self.currentFrame += 1
+        }
+    }
     
     
     
     public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        if(onScanCallback == nil){return}
         autoreleasepool {
             let buffer = CMSampleBufferGetImageBuffer(sampleBuffer)
             guard buffer != nil else {return}
+
+            if(self.currentFrame != self.processEveryNthFrame){
+                self.incrementCurrentFrame()
+                return
+            }
+
             let image = VisionImage(buffer: sampleBuffer)
             
             image.orientation = getOrientation(deviceOrientation: UIDevice.current.orientation, cameraPosition: videoInput!.device.position)
@@ -609,7 +662,9 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                         if(!barCodes.isEmpty) {
                             let response = toJSON(barCodes)
                             if(response != nil){
-                                onScanCallback?(response!, TNSMLKitDetectionType.Barcode.string())
+                                DispatchQueue.main.async {
+                                    self.onScanCallback!(response!, TNSMLKitDetectionType.Barcode.string())
+                                }
                             }
                         }
                     }
@@ -628,7 +683,9 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                         if(!faces.isEmpty) {
                             let response = toJSON(faces)
                             if response != nil {
-                                onScanCallback?(response!, TNSMLKitDetectionType.Face.string())
+                                DispatchQueue.main.async {
+                                    self.onScanCallback!(response!, TNSMLKitDetectionType.Face.string())
+                                }
                             }
                         }
                     }
@@ -648,7 +705,9 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                         if(!poses.isEmpty) {
                             let response = toJSON(poses)
                             if response != nil {
-                                onScanCallback?(response!, TNSMLKitDetectionType.Pose.string())
+                                DispatchQueue.main.async {
+                                    self.onScanCallback!(response!, TNSMLKitDetectionType.Pose.string())
+                                }
                             }
                         }
                     }
@@ -668,7 +727,9 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                         if(!labels.isEmpty) {
                             let response = toJSON(labels)
                             if response != nil {
-                                onScanCallback?(response!, TNSMLKitDetectionType.Image.string())
+                                DispatchQueue.main.async {
+                                    self.onScanCallback!(response!, TNSMLKitDetectionType.Image.string())
+                                }
                             }
                         }
                     }
@@ -688,7 +749,9 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                         if(!objects.isEmpty) {
                             let response = toJSON(objects)
                             if response != nil {
-                                onScanCallback?(response!, TNSMLKitDetectionType.Object.string())
+                                DispatchQueue.main.async {
+                                    self.onScanCallback!(response!, TNSMLKitDetectionType.Object.string())
+                                }
                             }
                         }
                     }
@@ -709,7 +772,9 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                         if(!texts.isEmpty) {
                             let response = toJSON(texts)
                             if response != nil {
-                                onScanCallback?(response!, TNSMLKitDetectionType.Text.string())
+                                DispatchQueue.main.async {
+                                    self.onScanCallback!(response!, TNSMLKitDetectionType.Text.string())
+                                }
                             }
                         }
                     }
@@ -738,7 +803,10 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                         ret["width"] = maskWidth
                         ret["height"] = maskHeight
                         ret["data"] = data
-                        onScanCallback?(ret, TNSMLKitDetectionType.Selfie.string())
+                        
+                        DispatchQueue.main.async {
+                            self.onScanCallback!(ret, TNSMLKitDetectionType.Selfie.string())
+                        }
                     
                     }
                 }catch {}
@@ -746,7 +814,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
 #endif
             
             
-            
+           self.resetCurrentFrame() 
         }
         
     }
