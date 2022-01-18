@@ -594,6 +594,9 @@ declare module io {
 				export class FancyCamera {
 					public static class: java.lang.Class<io.github.triniwiz.fancycamera.FancyCamera>;
 					public static Companion: io.github.triniwiz.fancycamera.FancyCamera.Companion;
+					public setRetrieveLatestImage(param0: boolean);
+					public getRetrieveLatestImage(): boolean;
+					public getLatestImage(): boolean;
 					public setProcessEveryNthFrame(param0: number): void;
 					public getProcessEveryNthFrame(): number;
 					public setFaceDetectionOptions(param0: any): void;

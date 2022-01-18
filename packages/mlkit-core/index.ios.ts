@@ -73,6 +73,38 @@ export class MLKitView extends MLKitViewBase {
     return nativeView;
   }
 
+  //@ts-ignore
+  get retrieveLatestImage(): boolean {
+    if (!this.#mlkitHelper) {
+      return false;
+    }
+    return this.#mlkitHelper.retrieveLatestImage;
+  }
+
+  set retrieveLatestImage(value: boolean) {
+    this.#mlkitHelper.retrieveLatestImage = value;
+  }
+
+  #latestImage: ImageSource;
+
+  //@ts-ignore
+  get latestImage(): ImageSource {
+    if (!this.#mlkitHelper) {
+      return null;
+    }
+
+    const image = this.#mlkitHelper.latestImage;
+    if (!image) {
+      return null;
+    }
+
+    if (image !== this.#latestImage.ios) {
+      this.#latestImage = new ImageSource(image);
+    }
+
+    return this.#latestImage;
+  }
+
   initNativeView() {
     super.initNativeView();
     this.#setupDetectors();

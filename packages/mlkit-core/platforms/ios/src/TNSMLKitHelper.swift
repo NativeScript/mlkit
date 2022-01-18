@@ -296,6 +296,22 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
     let sessionQueue = DispatchQueue(label: "TNSMLKitHelperSession")
     private var isSessionSetup = false
     private var videoInput: AVCaptureDeviceInput?
+    private var _latestImage: UIImage? = nil
+    
+    var retrieveLatestImage = false {
+        didSet {
+            if(_latestImage != nil){
+                _latestImage = nil
+            }
+        }
+    }
+    
+    var latestImage: UIImage? {
+        get {
+            return _latestImage
+        }
+    }
+    
     var cameraPosition = TNSMLKitHelperCameraPosition.Back {
         didSet {
             if(!isSessionSetup){
@@ -473,7 +489,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                     return
                 }
                 
-               
+                
                 if(wasRunning){
                     self.session.stopRunning()
                     self.resetCurrentFrame()
@@ -531,7 +547,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
             }
         }
     }
-
+    
     
     public func openCamera(){
         sessionQueue.async {
@@ -617,18 +633,18 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
             return .up;
         }
     }
-
-
+    
+    
     private func resetCurrentFrame() {
         if (isProcessingEveryNthFrame()) {
             self.currentFrame = 0
         }
     }
-
+    
     private func isProcessingEveryNthFrame() -> Bool {
         return self.processEveryNthFrame > 0
     }
-
+    
     private func incrementCurrentFrame() {
         if (isProcessingEveryNthFrame()) {
             self.currentFrame += 1
@@ -636,21 +652,33 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
     }
     
     
+    let context = CIContext()
     
     public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         if(onScanCallback == nil){return}
         autoreleasepool {
             let buffer = CMSampleBufferGetImageBuffer(sampleBuffer)
             guard buffer != nil else {return}
-
+            
             if(self.currentFrame != self.processEveryNthFrame){
                 self.incrementCurrentFrame()
                 return
             }
-
+            
             let image = VisionImage(buffer: sampleBuffer)
             
+            
             image.orientation = getOrientation(deviceOrientation: UIDevice.current.orientation, cameraPosition: videoInput!.device.position)
+            
+            if retrieveLatestImage {
+                let ciimage = CIImage(cvImageBuffer: buffer!)
+                
+                if let cgImage = context.createCGImage(ciimage, from: ciimage.extent) {
+                    self._latestImage = UIImage(cgImage: cgImage)
+                }else {
+                    self._latestImage = nil
+                }
+            }
             
             
 #if canImport(MLKitBarcodeScanning)
@@ -792,12 +820,12 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                         let mask = result!
                         let maskWidth = CVPixelBufferGetWidth(mask.buffer)
                         let maskHeight = CVPixelBufferGetHeight(mask.buffer)
-
+                        
                         CVPixelBufferLockBaseAddress(mask.buffer, CVPixelBufferLockFlags.readOnly)
                         let maskBytesPerRow = CVPixelBufferGetBytesPerRow(mask.buffer)
                         let maskAddress =
-                            CVPixelBufferGetBaseAddress(mask.buffer)!.bindMemory(
-                                to: Float32.self, capacity: maskBytesPerRow * maskHeight)
+                        CVPixelBufferGetBaseAddress(mask.buffer)!.bindMemory(
+                            to: Float32.self, capacity: maskBytesPerRow * maskHeight)
                         let data = Data(bytes: maskAddress, count: maskBytesPerRow * maskHeight)
                         var ret: [String: Any] = [:]
                         ret["width"] = maskWidth
@@ -807,14 +835,14 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                         DispatchQueue.main.async {
                             self.onScanCallback!(ret, TNSMLKitDetectionType.Selfie.string())
                         }
-                    
+                        
                     }
                 }catch {}
             }
 #endif
             
             
-           self.resetCurrentFrame() 
+            self.resetCurrentFrame()
         }
         
     }
