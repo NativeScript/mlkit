@@ -69,7 +69,7 @@ export class MLKitView extends MLKitViewBase {
     this.#camera.setRetrieveLatestImage(value);
   }
 
-  #latestImage: ImageSource;
+  #latestImage: ImageSource = null;
 
   //@ts-ignore
   get latestImage(): ImageSource {
@@ -82,7 +82,7 @@ export class MLKitView extends MLKitViewBase {
       return null;
     }
 
-    if (image !== this.#latestImage.android) {
+    if (image !== this.#latestImage?.android) {
       this.#latestImage = new ImageSource(image);
     }
 

@@ -85,7 +85,7 @@ export class MLKitView extends MLKitViewBase {
     this.#mlkitHelper.retrieveLatestImage = value;
   }
 
-  #latestImage: ImageSource;
+  #latestImage: ImageSource = null;
 
   //@ts-ignore
   get latestImage(): ImageSource {
@@ -98,7 +98,7 @@ export class MLKitView extends MLKitViewBase {
       return null;
     }
 
-    if (image !== this.#latestImage.ios) {
+    if (image !== this.#latestImage?.ios) {
       this.#latestImage = new ImageSource(image);
     }
 
