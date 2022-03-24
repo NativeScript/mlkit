@@ -251,7 +251,9 @@ export class MLKitView extends MLKitViewBase {
     }
 
     if (!this.#onFaceListener && (this.detectionType === DetectionType.Face || this.detectionType === DetectionType.All)) {
-      this.#faceDetectionOptions = new io.github.triniwiz.fancycamera.facedetection.FaceDetection.Options();
+      if (FACE_DETECTION_SUPPORTED()) {
+        this.#faceDetectionOptions = new io.github.triniwiz.fancycamera.facedetection.FaceDetection.Options();
+      }
       this.#onFaceListener = new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
         onSuccess(param0: string) {
           const hasListener = ref?.get?.().hasListeners?.(MLKitView.detectionEvent);
