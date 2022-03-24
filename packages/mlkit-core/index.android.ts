@@ -14,12 +14,12 @@ const DetectorType_Pose = lazy(() => io.github.triniwiz.fancycamera.DetectorType
 const DetectorType_Text = lazy(() => io.github.triniwiz.fancycamera.DetectorType.Text);
 const DetectorType_Selfie = lazy(() => (io as any).github.triniwiz.fancycamera.DetectorType.Selfie);
 
-const BARCODE_SCANNER_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.barcodescanning?.BarcodeScanner);
-const TEXT_RECOGNITION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.textrecognition?.TextRecognition);
-const FACE_DETECTION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.facedetection?.FaceDetection);
-const IMAGE_LABELING_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.imagelabeling?.ImageLabeling);
-const OBJECT_DETECTION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.objectdetection?.ObjectDetection);
-const POSE_DETECTION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.posedetection?.PoseDetection);
+const BARCODE_SCANNER_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.barcodescanning?.BarcodeScanner !== 'undefined');
+const TEXT_RECOGNITION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.textrecognition?.TextRecognition !== 'undefined');
+const FACE_DETECTION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.facedetection?.FaceDetection !== 'undefined');
+const IMAGE_LABELING_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.imagelabeling?.ImageLabeling !== 'undefined');
+const OBJECT_DETECTION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.objectdetection?.ObjectDetection !== 'undefined');
+const POSE_DETECTION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.posedetection?.PoseDetection !== 'undefined');
 
 const TORCH_MODE_ON = lazy(() => io.github.triniwiz.fancycamera.CameraFlashMode.TORCH);
 const TORCH_MODE_OFF = lazy(() => io.github.triniwiz.fancycamera.CameraFlashMode.OFF);
@@ -392,7 +392,7 @@ export class MLKitView extends MLKitViewBase {
   }
 
   [faceDetectionTrackingEnabledProperty.setNative](value) {
-    if (!FACE_DETECTION_SUPPORTED) {
+    if (!FACE_DETECTION_SUPPORTED()) {
       return;
     }
     if (!this.#faceDetectionOptions) {
@@ -405,7 +405,7 @@ export class MLKitView extends MLKitViewBase {
   }
 
   [faceDetectionMinFaceSizeProperty.setNative](value) {
-    if (!FACE_DETECTION_SUPPORTED) {
+    if (!FACE_DETECTION_SUPPORTED()) {
       return;
     }
 
@@ -418,7 +418,7 @@ export class MLKitView extends MLKitViewBase {
   }
 
   [faceDetectionPerformanceModeProperty.setNative](value) {
-    if (!FACE_DETECTION_SUPPORTED) {
+    if (!FACE_DETECTION_SUPPORTED()) {
       return;
     }
 
@@ -456,7 +456,7 @@ export class MLKitView extends MLKitViewBase {
   }
 
   [objectDetectionMultipleProperty.setNative](value) {
-    if (!OBJECT_DETECTION_SUPPORTED) {
+    if (!OBJECT_DETECTION_SUPPORTED()) {
       return;
     }
 
