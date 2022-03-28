@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/mlkit-object-detection",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "NativeScript MLKit Object Detection module",
   "main": "index",
   "typings": "index.d.ts",

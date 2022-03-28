@@ -1,6 +1,6 @@
 {
     "name": "@nativescript/mlkit-digital-ink-recognition",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "NativeScript MLKit Digital Ink Recognition module",
     "main": "index",
     "typings": "index.d.ts",
