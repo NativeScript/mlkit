@@ -4,14 +4,14 @@ import '@nativescript/core';
 import lazy from '@nativescript/core/utils/lazy';
 import { DetectionEvent, StillImageDetectionOptions } from '.';
 
-const BARCODE_SCANNER_SUPPORTED = lazy(() => typeof MLKBarcodeScanner);
-const TEXT_RECOGNITION_SUPPORTED = lazy(() => typeof MLKTextRecognizer);
-const FACE_DETECTION_SUPPORTED = lazy(() => typeof MLKFaceDetector);
-const IMAGE_LABELING_SUPPORTED = lazy(() => typeof MLKImageLabeler);
-const OBJECT_DETECTION_SUPPORTED = lazy(() => typeof MLKObjectDetector);
-const POSE_DETECTION_SUPPORTED = lazy(() => typeof MLKPoseDetector);
-const DIGITALINK_RECOGNITION_SUPPORTED = lazy(() => typeof MLKDigitalInkRecognizer);
-const SELFIE_SEGMENTATION_SUPPORTED = lazy(() => typeof MLKSegmenter);
+const BARCODE_SCANNER_SUPPORTED = lazy(() => typeof MLKBarcodeScanner !== 'undefined');
+const TEXT_RECOGNITION_SUPPORTED = lazy(() => typeof MLKTextRecognizer !== 'undefined');
+const FACE_DETECTION_SUPPORTED = lazy(() => typeof MLKFaceDetector !== 'undefined');
+const IMAGE_LABELING_SUPPORTED = lazy(() => typeof MLKImageLabeler !== 'undefined');
+const OBJECT_DETECTION_SUPPORTED = lazy(() => typeof MLKObjectDetector !== 'undefined');
+const POSE_DETECTION_SUPPORTED = lazy(() => typeof MLKPoseDetector !== 'undefined');
+const DIGITALINK_RECOGNITION_SUPPORTED = lazy(() => typeof MLKDigitalInkRecognizer !== 'undefined');
+const SELFIE_SEGMENTATION_SUPPORTED = lazy(() => typeof MLKSegmenter !== 'undefined');
 
 export { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty as imageLablerConfidenceThresholdProperty, objectDetectionClassifyProperty, objectDetectionMultipleProperty } from './common';
 
