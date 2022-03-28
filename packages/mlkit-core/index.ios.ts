@@ -220,37 +220,39 @@ export class MLKitView extends MLKitViewBase {
   }
 
   #setupDetectors() {
-    if (TEXT_RECOGNITION_SUPPORTED() && !this.#textRecognizer && (this.detectionType === DetectionType.Text || this.detectionType === DetectionType.All)) {
-      this.#textRecognizer = MLKTextRecognizer.textRecognizer();
-      this.#mlkitHelper.textRecognizer = this.#textRecognizer;
+    if (!this.#textRecognizer && (this.detectionType === DetectionType.Text || this.detectionType === DetectionType.All)) {
+      if (TEXT_RECOGNITION_SUPPORTED()) {
+        this.#textRecognizer = MLKTextRecognizer.textRecognizer();
+        this.#mlkitHelper.textRecognizer = this.#textRecognizer;
+      }
     }
 
-    if (BARCODE_SCANNER_SUPPORTED() && !this.#barcodeScanner && (this.detectionType === DetectionType.Barcode || this.detectionType === DetectionType.All)) {
+    if (!this.#barcodeScanner && (this.detectionType === DetectionType.Barcode || this.detectionType === DetectionType.All)) {
       this.#setupBarcodeScanner(this.barcodeFormats);
     }
 
     // TODO
-    if (DIGITALINK_RECOGNITION_SUPPORTED() && !this.#digitalInkRecognizer && (this.detectionType === DetectionType.DigitalInk || this.detectionType === DetectionType.All)) {
+    if (!this.#digitalInkRecognizer && (this.detectionType === DetectionType.DigitalInk || this.detectionType === DetectionType.All)) {
       // MLKDigitalInkRecognizer.digitalInkRecognizerWithOptions()
     }
 
-    if (FACE_DETECTION_SUPPORTED() && !this.#faceDetector && (this.detectionType === DetectionType.Face || this.detectionType === DetectionType.All)) {
+    if (!this.#faceDetector && (this.detectionType === DetectionType.Face || this.detectionType === DetectionType.All)) {
       this.#setupFaceDetector();
     }
 
-    if (IMAGE_LABELING_SUPPORTED() && !this.#imageLabeler && (this.detectionType === DetectionType.Image || this.detectionType === DetectionType.All)) {
+    if (!this.#imageLabeler && (this.detectionType === DetectionType.Image || this.detectionType === DetectionType.All)) {
       this.#setImageLabeler();
     }
 
-    if (OBJECT_DETECTION_SUPPORTED() && !this.#objectDetector && (this.detectionType === DetectionType.Object || this.detectionType === DetectionType.All)) {
+    if (!this.#objectDetector && (this.detectionType === DetectionType.Object || this.detectionType === DetectionType.All)) {
       this.#setupObjectDetection();
     }
 
-    if (POSE_DETECTION_SUPPORTED() && !this.#poseDetector && (this.detectionType === DetectionType.Pose || this.detectionType === DetectionType.All)) {
+    if (!this.#poseDetector && (this.detectionType === DetectionType.Pose || this.detectionType === DetectionType.All)) {
       this.#setPoseDetection();
     }
 
-    if (SELFIE_SEGMENTATION_SUPPORTED() && !this.#selfieSegmentor && (this.detectionType === DetectionType.Selfie || this.detectionType === DetectionType.All)) {
+    if (!this.#selfieSegmentor && (this.detectionType === DetectionType.Selfie || this.detectionType === DetectionType.All)) {
       this.#setSelfieSegmentation();
     }
   }
@@ -394,7 +396,7 @@ export class MLKitView extends MLKitViewBase {
   }
 
   #setupObjectDetection() {
-    if (!OBJECT_DETECTION_SUPPORTED) {
+    if (!OBJECT_DETECTION_SUPPORTED()) {
       return;
     }
     if (!this.#objectDetectionOptions) {
@@ -411,7 +413,7 @@ export class MLKitView extends MLKitViewBase {
   }
 
   #setPoseDetection() {
-    if (!POSE_DETECTION_SUPPORTED) {
+    if (!POSE_DETECTION_SUPPORTED()) {
       return;
     }
     if (!this.#poseDetectionOptions) {
