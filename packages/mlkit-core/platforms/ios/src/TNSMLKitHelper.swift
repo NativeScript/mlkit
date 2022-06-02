@@ -667,17 +667,16 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
             
             let image = VisionImage(buffer: sampleBuffer)
             
+            let orientation = getOrientation(deviceOrientation: UIDevice.current.orientation, cameraPosition: videoInput!.device.position)
             
-            image.orientation = getOrientation(deviceOrientation: UIDevice.current.orientation, cameraPosition: videoInput!.device.position)
+            image.orientation = orientation
             
             if retrieveLatestImage {
                 let ciimage = CIImage(cvImageBuffer: buffer!)
                 
-                if let cgImage = context.createCGImage(ciimage, from: ciimage.extent) {
-                    self._latestImage = UIImage(cgImage: cgImage)
-                }else {
-                    self._latestImage = nil
-                }
+                self._latestImage = UIImage(ciImage: ciimage, scale: 1.0, orientation: orientation)
+            } else {
+                self._latestImage = nil
             }
             
             
