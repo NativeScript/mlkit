@@ -1,26 +1,21 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDirs": [
-      ".",
-      "../.."
-    ],
-    "baseUrl": ".",
     "paths": {
-      "~/*": [
-        "src/*"
-      ],
-      "@nativescript/*": [
-        "../../dist/packages/*"
-      ],
-      "@demo/shared": [
-        "../../tools/demo/index.ts"
-      ]
+      "~/*": ["src/*"],
+      "@demo/shared": ["tools/demo/index.ts"],
+      "@nativescript/mlkit-text-recognition": ["packages/mlkit-text-recognition/index.ts"],
+      "@nativescript/mlkit-core": ["packages/mlkit-core/index.d.ts"],
+      "@nativescript/mlkit-core/angular": ["packages/mlkit-core/angular/index.ts"],
+      "@nativescript/mlkit-barcode-scanning": ["packages/mlkit-barcode-scanning/index.ts"],
+      "@nativescript/mlkit-face-detection": ["packages/mlkit-face-detection/index.ts"],
+      "@nativescript/mlkit-image-labeling": ["packages/mlkit-image-labeling/index.ts"],
+      "@nativescript/mlkit-object-detection": ["packages/mlkit-object-detection/index.ts"],
+      "@nativescript/mlkit-digital-ink-recognition": ["packages/mlkit-digital-ink-recognition/index.ts"],
+      "@nativescript/mlkit-pose-detection": ["packages/mlkit-pose-detection/index.ts"],
+      "@nativescript/mlkit-selfie-segmentation": ["packages/mlkit-selfie-segmentation/index.ts"]
     }
   },
-  "files": [
-    "./references.d.ts",
-    "./src/main.ts",
-    "./src/polyfills.ts"
-  ]
+  "files": ["./references.d.ts", "./src/main.ts", "./src/polyfills.ts"],
+  "include": ["../../packages/**/references.d.ts"]
 }

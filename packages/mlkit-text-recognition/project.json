@@ -1,0 +1,61 @@
+{
+  "projectType": "library",
+  "sourceRoot": "packages/mlkit-text-recognition",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "options": {
+        "outputPath": "dist/packages/mlkit-text-recognition",
+        "tsConfig": "packages/mlkit-text-recognition/tsconfig.json",
+        "packageJson": "packages/mlkit-text-recognition/package.json",
+        "main": "packages/mlkit-text-recognition/index.ts",
+        "assets": [
+          "packages/mlkit-text-recognition/*.md",
+          "LICENSE",
+          {
+            "glob": "**/*",
+            "input": "packages/mlkit-text-recognition/platforms/",
+            "output": "./platforms/"
+          }
+        ]
+      },
+      "dependsOn": [
+        {
+          "target": "build.all",
+          "projects": "dependencies"
+        }
+      ]
+    },
+    "build.all": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["node tools/scripts/build-finish.ts mlkit-text-recognition"],
+        "parallel": false
+      },
+      "outputs": ["dist/packages/mlkit-text-recognition"],
+      "dependsOn": [
+        {
+          "target": "build.all",
+          "projects": "dependencies"
+        },
+        {
+          "target": "build",
+          "projects": "self"
+        }
+      ]
+    },
+    "focus": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["nx g @nativescript/plugin-tools:focus-packages mlkit-text-recognition"],
+        "parallel": false
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["packages/mlkit-text-recognition/**/*.ts"]
+      }
+    }
+  }
+}

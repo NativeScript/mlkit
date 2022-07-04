@@ -1,0 +1,61 @@
+{
+  "projectType": "library",
+  "sourceRoot": "packages/mlkit-digital-ink-recognition",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "options": {
+        "outputPath": "dist/packages/mlkit-digital-ink-recognition",
+        "tsConfig": "packages/mlkit-digital-ink-recognition/tsconfig.json",
+        "packageJson": "packages/mlkit-digital-ink-recognition/package.json",
+        "main": "packages/mlkit-digital-ink-recognition/index.ts",
+        "assets": [
+          "packages/mlkit-digital-ink-recognition/*.md",
+          "LICENSE",
+          {
+            "glob": "**/*",
+            "input": "packages/mlkit-digital-ink-recognition/platforms/",
+            "output": "./platforms/"
+          }
+        ]
+      },
+      "dependsOn": [
+        {
+          "target": "build.all",
+          "projects": "dependencies"
+        }
+      ]
+    },
+    "build.all": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["node tools/scripts/build-finish.ts mlkit-digital-ink-recognition"],
+        "parallel": false
+      },
+      "outputs": ["dist/packages/mlkit-digital-ink-recognition"],
+      "dependsOn": [
+        {
+          "target": "build.all",
+          "projects": "dependencies"
+        },
+        {
+          "target": "build",
+          "projects": "self"
+        }
+      ]
+    },
+    "focus": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["nx g @nativescript/plugin-tools:focus-packages mlkit-digital-ink-recognition"],
+        "parallel": false
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["packages/mlkit-digital-ink-recognition/**/*.ts"]
+      }
+    }
+  }
+}

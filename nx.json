@@ -13,46 +13,22 @@
     "tslint.json": "*",
     "nx.json": "*"
   },
-  "projects": {
-    "demo": {
-      "tags": []
-    },
-    "demo-angular": {
-      "tags": []
-    },
-    "all": {
-      "tags": []
-    },
-    "mlkit-text-recognition": {
-      "tags": []
-    },
-    "mlkit-core": {
-      "tags": []
-    },
-    "mlkit-barcode-scanning": {
-      "tags": []
-    },
-    "mlkit-face-detection": {
-      "tags": []
-    },
-    "mlkit-image-labeling": {
-      "tags": []
-    },
-    "mlkit-object-detection": {
-      "tags": []
-    },
-    "mlkit-digital-ink-recognition": {
-      "tags": []
-    },
-    "mlkit-pose-detection": {
-      "tags": []
-    },
-    "mlkit-selfie-segmentation": {
-      "tags": []
-    }
-  },
   "workspaceLayout": {
     "appsDir": "apps",
     "libsDir": "packages"
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build", "build.all", "lint", "test", "e2e"],
+        "runtimeCacheInputs": ["node -v"],
+        "parallel": 1,
+        "useDaemonProcess": false
+      }
+    }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/workspace"
   }
 }

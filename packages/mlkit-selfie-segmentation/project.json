@@ -1,0 +1,61 @@
+{
+  "projectType": "library",
+  "sourceRoot": "packages/mlkit-selfie-segmentation",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "options": {
+        "outputPath": "dist/packages/mlkit-selfie-segmentation",
+        "tsConfig": "packages/mlkit-selfie-segmentation/tsconfig.json",
+        "packageJson": "packages/mlkit-selfie-segmentation/package.json",
+        "main": "packages/mlkit-selfie-segmentation/index.ts",
+        "assets": [
+          "packages/mlkit-selfie-segmentation/*.md",
+          "LICENSE",
+          {
+            "glob": "**/*",
+            "input": "packages/mlkit-selfie-segmentation/platforms/",
+            "output": "./platforms/"
+          }
+        ]
+      },
+      "dependsOn": [
+        {
+          "target": "build.all",
+          "projects": "dependencies"
+        }
+      ]
+    },
+    "build.all": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["node tools/scripts/build-finish.ts mlkit-selfie-segmentation"],
+        "parallel": false
+      },
+      "outputs": ["dist/packages/mlkit-selfie-segmentation"],
+      "dependsOn": [
+        {
+          "target": "build.all",
+          "projects": "dependencies"
+        },
+        {
+          "target": "build",
+          "projects": "self"
+        }
+      ]
+    },
+    "focus": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["nx g @nativescript/plugin-tools:focus-packages mlkit-selfie-segmentation"],
+        "parallel": false
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["packages/mlkit-selfie-segmentation/**/*.ts"]
+      }
+    }
+  }
+}

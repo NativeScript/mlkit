@@ -1,0 +1,62 @@
+{
+  "projectType": "library",
+  "sourceRoot": "packages/mlkit-core",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "options": {
+        "outputPath": "dist/packages/mlkit-core",
+        "tsConfig": "packages/mlkit-core/tsconfig.json",
+        "packageJson": "packages/mlkit-core/package.json",
+        "main": "packages/mlkit-core/index.d.ts",
+        "assets": [
+          "packages/mlkit-core/*.md",
+          "packages/mlkit-core/index.d.ts",
+          "LICENSE",
+          {
+            "glob": "**/*",
+            "input": "packages/mlkit-core/platforms/",
+            "output": "./platforms/"
+          }
+        ]
+      },
+      "dependsOn": [
+        {
+          "target": "build.all",
+          "projects": "dependencies"
+        }
+      ]
+    },
+    "build.all": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["node tools/scripts/build-finish.ts mlkit-core"],
+        "parallel": false
+      },
+      "outputs": ["dist/packages/mlkit-core"],
+      "dependsOn": [
+        {
+          "target": "build.all",
+          "projects": "dependencies"
+        },
+        {
+          "target": "build",
+          "projects": "self"
+        }
+      ]
+    },
+    "focus": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["nx g @nativescript/plugin-tools:focus-packages mlkit-core"],
+        "parallel": false
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["packages/mlkit-core/**/*.ts"]
+      }
+    }
+  }
+}

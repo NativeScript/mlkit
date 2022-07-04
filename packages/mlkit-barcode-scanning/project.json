@@ -1,0 +1,61 @@
+{
+  "projectType": "library",
+  "sourceRoot": "packages/mlkit-barcode-scanning",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "options": {
+        "outputPath": "dist/packages/mlkit-barcode-scanning",
+        "tsConfig": "packages/mlkit-barcode-scanning/tsconfig.json",
+        "packageJson": "packages/mlkit-barcode-scanning/package.json",
+        "main": "packages/mlkit-barcode-scanning/index.ts",
+        "assets": [
+          "packages/mlkit-barcode-scanning/*.md",
+          "LICENSE",
+          {
+            "glob": "**/*",
+            "input": "packages/mlkit-barcode-scanning/platforms/",
+            "output": "./platforms/"
+          }
+        ]
+      },
+      "dependsOn": [
+        {
+          "target": "build.all",
+          "projects": "dependencies"
+        }
+      ]
+    },
+    "build.all": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["node tools/scripts/build-finish.ts mlkit-barcode-scanning"],
+        "parallel": false
+      },
+      "outputs": ["dist/packages/mlkit-barcode-scanning"],
+      "dependsOn": [
+        {
+          "target": "build.all",
+          "projects": "dependencies"
+        },
+        {
+          "target": "build",
+          "projects": "self"
+        }
+      ]
+    },
+    "focus": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["nx g @nativescript/plugin-tools:focus-packages mlkit-barcode-scanning"],
+        "parallel": false
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["packages/mlkit-barcode-scanning/**/*.ts"]
+      }
+    }
+  }
+}

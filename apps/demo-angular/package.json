@@ -13,7 +13,7 @@
     "@nativescript/mlkit-selfie-segmentation": "file:../../dist/packages/mlkit-selfie-segmentation"
   },
   "devDependencies": {
-    "@nativescript/android": "~8.1.1",
-    "@nativescript/ios": "~8.1.0"
+    "@nativescript/android": "~8.2.0",
+    "@nativescript/ios": "~8.2.0"
   }
 }

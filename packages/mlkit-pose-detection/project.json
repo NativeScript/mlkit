@@ -1,0 +1,61 @@
+{
+  "projectType": "library",
+  "sourceRoot": "packages/mlkit-pose-detection",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "options": {
+        "outputPath": "dist/packages/mlkit-pose-detection",
+        "tsConfig": "packages/mlkit-pose-detection/tsconfig.json",
+        "packageJson": "packages/mlkit-pose-detection/package.json",
+        "main": "packages/mlkit-pose-detection/index.ts",
+        "assets": [
+          "packages/mlkit-pose-detection/*.md",
+          "LICENSE",
+          {
+            "glob": "**/*",
+            "input": "packages/mlkit-pose-detection/platforms/",
+            "output": "./platforms/"
+          }
+        ]
+      },
+      "dependsOn": [
+        {
+          "target": "build.all",
+          "projects": "dependencies"
+        }
+      ]
+    },
+    "build.all": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["node tools/scripts/build-finish.ts mlkit-pose-detection"],
+        "parallel": false
+      },
+      "outputs": ["dist/packages/mlkit-pose-detection"],
+      "dependsOn": [
+        {
+          "target": "build.all",
+          "projects": "dependencies"
+        },
+        {
+          "target": "build",
+          "projects": "self"
+        }
+      ]
+    },
+    "focus": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["nx g @nativescript/plugin-tools:focus-packages mlkit-pose-detection"],
+        "parallel": false
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["packages/mlkit-pose-detection/**/*.ts"]
+      }
+    }
+  }
+}

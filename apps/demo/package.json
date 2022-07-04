@@ -16,7 +16,7 @@
     "@nativescript/mlkit-text-recognition": "file:../../packages/mlkit-text-recognition"
   },
   "devDependencies": {
-    "@nativescript/android": "8.1.1",
-    "@nativescript/ios": "~8.1.0"
+    "@nativescript/android": "~8.2.0",
+    "@nativescript/ios": "~8.2.0"
   }
 }
