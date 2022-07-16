@@ -43,6 +43,11 @@ export declare class MLKitView extends MLKitViewBase {
   requestCameraPermission(): Promise<void>;
   hasCameraPermission(): boolean;
   on(event: 'detection', callback: (args: DetectionEvent) => void, thisArg?: any);
+  // Needed when 'on' method is overriden.
+  /**
+   * @hidden
+   */
+   on(eventNames: string, callback: (data: EventData) => void, thisArg?: any): void;
 }
 
 export function detectWithStillImage(image: any, options?: StillImageDetectionOptions): Promise<{ [key: string]: any }>;
