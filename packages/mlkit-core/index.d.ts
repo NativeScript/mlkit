@@ -47,7 +47,7 @@ export declare class MLKitView extends MLKitViewBase {
   /**
    * @hidden
    */
-   on(eventNames: string, callback: (data: EventData) => void, thisArg?: any): void;
+  on(eventNames: string, callback: (data: EventData) => void, thisArg?: any): void;
 }
 
 export function detectWithStillImage(image: any, options?: StillImageDetectionOptions): Promise<{ [key: string]: any }>;
