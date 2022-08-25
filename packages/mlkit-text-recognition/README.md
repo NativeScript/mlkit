@@ -6,8 +6,7 @@ ns plugin add @nativescript/mlkit-text-recognition
 
 ## Usage
 
-// TODO
-
+See [@nativescript/mlkit-core](/packages/mlkit-core/README.md) Usage
 ## License
 
 Apache License Version 2.0
