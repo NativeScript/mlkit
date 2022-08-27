@@ -1,7 +1,7 @@
 # @nativescript/mlkit-selfie-segmentation
 
 ```javascript
-ns plugin add @nativescript/mlkit-selfie-segmentation
+npm install @nativescript/mlkit-selfie-segmentation
 ```
 
 ## Usage

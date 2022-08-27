@@ -1,7 +1,7 @@
 # @nativescript/mlkit-digital-ink-recognition
 
 ```javascript
-ns plugin add @nativescript/mlkit-digital-ink-recognition
+npm install @nativescript/mlkit-digital-ink-recognition
 ```
 
 ## Usage

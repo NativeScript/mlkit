@@ -1,7 +1,7 @@
 # @nativescript/mlkit-image-labeling
 
 ```javascript
-ns plugin add @nativescript/mlkit-image-labeling
+npm install @nativescript/mlkit-image-labeling
 ```
 
 ## Usage

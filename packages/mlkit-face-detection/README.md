@@ -1,7 +1,7 @@
 # @nativescript/mlkit-face-detection
 
 ```javascript
-ns plugin add @nativescript/mlkit-face-detection
+npm install @nativescript/mlkit-face-detection
 ```
 
 ## Usage

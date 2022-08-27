@@ -1,7 +1,7 @@
 # @nativescript/mlkit-core
 
 ```javascript
-ns plugin add @nativescript/mlkit-core
+npm install @nativescript/mlkit-core
 ```
 
 ## Usage
@@ -69,7 +69,7 @@ detectionType="all"
 # Barcode Scanning
 
 ```javascript
-ns plugin add @nativescript/mlkit-barcode-scanning
+npm install @nativescript/mlkit-barcode-scanning
 ```
 
 ```ts
@@ -85,7 +85,7 @@ onDetection(event: DetectionEvent){
 # Face Detection
 
 ```javascript
-ns plugin add @nativescript/mlkit-face-detection
+npm install @nativescript/mlkit-face-detection
 ```
 
 ```ts
@@ -102,7 +102,7 @@ onDetection(event: DetectionEvent){
 # Image Labeling
 
 ```javascript
-ns plugin add @nativescript/mlkit-image-labeling
+npm install @nativescript/mlkit-image-labeling
 ```
 
 ```ts
@@ -119,7 +119,7 @@ onDetection(event: DetectionEvent){
 # Object Detection
 
 ```javascript
-ns plugin add @nativescript/mlkit-object-detection
+npm install @nativescript/mlkit-object-detection
 ```
 
 ```ts
@@ -135,7 +135,7 @@ onDetection(event: DetectionEvent){
 # Pose Detection
 
 ```javascript
-ns plugin add @nativescript/mlkit-pose-detection
+npm install @nativescript/mlkit-pose-detection
 ```
 
 ```ts
@@ -152,7 +152,7 @@ onDetection(event: DetectionEvent){
 # Text Recognition
 
 ```javascript
-ns plugin add @nativescript/mlkit-text-recognition
+npm install @nativescript/mlkit-text-recognition
 ```
 
 ```ts

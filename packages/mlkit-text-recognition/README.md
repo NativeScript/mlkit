@@ -1,7 +1,7 @@
 # @nativescript/mlkit-text-recognition
 
 ```javascript
-ns plugin add @nativescript/mlkit-text-recognition
+npm install @nativescript/mlkit-text-recognition
 ```
 
 ## Usage

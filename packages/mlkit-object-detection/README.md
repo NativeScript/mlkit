@@ -1,7 +1,7 @@
 # @nativescript/mlkit-object-detection
 
 ```javascript
-ns plugin add @nativescript/mlkit-object-detection
+npm install @nativescript/mlkit-object-detection
 ```
 
 ## Usage

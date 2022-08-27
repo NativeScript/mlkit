@@ -1,7 +1,7 @@
 # @nativescript/mlkit-barcode-scanning
 
 ```javascript
-ns plugin add @nativescript/mlkit-barcode-scanning
+npm install @nativescript/mlkit-barcode-scanning
 ```
 
 ## Usage

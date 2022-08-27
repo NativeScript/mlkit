@@ -1,7 +1,7 @@
 # @nativescript/mlkit-pose-detection
 
 ```javascript
-ns plugin add @nativescript/mlkit-pose-detection
+npm install @nativescript/mlkit-pose-detection
 ```
 
 ## Usage
