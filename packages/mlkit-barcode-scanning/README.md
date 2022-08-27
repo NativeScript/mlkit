@@ -6,7 +6,7 @@ ns plugin add @nativescript/mlkit-barcode-scanning
 
 ## Usage
 
-// TODO
+See [@nativescript/mlkit-core](/packages/mlkit-core/README.md) Usage
 
 ## License
 
