@@ -12,5 +12,6 @@
     "mlkit-pose-detection": "packages/mlkit-pose-detection",
     "mlkit-selfie-segmentation": "packages/mlkit-selfie-segmentation",
     "mlkit-text-recognition": "packages/mlkit-text-recognition"
-  }
+  },
+  "$schema": "./node_modules/nx/schemas/workspace-schema.json"
 }
