@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/mlkit-face-detection",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "NativeScript MLKit Face Detection module",
   "main": "index",
   "typings": "index.d.ts",

@@ -58,6 +58,7 @@ export class MLKitViewBase extends ContainerView {
   processEveryNthFrame: number;
   readonly latestImage?: ImageSource;
   retrieveLatestImage: boolean;
+  aspectRatio: 'aspect' | 'aspectFill' | 'fill';
 }
 
 export const cameraPositionProperty = new Property<MLKitViewBase, CameraPosition>({
@@ -66,6 +67,13 @@ export const cameraPositionProperty = new Property<MLKitViewBase, CameraPosition
 });
 
 cameraPositionProperty.register(MLKitViewBase);
+
+export const aspectRatioProperty = new Property<MLKitViewBase, 'aspect' | 'aspectFill' | 'fill'>({
+  name: 'aspectRatio',
+  defaultValue: 'aspect',
+});
+
+aspectRatioProperty.register(MLKitViewBase);
 
 export const detectionTypeProperty = new Property<MLKitViewBase, DetectionType>({
   name: 'detectionType',

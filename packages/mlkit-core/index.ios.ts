@@ -1,5 +1,5 @@
 import { ImageSource, Utils } from '@nativescript/core';
-import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, pauseProperty, processEveryNthFrameProperty, torchOnProperty } from './common';
+import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, pauseProperty, processEveryNthFrameProperty, torchOnProperty, aspectRatioProperty } from './common';
 import '@nativescript/core';
 import lazy from '@nativescript/core/utils/lazy';
 import { DetectionEvent, StillImageDetectionOptions } from '.';
@@ -16,6 +16,18 @@ const SELFIE_SEGMENTATION_SUPPORTED = lazy(() => typeof MLKSegmenter !== 'undefi
 export { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty as imageLablerConfidenceThresholdProperty, objectDetectionClassifyProperty, objectDetectionMultipleProperty } from './common';
 
 declare const TNSMLKitHelper, TNSMLKitHelperCameraPosition;
+
+function getGravity(value) {
+  switch (value) {
+    case 'fill':
+      return AVLayerVideoGravityResize;
+    case 'aspectFill':
+      return AVLayerVideoGravityResizeAspectFill;
+    case 'aspect':
+      return AVLayerVideoGravityResizeAspect;
+  }
+  return null;
+}
 
 export class MLKitView extends MLKitViewBase {
   #device: AVCaptureDevice;
@@ -68,7 +80,7 @@ export class MLKitView extends MLKitViewBase {
   createNativeView() {
     const nativeView = UIView.new();
     this.#preview = AVCaptureVideoPreviewLayer.layerWithSession(this.#mlkitHelper.session);
-    this.#preview.videoGravity = AVLayerVideoGravityResizeAspect;
+    this.#preview.videoGravity = getGravity(this.aspectRatio) ?? AVLayerVideoGravityResizeAspect;
     nativeView.layer.insertSublayerAtIndex(this.#preview, 0);
     return nativeView;
   }
@@ -143,6 +155,18 @@ export class MLKitView extends MLKitViewBase {
 
   get _selfieSegmentor() {
     return this.#selfieSegmentor;
+  }
+
+  [aspectRatioProperty.setNative](ratio) {
+    if (this.#preview) {
+      switch (ratio) {
+        case 'fill':
+        case 'aspectFill':
+        case 'aspect':
+          this.#preview.videoGravity = getGravity(ratio);
+          break;
+      }
+    }
   }
 
   [cameraPositionProperty.setNative](value: CameraPosition) {
