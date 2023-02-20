@@ -1,15 +1,18 @@
 # @nativescript/mlkit-core
 
-```javascript
+A plugin that provides a UI component to access the different functionalities of [Google's ML Kit](https://developers.google.com/ml-kit) SDK.
+
+```cli
 npm install @nativescript/mlkit-core
 ```
 
-## Usage
-
+## Use @nativescript/mlkit-core
 
 ## Core
 
-> **Important:** Ensure you've included xmlns:ui="@nativescript/mlkit-core" on the Page element
+1. Register [MLKitView]() by adding `xmlns:ui="@nativescript/mlkit-core"` to the Page element.
+
+2. Use the `ui` prefix to access `MLKitView` from the plugin.
 
 ```xml
 <ui:MLKitView
@@ -19,8 +22,9 @@ npm install @nativescript/mlkit-core
 />
 ```
 
+### Angular
 
-#### Angular
+1. In Angular, register []() by adding `MLKitModule` to the `NgModule` of the component where you want to use `MLKitView`.
 
 ```ts
 import { MLKitModule } from '@nativescript/mlkit-core/angular';
@@ -36,6 +40,7 @@ import { MLKitModule } from '@nativescript/mlkit-core/angular';
 })
 ```
 
+2. Use in markup.
 
 ```html
 <MLKitView
@@ -45,14 +50,21 @@ detectionType="all"
 ></MLKitView>
 ```
 
-#### Vue
+### Vue
+
+1. To [MLKitView](#mlkitview-class), register it in the `app.ts` by passing it to the `use` method of the app instance.
 
 ```ts
-import Vue from 'nativescript-vue'
-import MLKit from '@nativescript/mlkit-core/vue'
+import { createApp } from 'nativescript-vue'
 
-Vue.use(MLKit)
+import MLKit from '@nativescript/mlkit-core/vue'
+import Home from './components/Home.vue';
+
+const app = createApp(Home)
+
+app.use(MLKit)
 ```
+2. Use it in markup.
 
 ```html
 <MLKitView
@@ -66,10 +78,10 @@ detectionType="all"
 
 > **Important:** Detection works only for optional modules installed
 
-# Barcode Scanning
+#### Barcode Scanning
 
-```javascript
-npm install @nativescript/mlkit-barcode-scanning
+```cli
+npm i @nativescript/mlkit-barcode-scanning
 ```
 
 ```ts
@@ -82,15 +94,18 @@ onDetection(event: DetectionEvent){
 }
 ```
 
-# Face Detection
+For more details, see [@nativescript/mlkit-barcode-scanning](../mlkit-barcode-scanning/)
 
-```javascript
+#### Face Detection
+
+```cli
 npm install @nativescript/mlkit-face-detection
 ```
 
 ```ts
 import { DetectionType, DetectionEvent } from '@nativescript/mlkit-core';
 import { FaceResult } from '@nativescript/mlkit-face-detection';
+
 onDetection(event: DetectionEvent){
     if(event.type === DetectionType.Face){
         const faces: FaceResult[] = event.data;
@@ -98,10 +113,11 @@ onDetection(event: DetectionEvent){
 }
 ```
 
+For more details, see [@nativescript/mlkit-face-detection](../mlkit-face-detection/)
 
-# Image Labeling
+#### Image Labeling
 
-```javascript
+```cli
 npm install @nativescript/mlkit-image-labeling
 ```
 
@@ -115,10 +131,11 @@ onDetection(event: DetectionEvent){
 }
 ```
 
+For more details, see [nativescript/mlkit-image-labeling](../mlkit-image-labeling/)
 
-# Object Detection
+#### Object Detection
 
-```javascript
+```cli
 npm install @nativescript/mlkit-object-detection
 ```
 
@@ -131,10 +148,11 @@ onDetection(event: DetectionEvent){
     }
 }
 ```
+For more details, see [@nativescript/mlkit-object-detection](../mlkit-object-detection/)
 
-# Pose Detection
+#### Pose Detection
 
-```javascript
+```cli
 npm install @nativescript/mlkit-pose-detection
 ```
 
@@ -148,10 +166,11 @@ onDetection(event: DetectionEvent){
 }
 ```
 
+For more details, see [@nativescript/mlkit-pose-detection](../mlkit-pose-detection/)
 
-# Text Recognition
+#### Text Recognition
 
-```javascript
+```cli
 npm install @nativescript/mlkit-text-recognition
 ```
 
@@ -164,7 +183,50 @@ onDetection(event: DetectionEvent){
     }
 }
 ```
+For more details, see [@nativescript/mlkit-text-recognition](../mlkit-text-recognition/)
 
+## API
+### detectWithStillImage()
+
+```ts
+import { DetectionType, detectWithStillImage } from "@nativescript/mlkit-core";
+
+async processStill(args) {
+        try {
+           
+            result: { [key: string]: any } = await detectWithStillImage(image: ImageSource, options)
+        } catch (e) {
+            console.log(e);
+        }
+    }
+```
+Detects barcode, pose, etc from a still image instead of using the camera.
+
+### MLKItView class
+
+The MLKItView class provides the camera view for detection.
+ 
+It has the following members.
+
+#### Properties
+
+| Property | Type
+|:---------|:-----
+| `detectionEvent`| `string`
+| `cameraPosition` | [CameraPosition]()
+| `detectionType` | [DetectionType]()
+| `barcodeFormats` | [BarcodeFormats]()
+| `faceDetectionPerformanceMode` | [FaceDetectionPerformanceMode]()
+| `faceDetectionTrackingEnabled` | `boolean`
+| `faceDetectionMinFaceSize` | `number`
+| `imageLabelerConfidenceThreshold` | `number`
+| `objectDetectionMultiple` | `boolean`
+| `objectDetectionClassify` | `boolean`
+| `torchOn` | `boolean`
+| `pause` | `boolean`
+| `processEveryNthFrame` | `number`
+| `readonly latestImage?` | [ImageSource]()
+| `retrieveLatestImage` | `boolean`
 
 ## License
 
