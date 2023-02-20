@@ -2,6 +2,8 @@
 
 A plugin that provides a UI component to access the different functionalities of [Google's ML Kit](https://developers.google.com/ml-kit) SDK.
 
+## Installation
+
 ```cli
 npm install @nativescript/mlkit-core
 ```
@@ -10,7 +12,7 @@ npm install @nativescript/mlkit-core
 
 ## Core
 
-1. Register [MLKitView]() by adding `xmlns:ui="@nativescript/mlkit-core"` to the Page element.
+1. Register [MLKitView](#mlkitview-class) by adding `xmlns:ui="@nativescript/mlkit-core"` to the Page element.
 
 2. Use the `ui` prefix to access `MLKitView` from the plugin.
 
@@ -24,7 +26,7 @@ npm install @nativescript/mlkit-core
 
 ### Angular
 
-1. In Angular, register []() by adding `MLKitModule` to the `NgModule` of the component where you want to use `MLKitView`.
+1. In Angular, register the `MLKitView` by adding `MLKitModule` to the `NgModule` of the component where you want to use `MLKitView`.
 
 ```ts
 import { MLKitModule } from '@nativescript/mlkit-core/angular';
@@ -40,7 +42,7 @@ import { MLKitModule } from '@nativescript/mlkit-core/angular';
 })
 ```
 
-2. Use in markup.
+2. Use `MLKitView` in markup.
 
 ```html
 <MLKitView
@@ -52,7 +54,7 @@ detectionType="all"
 
 ### Vue
 
-1. To [MLKitView](#mlkitview-class), register it in the `app.ts` by passing it to the `use` method of the app instance.
+1. To use [MLKitView](#mlkitview-class), register it in the `app.ts` by passing it to the `use` method of the app instance.
 
 ```ts
 import { createApp } from 'nativescript-vue'
@@ -64,7 +66,7 @@ const app = createApp(Home)
 
 app.use(MLKit)
 ```
-2. Use it in markup.
+2. Use `MLKitView` in markup.
 
 ```html
 <MLKitView
@@ -201,6 +203,8 @@ async processStill(args) {
     }
 ```
 Detects barcode, pose, etc from a still image instead of using the camera.
+- `image`: The image to detect the object from
+- `options`: An _optional_ [StillImageDetectionOptions](#stillimagedetectionoptions) object parameter specifying the detection characteristics.
 
 ### MLKItView class
 
@@ -213,10 +217,10 @@ It has the following members.
 | Property | Type
 |:---------|:-----
 | `detectionEvent`| `string`
-| `cameraPosition` | [CameraPosition]()
-| `detectionType` | [DetectionType]()
-| `barcodeFormats` | [BarcodeFormats]()
-| `faceDetectionPerformanceMode` | [FaceDetectionPerformanceMode]()
+| `cameraPosition` | [CameraPosition](#cameraposition)
+| `detectionType` | [DetectionType](#detectiontype)
+| `barcodeFormats` | [BarcodeFormats](#barcodeformats)
+| `faceDetectionPerformanceMode` | [FaceDetectionPerformanceMode](#facedetectionperformancemode)
 | `faceDetectionTrackingEnabled` | `boolean`
 | `faceDetectionMinFaceSize` | `number`
 | `imageLabelerConfidenceThreshold` | `number`
@@ -225,9 +229,108 @@ It has the following members.
 | `torchOn` | `boolean`
 | `pause` | `boolean`
 | `processEveryNthFrame` | `number`
-| `readonly latestImage?` | [ImageSource]()
+| `readonly latestImage?` | [ImageSource](https://docs.nativescript.org/api-reference/classes/imagesource)
 | `retrieveLatestImage` | `boolean`
 
+#### Methods
+
+| Method | Returns | Description
+|:-------|:--------|:-----------
+| `isAvailable()` | `boolean`| A static method to check if the device supports ML Kit.
+| `stopPreview()` | `void`
+| `startPreview()` | `void`
+| `toggleCamera()` | `void`
+| `requestCameraPermission()` | `Promise<void>`
+| `hasCameraPermission()` | `boolean` | 
+| `on()` | `void` | 
+
+
+#### StillImageDetectionOptions interface
+
+
+```ts
+interface StillImageDetectionOptions {
+  detectorType: DetectionType;
+
+  barcodeScanning?: {
+    barcodeFormat?: [BarcodeFormats];
+  };
+  faceDetection?: {
+    faceTracking?: boolean;
+    minimumFaceSize: ?number;
+    detectionMode?: 'fast' | 'accurate';
+    landmarkMode?: 'all' | 'none';
+    contourMode?: 'all' | 'none';
+    classificationMode?: 'all' | 'none';
+  };
+  imageLabeling?: {
+    confidenceThreshold?: number;
+  };
+  objectDetection?: {
+    multiple: boolean;
+    classification: boolean;
+  };
+  selfieSegmentation?: {
+    enableRawSizeMask?: boolean;
+    smoothingRatio?: number;
+  };
+}
+```
+### Enums
+
+#### DetectionType
+
+```ts
+export enum DetectionType {
+  Barcode = 'barcode',
+  DigitalInk = 'digitalInk',
+  Face = 'face',
+  Image = 'image',
+  Object = 'object',
+  Pose = 'pose',
+  Text = 'text',
+  All = 'all',
+  Selfie = 'selfie',
+  None = 'none',
+}
+```
+
+#### CameraPosition
+```ts
+export enum CameraPosition {
+  FRONT = 'front',
+  BACK = 'back',
+}
+```
+
+#### BarcodeFormats
+```ts
+export enum BarcodeFormats {
+  ALL = 'all',
+  CODE_128 = 'code_128',
+  CODE_39 = 'code_39',
+  CODE_93 = 'code_93',
+  CODABAR = 'codabar',
+  DATA_MATRIX = 'data_matrix',
+  EAN_13 = 'ean_13',
+  EAN_8 = 'ean_8',
+  ITF = 'itf',
+  QR_CODE = 'qr_code',
+  UPC_A = 'upc_a',
+  UPC_E = 'upc_e',
+  PDF417 = 'pdf417',
+  AZTEC = 'aztec',
+  UNKOWN = 'unknown',
+}
+```
+#### FaceDetectionPerformanceMode
+
+```ts
+export enum FaceDetectionPerformanceMode {
+  Fast = 'fast',
+  Accurate = 'accurate',
+}
+```
 ## License
 
 Apache License Version 2.0
