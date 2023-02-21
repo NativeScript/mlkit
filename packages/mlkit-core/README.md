@@ -47,7 +47,21 @@ To use all the vision APIs at once, set the `detectionType` property to `'all'` 
 To access a specific API, Barcode scanning for example, set the `detectionType` property to the API name (`'barcode'` for Barcode scanning), AND import that API's NativeScript plugin.
 
 3. Check if ML Kit is supported
-4. Request for permission to access the device camera
+To verify if ML Kit is supported on the device, call the `isAvailable()` method on [MLKitView class](#mlkitview-class).
+
+```ts
+if(MLKitView.isAvailable()){
+
+}
+```
+4. Request for permission to access the device camera by calling `requestCameraPermission()`:
+
+```ts
+mlKitView.requestCameraPermission().then(()=>{
+
+})
+```
+The following are example of registering and using `MLKitView` in the different JS flavors.
 
 ### Core
 
