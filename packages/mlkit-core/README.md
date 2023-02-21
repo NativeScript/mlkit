@@ -2,6 +2,33 @@
 
 A plugin that provides a UI component to access the different functionalities of [Google's ML Kit](https://developers.google.com/ml-kit) SDK.
 
+## Contents
+* [Installation](#installation)
+* [Use @nativescript/mlkit-core](#use-nativescriptmlkit-core)
+  * [Core](#core)
+  * [Angular](#angular)
+  * [Vue](#vue)
+  * [Vision APIs optional modules](#vision-apis-optional-modules)
+    * [Barcode Scanning](#barcode-scanning)
+    * [Face Detection](#face-detection)
+    * [Image Labeling](#image-labeling)
+    * [Object Detection](#object-detection)
+    * [Pose Detection](#pose-detection)
+    * [Text Recognition](#text-recognition)
+
+* [API](#api)
+  * [detectWithStillImage()](#detectwithstillimage)
+    * [StillImageDetectionOptions interface](#stillimagedetectionoptions-interface)
+  * [MLKitView class](#mlkitview-class)
+    * [Properties](#properties)
+    * [Methods](#methods)
+  * [Enums](#enums)
+    * [DetectionType](#detectiontype)
+    * [CameraPosition](#cameraposition)
+    * [BarcodeFormats](#barcodeformats)
+    * [FaceDetectionPerformanceMode](#facedetectionperformancemode)
+* [License](#license) 
+
 ## Installation
 
 ```cli
@@ -10,7 +37,11 @@ npm install @nativescript/mlkit-core
 
 ## Use @nativescript/mlkit-core
 
-## Core
+- Using `@nativescript/mlkit-core` consists of
+ registering and adding [MLKitView](#mlkitview-class) to your markup. Then, to use all the vision APIs at once, set the `detectionType` property to `'all'` and identify them in the `detection` event's handler.
+- To access a specific API, Barcode scanning for example, set the `detectionType` property to the API name (`'barcode'` for Barcode scanning), AND import that API's NativeScript plugin.
+
+### Core
 
 1. Register [MLKitView](#mlkitview-class) by adding `xmlns:ui="@nativescript/mlkit-core"` to the Page element.
 
@@ -76,7 +107,7 @@ detectionType="all"
 />
 ```
 
-### Optional modules
+### Vision APIs optional modules
 
 > **Important:** Detection works only for optional modules installed
 
@@ -206,9 +237,9 @@ Detects barcode, pose, etc from a still image instead of using the camera.
 - `image`: The image to detect the object from
 - `options`: An _optional_ [StillImageDetectionOptions](#stillimagedetectionoptions) object parameter specifying the detection characteristics.
 
-### MLKItView class
+### MLKitView class
 
-The MLKItView class provides the camera view for detection.
+The MLKitView class provides the camera view for detection.
  
 It has the following members.
 
