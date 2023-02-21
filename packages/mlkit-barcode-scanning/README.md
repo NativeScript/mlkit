@@ -1,8 +1,9 @@
 # @nativescript/mlkit-barcode-scanning
 
-This plugin is used with [@nativescript/mlkit-core](../mlkit-core/) and it provides the [BarcodeResult](#barcoderesult) types for the barcode scanned data.
+This plugin is used with [@nativescript/mlkit-core](../mlkit-core/) and it provides the [BarcodeResult](#barcoderesult) types for the barcode-scanned data.
 
 ## Contents
+
 * [Installation](#installation)
 * [Use @nativescript/mlkit-barcode-scanning](#use-nativescriptmlkit-barcode-scanning)
 * [API](#api)
