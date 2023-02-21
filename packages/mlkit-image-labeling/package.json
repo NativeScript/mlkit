@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/mlkit-image-labeling",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "NativeScript MLKit Image Labeling module",
   "main": "index",
   "typings": "index.d.ts",
