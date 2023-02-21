@@ -3,6 +3,7 @@
 A plugin that provides a UI component to access the different functionalities of [Google's ML Kit](https://developers.google.com/ml-kit) SDK.
 
 ## Contents
+
 * [Installation](#installation)
 * [Use @nativescript/mlkit-core](#use-nativescriptmlkit-core)
   * [Core](#core)
@@ -36,10 +37,17 @@ npm install @nativescript/mlkit-core
 ```
 
 ## Use @nativescript/mlkit-core
+The usage of `@nativescript/mlkit-core` has the following flow:
 
-- Using `@nativescript/mlkit-core` consists of
- registering and adding [MLKitView](#mlkitview-class) to your markup. Then, to use all the vision APIs at once, set the `detectionType` property to `'all'` and identify them in the `detection` event's handler.
-- To access a specific API, Barcode scanning for example, set the `detectionType` property to the API name (`'barcode'` for Barcode scanning), AND import that API's NativeScript plugin.
+1. Registering and adding [MLKitView](#mlkitview-class) to your markup. 
+
+2. Set the `detectionType` and listen to the `detection` event
+
+To use all the vision APIs at once, set the `detectionType` property to `'all'` and identify them in the `detection` event's handler.
+To access a specific API, Barcode scanning for example, set the `detectionType` property to the API name (`'barcode'` for Barcode scanning), AND import that API's NativeScript plugin.
+
+3. Check if ML Kit is supported
+4. Request for permission to access the device camera
 
 ### Core
 
