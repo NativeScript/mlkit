@@ -6,6 +6,7 @@ This plugin is used with [@nativescript/mlkit-core](../mlkit-core/) and it provi
 
 * [Installation](#installation)
 * [Use @nativescript/mlkit-barcode-scanning](#use-nativescriptmlkit-barcode-scanning)
+    * [Demo app](#demo-app)
 * [API](#api)
      * [BarcodeResult](#barcoderesult)
         
@@ -23,10 +24,18 @@ Follow these steps to scan a barcode:
 1. Add [MLKitView](../mlkit-core/) to your page and set the `detectionType` property to `"barcode"`.
 
 ```xml
-<MLKitView
-   detectionType="barcode" 
-   detection="{{ onDetection }}"
-/>
+<StackLayout>
+    <MLKitView
+    detectionType="barcode" 
+    detection="{{ onDetection }}"
+    />
+    <Label row="6">
+        <FormattedString>
+            <Span text="Barcode: "/>
+            <Span text="{{ barcode }}" class="text-green-500"/>
+        </FormattedString>
+    </Label>
+</StackLayout>
 ```
 2. To receive the scanned barcode data, handle the `detection` event and get the data if the event's type is `"barcode"`.
 
@@ -36,17 +45,20 @@ import { DetectionEvent, DetectionType } from "@nativescript/mlkit-core";
 import { BarcodeResult } from "@nativescript/mlkit-barcode-scanning";
 
 export class BarcodeScannerViewModel extends Observable {
-
+    barcode = ""
+...
     onDetection(event: DetectionEvent){
 
         if(event.type == DetectionType.Barcode){
             const barcodeData: BarcodeResult = event.data[0] as BarcodeResult;
-
+            this.set("barcode", barcodeData?.rawValue)
         }
 }
 }
 
 ```
+#### Demo app
+You can try a demo app at [StackBlitz](https://stackblitz.com/edit/nativescript-stackblitz-templates-svbcbz?file=app/main-page.xml) with the [NativeScript Preview app](https://preview.nativescript.org/).
 
 ## API
 
