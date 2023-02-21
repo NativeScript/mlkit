@@ -1,4 +1,4 @@
 dependencies {
-    implementation 'io.github.triniwiz.fancycamera:selfieSegmentation:1.0.0-alpha.2'
-    implementation 'com.google.mlkit:segmentation-selfie:16.0.0-beta3'
+    implementation 'io.github.triniwiz.fancycamera:selfieSegmentation:1.0.0'
+    implementation 'com.google.mlkit:segmentation-selfie:16.0.0-beta4'
 }

@@ -1,25 +1,25 @@
 allprojects {
-    repositories {
-        maven { url "https://repo1.maven.org/maven2/" }
-        maven { url "https://s01.oss.sonatype.org/content/repositories/releases/" }
-    }
+  repositories {
+    maven { url "https://repo1.maven.org/maven2/" }
+    maven { url "https://s01.oss.sonatype.org/content/repositories/releases/" }
+  }
 }
 
 dependencies {
-    implementation 'io.github.triniwiz:fancycamera:3.0.0-alpha.37'
+  implementation 'io.github.triniwiz:fancycamera:3.0.5'
 }
 
 
-android { 
-      packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/license.txt'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/notice.txt'
-        exclude 'META-INF/ASL2.0'
-        exclude("META-INF/*.kotlin_module") 
-      }          
+android {
+  packagingOptions {
+    exclude 'META-INF/DEPENDENCIES'
+    exclude 'META-INF/LICENSE'
+    exclude 'META-INF/LICENSE.txt'
+    exclude 'META-INF/license.txt'
+    exclude 'META-INF/NOTICE'
+    exclude 'META-INF/NOTICE.txt'
+    exclude 'META-INF/notice.txt'
+    exclude 'META-INF/ASL2.0'
+    exclude("META-INF/*.kotlin_module")
+  }
 }

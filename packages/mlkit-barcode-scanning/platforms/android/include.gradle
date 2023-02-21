@@ -1,4 +1,4 @@
 dependencies {
-    implementation 'io.github.triniwiz.fancycamera:barcodeScanning:1.0.0-alpha.4'
-    implementation 'com.google.mlkit:barcode-scanning:17.0.1'
+    implementation 'io.github.triniwiz.fancycamera:barcodeScanning:1.0.1'
+    implementation 'com.google.mlkit:barcode-scanning:17.0.3'
 }

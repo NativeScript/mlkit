@@ -1,4 +1,4 @@
 dependencies {
-    implementation 'io.github.triniwiz.fancycamera:imageLabeling:1.0.0-alpha.4'
-    implementation 'com.google.mlkit:image-labeling:17.0.6'
+    implementation 'io.github.triniwiz.fancycamera:imageLabeling:1.0.1'
+    implementation 'com.google.mlkit:image-labeling:17.0.7'
 }
