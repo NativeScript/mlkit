@@ -1,14 +1,16 @@
 # @nativescript/mlkit-object-detection
 
+A plugin that is used with [@nativescript/mlkit-core](../mlkit-core/) to enable object detection and provide the [bjectResult](#objectresult) type for the object detection event data.
+
 ## Installation
 
 ```cli
 npm install @nativescript/mlkit-object-detection
 ```
 
-## Usage
+## Use @nativescript/mlkit-object-detection
 
-See [@nativescript/mlkit-core](/packages/mlkit-core/README.md) Usage
+For an example, read [Use @nativescript/mlkit-core](../mlkit-core#use-nativescriptmlkit-core) and [object-detection](../mlkit-core#bject-detection).
 
 ## API 
 
