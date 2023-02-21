@@ -7,6 +7,7 @@ import { ImageLabelingResult } from '@nativescript/mlkit-image-labeling';
 import { ObjectResult } from '@nativescript/mlkit-object-detection';
 import { PoseResult } from '@nativescript/mlkit-pose-detection';
 import { TextResult } from '@nativescript/mlkit-text-recognition';
+
 export function navigatingTo(args: EventData) {
   const page = <Page>args.object;
   page.bindingContext = new DemoModel();
@@ -17,10 +18,11 @@ export class DemoModel extends DemoSharedMlkitCore {
   detectorType = DetectionType.Barcode;
   isPaused = false;
   torchOn = false;
+
   onLoaded(args) {
     this.camera = args.object;
     this.set('isPaused', this.camera.pause);
-	this.set('torchOn', this.camera.torchOn);
+    this.set('torchOn', this.camera.torchOn);
   }
 
   onDetection(event: DetectionEvent) {
@@ -36,8 +38,8 @@ export class DemoModel extends DemoSharedMlkitCore {
   }
 
   toggleTorch() {
-    this.camera.torchOn = !this.camera.torchOn
-	this.set('torchOn', this.camera.torchOn);
+    this.camera.torchOn = !this.camera.torchOn;
+    this.set('torchOn', this.camera.torchOn);
   }
 
   requestPermission() {

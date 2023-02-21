@@ -1,4 +1,5 @@
 {
+  "name": "mlkit-image-labeling",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
   "sourceRoot": "packages/mlkit-image-labeling",
@@ -28,12 +29,12 @@
       ]
     },
     "build.all": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": ["node tools/scripts/build-finish.ts mlkit-image-labeling"],
         "parallel": false
       },
-      "outputs": ["dist/packages/mlkit-image-labeling"],
+      "outputs": ["{workspaceRoot}/dist/packages/mlkit-image-labeling"],
       "dependsOn": [
         {
           "target": "build.all",
@@ -46,7 +47,7 @@
       ]
     },
     "focus": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": ["nx g @nativescript/plugin-tools:focus-packages mlkit-image-labeling"],
         "parallel": false
