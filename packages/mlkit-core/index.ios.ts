@@ -30,29 +30,29 @@ function getGravity(value) {
 }
 
 export class MLKitView extends MLKitViewBase {
-  #device: AVCaptureDevice;
-  #preview: AVCaptureVideoPreviewLayer;
-  #textRecognizer: MLKTextRecognizer;
-  #barcodeScanner: MLKBarcodeScanner;
-  #digitalInkRecognizer: MLKDigitalInkRecognizer;
-  #faceDetector: MLKFaceDetector;
-  #imageLabeler: MLKImageLabeler;
-  #objectDetector: MLKObjectDetector;
-  #poseDetector: MLKPoseDetector;
-  #selfieSegmentor: MLKSegmenter;
-  #barcodeScannerOptions: MLKBarcodeScannerOptions;
-  #faceDetectorOptions: MLKFaceDetectorOptions;
-  #imageLabelerOptions: MLKImageLabelerOptions;
-  #objectDetectionOptions: MLKObjectDetectorOptions;
-  #poseDetectionOptions: MLKPoseDetectorOptions;
-  #selfieSegmentationOptions: MLKSelfieSegmenterOptions;
+  _device: AVCaptureDevice;
+  _preview: AVCaptureVideoPreviewLayer;
+  _textRecognizer: MLKTextRecognizer;
+  _barcodeScanner: MLKBarcodeScanner;
+  _digitalInkRecognizer: MLKDigitalInkRecognizer;
+  _faceDetector: MLKFaceDetector;
+  _imageLabeler: MLKImageLabeler;
+  _objectDetector: MLKObjectDetector;
+  _poseDetector: MLKPoseDetector;
+  _selfieSegmentor: MLKSegmenter;
+  _barcodeScannerOptions: MLKBarcodeScannerOptions;
+  _faceDetectorOptions: MLKFaceDetectorOptions;
+  _imageLabelerOptions: MLKImageLabelerOptions;
+  _objectDetectionOptions: MLKObjectDetectorOptions;
+  _poseDetectionOptions: MLKPoseDetectorOptions;
+  _selfieSegmentationOptions: MLKSelfieSegmenterOptions;
 
-  #mlkitHelper: TNSMLKitHelper;
+  _mlkitHelper: TNSMLKitHelper;
   _onScanCallback: (result: any, type) => void;
 
   constructor() {
     super();
-    this.#mlkitHelper = TNSMLKitHelper.alloc().init();
+    this._mlkitHelper = TNSMLKitHelper.alloc().init();
 
     const ref = new WeakRef(this);
     const _onScanCallback = (result: any, type) => {
@@ -74,96 +74,61 @@ export class MLKitView extends MLKitViewBase {
     };
 
     this._onScanCallback = _onScanCallback;
-    this.#mlkitHelper.onScanCallback = _onScanCallback;
+    this._mlkitHelper.onScanCallback = _onScanCallback;
   }
 
   createNativeView() {
     const nativeView = UIView.new();
-    this.#preview = AVCaptureVideoPreviewLayer.layerWithSession(this.#mlkitHelper.session);
-    this.#preview.videoGravity = getGravity(this.aspectRatio) ?? AVLayerVideoGravityResizeAspect;
-    nativeView.layer.insertSublayerAtIndex(this.#preview, 0);
+    this._preview = AVCaptureVideoPreviewLayer.layerWithSession(this._mlkitHelper.session);
+    this._preview.videoGravity = getGravity(this.aspectRatio) ?? AVLayerVideoGravityResizeAspect;
+    nativeView.layer.insertSublayerAtIndex(this._preview, 0);
     return nativeView;
   }
 
   //@ts-ignore
   get retrieveLatestImage(): boolean {
-    if (!this.#mlkitHelper) {
+    if (!this._mlkitHelper) {
       return false;
     }
-    return this.#mlkitHelper.retrieveLatestImage;
+    return this._mlkitHelper.retrieveLatestImage;
   }
 
   set retrieveLatestImage(value: boolean) {
-    this.#mlkitHelper.retrieveLatestImage = value;
+    this._mlkitHelper.retrieveLatestImage = value;
   }
 
-  #latestImage: ImageSource = null;
+  _latestImage: ImageSource = null;
 
   //@ts-ignore
   get latestImage(): ImageSource {
-    if (!this.#mlkitHelper) {
+    if (!this._mlkitHelper) {
       return null;
     }
 
-    const image = this.#mlkitHelper.latestImage;
+    const image = this._mlkitHelper.latestImage;
     if (!image) {
       return null;
     }
 
-    if (image !== this.#latestImage?.ios) {
-      this.#latestImage = new ImageSource(image);
+    if (image !== this._latestImage?.ios) {
+      this._latestImage = new ImageSource(image);
     }
 
-    return this.#latestImage;
+    return this._latestImage;
   }
 
   initNativeView() {
     super.initNativeView();
-    this.#setupDetectors();
-  }
-
-  get _device() {
-    return this.#device;
-  }
-
-  get _textRecognizer(): MLKTextRecognizer {
-    return this.#textRecognizer;
-  }
-
-  get _barcodeScanner(): MLKBarcodeScanner {
-    return this.#barcodeScanner;
-  }
-
-  get _digitalInkRecognizer(): MLKDigitalInkRecognizer {
-    return this.#digitalInkRecognizer;
-  }
-
-  get _faceDetector(): MLKFaceDetector {
-    return this.#faceDetector;
-  }
-
-  get _imageLabeler(): MLKImageLabeler {
-    return this.#imageLabeler;
-  }
-
-  get _objectDetector(): MLKObjectDetector {
-    return this.#objectDetector;
-  }
-  get _poseDetector(): MLKPoseDetector {
-    return this.#poseDetector;
-  }
-
-  get _selfieSegmentor() {
-    return this.#selfieSegmentor;
+    this._setupDetectors();
   }
 
   [aspectRatioProperty.setNative](ratio) {
-    if (this.#preview) {
+    if (this._preview) {
       switch (ratio) {
         case 'fill':
         case 'aspectFill':
         case 'aspect':
-          this.#preview.videoGravity = getGravity(ratio);
+          this._preview.videoGravity = getGravity(ratio);
           break;
       }
     }
@@ -172,10 +137,10 @@ export class MLKitView extends MLKitViewBase {
   [cameraPositionProperty.setNative](value: CameraPosition) {
     switch (value) {
       case CameraPosition.FRONT:
-        this.#mlkitHelper.cameraPosition = TNSMLKitHelperCameraPosition.FRONT;
+        this._mlkitHelper.cameraPosition = TNSMLKitHelperCameraPosition.FRONT;
         break;
       case CameraPosition.BACK:
-        this.#mlkitHelper.cameraPosition = TNSMLKitHelperCameraPosition.BACK;
+        this._mlkitHelper.cameraPosition = TNSMLKitHelperCameraPosition.BACK;
         break;
       default:
         break;
@@ -188,14 +153,14 @@ export class MLKitView extends MLKitViewBase {
 
   [torchOnProperty.setNative](value: boolean) {
     if (value) {
-      this.#mlkitHelper.torchMode = TNSMLKitTorchMode.On;
+      this._mlkitHelper.torchMode = TNSMLKitTorchMode.On;
     } else {
-      this.#mlkitHelper.torchMode = TNSMLKitTorchMode.Off;
+      this._mlkitHelper.torchMode = TNSMLKitTorchMode.Off;
     }
   }
 
   [pauseProperty.setNative](value: boolean) {
-    this.#mlkitHelper.pause = value;
+    this._mlkitHelper.pause = value;
   }
 
   [detectionTypeProperty.setNative](value) {
@@ -233,73 +198,73 @@ export class MLKitView extends MLKitViewBase {
         break;
     }
 
-    this.#setupDetectors();
-    this.#mlkitHelper.detectorType = type;
+    this._setupDetectors();
+    this._mlkitHelper.detectorType = type;
   }
 
   [processEveryNthFrameProperty.setNative](value) {
-    if (this.#mlkitHelper) {
-      this.#mlkitHelper.processEveryNthFrame = value;
+    if (this._mlkitHelper) {
+      this._mlkitHelper.processEveryNthFrame = value;
     }
   }
 
-  #setupDetectors() {
-    if (!this.#textRecognizer && (this.detectionType === DetectionType.Text || this.detectionType === DetectionType.All)) {
+  _setupDetectors() {
+    if (!this._textRecognizer && (this.detectionType === DetectionType.Text || this.detectionType === DetectionType.All)) {
       if (TEXT_RECOGNITION_SUPPORTED()) {
-        this.#textRecognizer = MLKTextRecognizer.textRecognizer();
-        this.#mlkitHelper.textRecognizer = this.#textRecognizer;
+        this._textRecognizer = MLKTextRecognizer.textRecognizer();
+        this._mlkitHelper.textRecognizer = this._textRecognizer;
       }
     }
 
-    if (!this.#barcodeScanner && (this.detectionType === DetectionType.Barcode || this.detectionType === DetectionType.All)) {
-      this.#setupBarcodeScanner(this.barcodeFormats);
+    if (!this._barcodeScanner && (this.detectionType === DetectionType.Barcode || this.detectionType === DetectionType.All)) {
+      this._setupBarcodeScanner(this.barcodeFormats);
     }
 
     // TODO
-    if (!this.#digitalInkRecognizer && (this.detectionType === DetectionType.DigitalInk || this.detectionType === DetectionType.All)) {
+    if (!this._digitalInkRecognizer && (this.detectionType === DetectionType.DigitalInk || this.detectionType === DetectionType.All)) {
       // MLKDigitalInkRecognizer.digitalInkRecognizerWithOptions()
     }
 
-    if (!this.#faceDetector && (this.detectionType === DetectionType.Face || this.detectionType === DetectionType.All)) {
-      this.#setupFaceDetector();
+    if (!this._faceDetector && (this.detectionType === DetectionType.Face || this.detectionType === DetectionType.All)) {
+      this._setupFaceDetector();
     }
 
-    if (!this.#imageLabeler && (this.detectionType === DetectionType.Image || this.detectionType === DetectionType.All)) {
-      this.#setImageLabeler();
+    if (!this._imageLabeler && (this.detectionType === DetectionType.Image || this.detectionType === DetectionType.All)) {
+      this._setImageLabeler();
     }
 
-    if (!this.#objectDetector && (this.detectionType === DetectionType.Object || this.detectionType === DetectionType.All)) {
-      this.#setupObjectDetection();
+    if (!this._objectDetector && (this.detectionType === DetectionType.Object || this.detectionType === DetectionType.All)) {
+      this._setupObjectDetection();
     }
 
-    if (!this.#poseDetector && (this.detectionType === DetectionType.Pose || this.detectionType === DetectionType.All)) {
-      this.#setPoseDetection();
+    if (!this._poseDetector && (this.detectionType === DetectionType.Pose || this.detectionType === DetectionType.All)) {
+      this._setPoseDetection();
     }
 
-    if (!this.#selfieSegmentor && (this.detectionType === DetectionType.Selfie || this.detectionType === DetectionType.All)) {
-      this.#setSelfieSegmentation();
+    if (!this._selfieSegmentor && (this.detectionType === DetectionType.Selfie || this.detectionType === DetectionType.All)) {
+      this._setSelfieSegmentation();
     }
   }
 
-  #setSelfieSegmentation() {
+  _setSelfieSegmentation() {
     if (!SELFIE_SEGMENTATION_SUPPORTED()) {
       return;
     }
 
-    if (!this.#selfieSegmentationOptions) {
-      this.#selfieSegmentationOptions = MLKSelfieSegmenterOptions.new();
+    if (!this._selfieSegmentationOptions) {
+      this._selfieSegmentationOptions = MLKSelfieSegmenterOptions.new();
     }
 
-    this.#selfieSegmentationOptions.shouldEnableRawSizeMask = true;
-    this.#selfieSegmentor = MLKSegmenter.segmenterWithOptions(this.#selfieSegmentationOptions);
-    this.#mlkitHelper.selfieSegmentor = this.#selfieSegmentor;
+    this._selfieSegmentationOptions.shouldEnableRawSizeMask = true;
+    this._selfieSegmentor = MLKSegmenter.segmenterWithOptions(this._selfieSegmentationOptions);
+    this._mlkitHelper.selfieSegmentor = this._selfieSegmentor;
   }
 
   [barcodeFormatsProperty.setNative](value: BarcodeFormats[]) {
-    this.#setupBarcodeScanner(value);
+    this._setupBarcodeScanner(value);
   }
 
-  #setupBarcodeScanner(value) {
+  _setupBarcodeScanner(value) {
     if (!BARCODE_SCANNER_SUPPORTED()) {
       return;
     }
@@ -360,95 +325,95 @@ export class MLKitView extends MLKitViewBase {
       formats = MLKBarcodeFormat.All;
     }
 
-    this.#barcodeScannerOptions = MLKBarcodeScannerOptions.alloc().initWithFormats(formats);
-    this.#barcodeScanner = MLKBarcodeScanner.barcodeScannerWithOptions(this.#barcodeScannerOptions);
-    this.#mlkitHelper.barcodeScanner = this.#barcodeScanner;
+    this._barcodeScannerOptions = MLKBarcodeScannerOptions.alloc().initWithFormats(formats);
+    this._barcodeScanner = MLKBarcodeScanner.barcodeScannerWithOptions(this._barcodeScannerOptions);
+    this._mlkitHelper.barcodeScanner = this._barcodeScanner;
   }
 
   [faceDetectionTrackingEnabledProperty.setNative](value) {
-    this.#setupFaceDetector();
+    this._setupFaceDetector();
   }
 
   [faceDetectionMinFaceSizeProperty.setNative](value) {
-    this.#setupFaceDetector();
+    this._setupFaceDetector();
   }
 
   [faceDetectionPerformanceModeProperty.setNative](value) {
-    this.#setupFaceDetector();
+    this._setupFaceDetector();
   }
 
-  #setupFaceDetector() {
+  _setupFaceDetector() {
     if (!FACE_DETECTION_SUPPORTED()) {
       return;
     }
 
-    if (!this.#faceDetectorOptions) {
-      this.#faceDetectorOptions = MLKFaceDetectorOptions.new();
+    if (!this._faceDetectorOptions) {
+      this._faceDetectorOptions = MLKFaceDetectorOptions.new();
     }
 
-    this.#faceDetectorOptions.landmarkMode = MLKFaceDetectorLandmarkModeAll;
-    this.#faceDetectorOptions.classificationMode = MLKFaceDetectorClassificationModeAll;
-    this.#faceDetectorOptions.performanceMode = this.faceDetectionPerformanceMode === 'accurate' ? (this.#faceDetectorOptions.performanceMode = MLKFaceDetectorPerformanceModeAccurate) : (this.#faceDetectorOptions.performanceMode = MLKFaceDetectorPerformanceModeFast);
-    this.#faceDetectorOptions.trackingEnabled = this.faceDetectionTrackingEnabled;
-    this.#faceDetectorOptions.minFaceSize = this.faceDetectionMinFaceSize;
-    this.#faceDetector = MLKFaceDetector.faceDetectorWithOptions(this.#faceDetectorOptions);
-    this.#mlkitHelper.faceDetector = this.#faceDetector;
+    this._faceDetectorOptions.landmarkMode = MLKFaceDetectorLandmarkModeAll;
+    this._faceDetectorOptions.classificationMode = MLKFaceDetectorClassificationModeAll;
+    this._faceDetectorOptions.performanceMode = this.faceDetectionPerformanceMode === 'accurate' ? (this._faceDetectorOptions.performanceMode = MLKFaceDetectorPerformanceModeAccurate) : (this._faceDetectorOptions.performanceMode = MLKFaceDetectorPerformanceModeFast);
+    this._faceDetectorOptions.trackingEnabled = this.faceDetectionTrackingEnabled;
+    this._faceDetectorOptions.minFaceSize = this.faceDetectionMinFaceSize;
+    this._faceDetector = MLKFaceDetector.faceDetectorWithOptions(this._faceDetectorOptions);
+    this._mlkitHelper.faceDetector = this._faceDetector;
   }
 
   [imageLabelerConfidenceThresholdProperty.setNative](value) {
-    this.#setImageLabeler();
+    this._setImageLabeler();
   }
 
-  #setImageLabeler() {
+  _setImageLabeler() {
     if (!IMAGE_LABELING_SUPPORTED()) {
       return;
     }
-    if (!this.#imageLabelerOptions) {
-      this.#imageLabelerOptions = MLKImageLabelerOptions.new();
+    if (!this._imageLabelerOptions) {
+      this._imageLabelerOptions = MLKImageLabelerOptions.new();
     }
-    this.#imageLabelerOptions.confidenceThreshold = this.imageLabelerConfidenceThreshold;
-    this.#imageLabeler = MLKImageLabeler.imageLabelerWithOptions(this.#imageLabelerOptions);
-    this.#mlkitHelper.imageLabeler = this.#imageLabeler;
+    this._imageLabelerOptions.confidenceThreshold = this.imageLabelerConfidenceThreshold;
+    this._imageLabeler = MLKImageLabeler.imageLabelerWithOptions(this._imageLabelerOptions);
+    this._mlkitHelper.imageLabeler = this._imageLabeler;
   }
 
   [objectDetectionClassifyProperty.setNative](value) {
-    this.#setupObjectDetection();
+    this._setupObjectDetection();
   }
 
   [objectDetectionMultipleProperty.setNative](value) {
-    this.#setupObjectDetection();
+    this._setupObjectDetection();
   }
 
-  #setupObjectDetection() {
+  _setupObjectDetection() {
     if (!OBJECT_DETECTION_SUPPORTED()) {
       return;
     }
-    if (!this.#objectDetectionOptions) {
-      this.#objectDetectionOptions = MLKObjectDetectorOptions.new();
+    if (!this._objectDetectionOptions) {
+      this._objectDetectionOptions = MLKObjectDetectorOptions.new();
     }
 
-    this.#objectDetectionOptions.detectorMode = MLKObjectDetectorModeStream;
+    this._objectDetectionOptions.detectorMode = MLKObjectDetectorModeStream;
 
-    this.#objectDetectionOptions.shouldEnableMultipleObjects = this.objectDetectionMultiple;
-    this.#objectDetectionOptions.shouldEnableClassification = this.objectDetectionClassify;
+    this._objectDetectionOptions.shouldEnableMultipleObjects = this.objectDetectionMultiple;
+    this._objectDetectionOptions.shouldEnableClassification = this.objectDetectionClassify;
 
-    this.#objectDetector = MLKObjectDetector.objectDetectorWithOptions(this.#objectDetectionOptions);
-    this.#mlkitHelper.objectDetector = this.#objectDetector;
+    this._objectDetector = MLKObjectDetector.objectDetectorWithOptions(this._objectDetectionOptions);
+    this._mlkitHelper.objectDetector = this._objectDetector;
   }
 
-  #setPoseDetection() {
+  _setPoseDetection() {
     if (!POSE_DETECTION_SUPPORTED()) {
       return;
     }
-    if (!this.#poseDetectionOptions) {
-      this.#poseDetectionOptions = MLKPoseDetectorOptions.new();
+    if (!this._poseDetectionOptions) {
+      this._poseDetectionOptions = MLKPoseDetectorOptions.new();
     }
 
-    this.#poseDetectionOptions.detectorMode = 1; // MLKPoseDetectorModeStream;
+    this._poseDetectionOptions.detectorMode = 1; // MLKPoseDetectorModeStream;
 
-    this.#poseDetector = MLKPoseDetector.poseDetectorWithOptions(this.#poseDetectionOptions);
+    this._poseDetector = MLKPoseDetector.poseDetectorWithOptions(this._poseDetectionOptions);
 
-    this.#mlkitHelper.poseDetector = this.#poseDetector;
+    this._mlkitHelper.poseDetector = this._poseDetector;
   }
 
   onLoaded() {
@@ -462,23 +427,23 @@ export class MLKitView extends MLKitViewBase {
   }
 
   public stopPreview(): void {
-    this.#mlkitHelper.stopPreview();
+    this._mlkitHelper.stopPreview();
   }
 
   public toggleCamera(): void {
-    this.#mlkitHelper.toggleCamera();
+    this._mlkitHelper.toggleCamera();
   }
 
   public startPreview(): void {
-    this.#mlkitHelper.openCamera();
+    this._mlkitHelper.openCamera();
     if (!this.pause) {
-      this.#mlkitHelper.startPreview();
+      this._mlkitHelper.startPreview();
     }
   }
 
   public onLayout(left: number, top: number, right: number, bottom: number) {
-    if (this.#preview) {
-      this.#preview.frame = this.nativeView.bounds;
+    if (this._preview) {
+      this._preview.frame = this.nativeView.bounds;
     }
   }
 
