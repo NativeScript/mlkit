@@ -1,5 +1,7 @@
 # @nativescript/mlkit-text-recognition
 
+A plugin used with [@nativescript/mlkit-core](../mlkit-core) to enable Text Recognition in your app.
+
 ## Installation
 
 ```cli
