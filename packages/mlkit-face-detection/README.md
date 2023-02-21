@@ -1,4 +1,7 @@
 # @nativescript/mlkit-face-detection
+
+A plugin that is used with [@nativescript/mlkit-core](../mlkit-core/) to enable face detection and provide the [FaceResult](#faceresult) type for the data of the face detection event.
+
 ## Installation
 
 ```cli
@@ -7,11 +10,14 @@ npm install @nativescript/mlkit-face-detection
 
 ## Use @nativescript/mlkit-face-detection
 
-See [@nativescript/mlkit-core](../mlkit-core#face-detection) Usage
+For an example, see [@nativescript/mlkit-core](../mlkit-core#face-detection)
 
 ## API
 
 ### FaceResult
+
+The Face Detection event data type.
+
 ```ts
 interface FaceResult {
     smilingProbability: number;
