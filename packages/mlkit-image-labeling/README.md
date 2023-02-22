@@ -1,17 +1,27 @@
 # @nativescript/mlkit-image-labeling
 
+## Contents
+* [Installation](#installation)
+* [Use @nativescript/mlkit-image-labeling](#use-nativescriptmlkit-image-labeling)
+* [API](#api)
+    * [ImageLabelingResult](#imagelabelingresult)
+* [License](#license)
+
 ## Installation
 
-```javascript
+```cli
 npm install @nativescript/mlkit-image-labeling
 ```
 
-## Usage
+## Use @nativescript/mlkit-image-labeling
 
-See [@nativescript/mlkit-core](/packages/mlkit-core/README.md) Usage
+For an example, read [Use @nativescript/mlkit-core](../mlkit-core#use-nativescriptmlkit-core) and [Image Labeling](../mlkit-core#image-labeling)
 
 ## API
+
 ### ImageLabelingResult
+
+The Image Labeling event data type.
 
 ```ts
 interface ImageLabelingResult {
