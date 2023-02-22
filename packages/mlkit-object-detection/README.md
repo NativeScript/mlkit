@@ -11,6 +11,8 @@ A plugin that is used with [@nativescript/mlkit-core](../mlkit-core/) to enable 
 
 ## Installation
 
+Install `@nativescript/mlkit-object-detection` by running the following command:
+
 ```cli
 npm install @nativescript/mlkit-object-detection
 ```
