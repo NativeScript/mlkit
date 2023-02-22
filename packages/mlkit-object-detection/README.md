@@ -19,7 +19,7 @@ npm install @nativescript/mlkit-object-detection
 
 ## Use @nativescript/mlkit-object-detection
 
-For an example, read [Use @nativescript/mlkit-core](../mlkit-core#use-nativescriptmlkit-core) and [object-detection](../mlkit-core#bject-detection).
+For an example, read [Use @nativescript/mlkit-core](../mlkit-core#use-nativescriptmlkit-core) and [Object Detection](../mlkit-core#object-detection).
 
 ## API 
 
