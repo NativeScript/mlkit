@@ -2,7 +2,15 @@
 
 A plugin that is used with [@nativescript/mlkit-core](../mlkit-core/) to enable face detection and provide the [FaceResult](#faceresult) type for the data of the face detection event.
 
+## Contents
+* [Installation](#installation)
+* [Use @nativescript/mlkit-face-detection](#use-nativescriptmlkit-face-detection)
+* [API](#api)
+    * [FaceResult](#faceresult)
+* [License](#license)
+
 ## Installation
+Install `@nativescript/mlkit-face-detection` by running the following command:
 
 ```cli
 npm install @nativescript/mlkit-face-detection
@@ -10,7 +18,7 @@ npm install @nativescript/mlkit-face-detection
 
 ## Use @nativescript/mlkit-face-detection
 
-For an example, see [@nativescript/mlkit-core](../mlkit-core#face-detection)
+For more details, read [use @nativescript/mlkit-core](../mlkit-core#use-nativescriptmlkit-core) and [@nativescript/mlkit-core](../mlkit-core#face-detection)
 
 ## API
 
@@ -52,6 +60,7 @@ interface Size {
     height: number;
 }
 ```
+
 ## License
 
 Apache License Version 2.0
