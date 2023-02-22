@@ -41,9 +41,10 @@ The usage of `@nativescript/mlkit-core` has the following flow:
 
 1. Registering and adding [MLKitView](#mlkitview-class) to your markup. 
 
-2. Setting the `detectionType` and listening to the `detection` event
+2. Setting the `detectionType` and listening to the `detection` event.
 
-To use all the vision APIs at once, set the `detectionType` property to `'all'` and identify them in the `detection` event's handler.
+To access all the vision APIs at once, set the `detectionType` property to `'all'` and identify them in the `detection` event's handler.
+
 To access a specific API, Barcode scanning for example, set the `detectionType` property to the API name (`'barcode'` for Barcode scanning), AND import that API's NativeScript plugin(`@nativescript/mlkit-barcode-scanning`).
 
 3. Check if ML Kit is supported
@@ -241,6 +242,7 @@ onDetection(event: DetectionEvent){
 For more details, see [@nativescript/mlkit-text-recognition](../mlkit-text-recognition/)
 
 ## API
+
 ### detectWithStillImage()
 
 ```ts
