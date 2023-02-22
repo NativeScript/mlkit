@@ -1,6 +1,16 @@
 # @nativescript/mlkit-pose-detection
 
+A plugin that is used with [@nativescript/mlkit-core](../mlkit-core/) to enable Pose Detection and provide the [PoseResult](#poseresult) type for the Pose Detection event data.
+
+## Contents
+* [Installation](#installation)
+* [Use @nativescript/mlkit-pose-detection](#use-nativescriptmlkit-pose-detection)
+* [API](#api)
+    * [PoseResult](#poseresult)
+* [License](#license)
+
 ## Installation
+Install `@nativescript/mlkit-pose-detection` by running the following command:
 
 ```cli
 npm install @nativescript/mlkit-pose-detection
@@ -8,11 +18,12 @@ npm install @nativescript/mlkit-pose-detection
 
 ## Use @nativescript/mlkit-pose-detection
 
-For an example, see [@nativescript/mlkit-core](../mlkit-core#mlkit-pose-detection).
+For an example, read [Use @nativescript/mlkit-core](../mlkit-core#use-nativescriptmlkit-core) and [Pose Detection](../mlkit-core#pose-detection).
 
 ## API
 
 ### PoseResult
+The Pose Detection event data type.
 
 ```ts
 interface PoseResult {
