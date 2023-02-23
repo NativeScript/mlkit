@@ -2,6 +2,13 @@
 
 A plugin used with [@nativescript/mlkit-core](../mlkit-core) to enable Text Recognition in your app and provide [TextResult](#textresult) type for the text recognition event data.
 
+## Contents
+* [Installation](#installation)
+* [Use @nativescript/mlkit-text-recognition](#use-nativescriptmlkit-text-recognition)
+* [API](#api)
+    * [TextResult](#textresult)
+* [License](#license)
+
 ## Installation
 
 ```cli
