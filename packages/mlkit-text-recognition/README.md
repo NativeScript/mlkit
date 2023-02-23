@@ -1,6 +1,6 @@
 # @nativescript/mlkit-text-recognition
 
-A plugin used with [@nativescript/mlkit-core](../mlkit-core) to enable Text Recognition in your app.
+A plugin used with [@nativescript/mlkit-core](../mlkit-core) to enable Text Recognition in your app and provide [TextResult](#textresult) type for the text recognition event data.
 
 ## Installation
 
@@ -10,13 +10,13 @@ npm install @nativescript/mlkit-text-recognition
 
 ## Use @nativescript/mlkit-text-recognition
 
-For an example, see [@nativescript/mlkit-core](../mlkit-core#text-recognition).
+For an example, read [Use @nativescript/mlkit-core](../mlkit-core#use-nativescriptmlkit-core) and [Text Recognition](../mlkit-core#text-recognition).
 
 ## API
 
 ### TextResult
 
-The type of the Text Recognition event data.
+The Text Recognition event data type.
 
 ```ts
 interface TextResult {
