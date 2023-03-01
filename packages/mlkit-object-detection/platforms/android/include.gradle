@@ -1,4 +1,4 @@
 dependencies {
-    implementation 'io.github.triniwiz.fancycamera:objectDetection:1.0.1'
+    implementation 'io.github.triniwiz.fancycamera:objectDetection:1.0.2'
     implementation 'com.google.mlkit:object-detection:17.0.0'
 }

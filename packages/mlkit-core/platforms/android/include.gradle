@@ -6,7 +6,7 @@ allprojects {
 }
 
 dependencies {
-  implementation 'io.github.triniwiz:fancycamera:3.0.5'
+  implementation 'io.github.triniwiz:fancycamera:3.0.6'
 }
 
 
