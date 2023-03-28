@@ -1,2 +1,2 @@
 platform :ios, '11.0'
-pod 'GoogleMLKit/DigitalInkRecognition', '3.2.0'
+pod 'GoogleMLKit/DigitalInkRecognition', '4.0.0'
