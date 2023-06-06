@@ -1,0 +1,3 @@
+platform :ios, '11.0'
+pod 'GoogleMLKit/ObjectDetectionCustom', '3.2.0'
+pod 'GoogleMLKit/LinkFirebase', '3.2.0'
