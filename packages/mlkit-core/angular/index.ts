@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { registerElement } from '@nativescript/angular';
 
 import { MLKitViewDirective } from './mlkit-view-directive';
+import { MLKitView } from '@nativescript/mlkit-core';
 export * from './mlkit-view-directive';
 
 @NgModule({
@@ -12,4 +13,4 @@ export * from './mlkit-view-directive';
 // @ts-ignore
 export class MLKitModule { }
 
-registerElement('MLKitView', () => require('@nativescript/mlkit-core').MLKitView);
+registerElement('MLKitView', () => MLKitView);
