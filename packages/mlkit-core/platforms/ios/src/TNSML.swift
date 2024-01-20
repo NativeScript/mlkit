@@ -1,6 +1,6 @@
 import Foundation
 import UIKit
-import MLKit
+import MLKitVision
 
 #if canImport(MLKitBarcodeScanning)
 import MLKitBarcodeScanning
