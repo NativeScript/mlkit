@@ -1,0 +1,4 @@
+dependencies {
+  implementation 'com.google.mlkit:object-detection-custom:17.0.0'
+  implementation 'com.google.mlkit:linkfirebase:17.0.0'
+}

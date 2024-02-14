@@ -24,4 +24,8 @@ declare class MLKObjectDetectorOptions extends MLKCommonObjectDetectorOptions {
 	static alloc(): MLKObjectDetectorOptions; // inherited from NSObject
 
 	static new(): MLKObjectDetectorOptions; // inherited from NSObject
+	loadCustomModel(path: string) {
+		return MLKLocalModel *localModel =
+	    [[MLKLocalModel alloc] initWithPath:path];
+	}
 }
