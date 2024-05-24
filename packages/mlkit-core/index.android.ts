@@ -3,16 +3,47 @@ import { Application, Device, Utils, AndroidActivityRequestPermissionsEventData,
 import lazy from '@nativescript/core/utils/lazy';
 import { StillImageDetectionOptions } from '.';
 
-const DetectorType_All = lazy(() => io.github.triniwiz.fancycamera.DetectorType.All);
-const DetectorType_Barcode = lazy(() => io.github.triniwiz.fancycamera.DetectorType.Barcode);
-const DetectorType_DigitalInk = lazy(() => io.github.triniwiz.fancycamera.DetectorType.DigitalInk);
-const DetectorType_Face = lazy(() => io.github.triniwiz.fancycamera.DetectorType.Face);
-const DetectorType_Image = lazy(() => io.github.triniwiz.fancycamera.DetectorType.Image);
-const DetectorType_None = lazy(() => io.github.triniwiz.fancycamera.DetectorType.None);
-const DetectorType_Object = lazy(() => io.github.triniwiz.fancycamera.DetectorType.Object);
-const DetectorType_Pose = lazy(() => io.github.triniwiz.fancycamera.DetectorType.Pose);
-const DetectorType_Text = lazy(() => io.github.triniwiz.fancycamera.DetectorType.Text);
-const DetectorType_Selfie = lazy(() => (io as any).github.triniwiz.fancycamera.DetectorType.Selfie);
+const IMAGE_PROCESSOR_All = lazy(() => {
+  const ret = [];
+
+  if (BARCODE_SCANNER_SUPPORTED) {
+    ret.push(IMAGE_PROCESSOR_Barcode());
+  }
+
+  if (FACE_DETECTION_SUPPORTED) {
+    ret.push(IMAGE_PROCESSOR_Face());
+  }
+
+  if (IMAGE_LABELING_SUPPORTED) {
+    ret.push(IMAGE_PROCESSOR_Image());
+  }
+
+  if (IMAGE_PROCESSOR_Object) {
+    ret.push(IMAGE_PROCESSOR_Object());
+  }
+
+  if (POSE_DETECTION_SUPPORTED) {
+    ret.push(IMAGE_PROCESSOR_Pose());
+  }
+
+  if (TEXT_RECOGNITION_SUPPORTED) {
+    ret.push(IMAGE_PROCESSOR_Text());
+  }
+
+  if (SELFIE_SEGMENTATION_SUPPORTED) {
+    ret.push(IMAGE_PROCESSOR_Selfie());
+  }
+
+  return ret;
+});
+const IMAGE_PROCESSOR_Barcode = lazy(() => new io.github.triniwiz.fancycamera.barcodescanning.BarcodeScanner());
+const IMAGE_PROCESSOR_DigitalInk = lazy(() => new (io as any).github.triniwiz.fancycamera.digitalink.DigitalInk());
+const IMAGE_PROCESSOR_Face = lazy(() => new io.github.triniwiz.fancycamera.facedetection.FaceDetection());
+const IMAGE_PROCESSOR_Image = lazy(() => new io.github.triniwiz.fancycamera.imagelabeling.ImageLabeling());
+const IMAGE_PROCESSOR_Object = lazy(() => new io.github.triniwiz.fancycamera.objectdetection.ObjectDetection());
+const IMAGE_PROCESSOR_Pose = lazy(() => new io.github.triniwiz.fancycamera.posedetection.PoseDetection());
+const IMAGE_PROCESSOR_Text = lazy(() => new io.github.triniwiz.fancycamera.textrecognition.TextRecognition());
+const IMAGE_PROCESSOR_Selfie = lazy(() => new io.github.triniwiz.fancycamera.selfiesegmentation.SelfieSegmentation());
 
 const BARCODE_SCANNER_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.barcodescanning?.BarcodeScanner !== 'undefined');
 const TEXT_RECOGNITION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.textrecognition?.TextRecognition !== 'undefined');
@@ -20,6 +51,7 @@ const FACE_DETECTION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamer
 const IMAGE_LABELING_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.imagelabeling?.ImageLabeling !== 'undefined');
 const OBJECT_DETECTION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.objectdetection?.ObjectDetection !== 'undefined');
 const POSE_DETECTION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.posedetection?.PoseDetection !== 'undefined');
+const SELFIE_SEGMENTATION_SUPPORTED = lazy(() => typeof io.github.triniwiz.fancycamera?.selfiesegmentation?.SelfieSegmentation !== 'undefined');
 
 const TORCH_MODE_ON = lazy(() => io.github.triniwiz.fancycamera.CameraFlashMode.TORCH);
 const TORCH_MODE_OFF = lazy(() => io.github.triniwiz.fancycamera.CameraFlashMode.OFF);
@@ -57,7 +89,7 @@ export class MLKitView extends MLKitViewBase {
     return this._camera;
   }
 
-  //@ts-ignore
+  // @ts-ignore
   get retrieveLatestImage(): boolean {
     if (!this._camera) {
       return false;
@@ -71,7 +103,7 @@ export class MLKitView extends MLKitViewBase {
 
   _latestImage: ImageSource = null;
 
-  //@ts-ignore
+  // @ts-ignore
   get latestImage(): ImageSource {
     if (!this._camera) {
       return null;
@@ -135,40 +167,53 @@ export class MLKitView extends MLKitViewBase {
   }
 
   [detectionTypeProperty.setNative](value) {
-    let type = DetectorType_None();
     switch (value) {
       case DetectionType.All:
-        type = DetectorType_All();
+        {
+          const all = IMAGE_PROCESSOR_All();
+          if (all.length) {
+            this._camera.addImageProcessors(all);
+          } else {
+            this._camera.clearImageProcessor();
+          }
+        }
         break;
       case DetectionType.Barcode:
-        type = DetectorType_Barcode();
+        this._camera.clearImageProcessor();
+        this._camera.addImageProcessor(IMAGE_PROCESSOR_Barcode());
         break;
       case DetectionType.DigitalInk:
-        type = DetectorType_DigitalInk();
+        this._camera.clearImageProcessor();
         break;
       case DetectionType.Face:
-        type = DetectorType_Face();
+        this._camera.clearImageProcessor();
+        this._camera.addImageProcessor(IMAGE_PROCESSOR_Face());
         break;
       case DetectionType.Image:
-        type = DetectorType_Image();
+        this._camera.clearImageProcessor();
+        this._camera.addImageProcessor(IMAGE_PROCESSOR_Image());
         break;
       case DetectionType.Object:
-        type = DetectorType_Object();
+        this._camera.clearImageProcessor();
+        this._camera.addImageProcessor(IMAGE_PROCESSOR_Object());
         break;
       case DetectionType.Pose:
-        type = DetectorType_Pose();
+        this._camera.clearImageProcessor();
+        this._camera.addImageProcessor(IMAGE_PROCESSOR_Pose());
         break;
       case DetectionType.Text:
-        type = DetectorType_Text();
+        this._camera.clearImageProcessor();
+        this._camera.addImageProcessor(IMAGE_PROCESSOR_Text());
         break;
       case DetectionType.Selfie:
-        type = DetectorType_Selfie();
+        this._camera.clearImageProcessor();
+        this._camera.addImageProcessor(IMAGE_PROCESSOR_Selfie());
         break;
       default:
-        type = DetectorType_None();
+        this._camera.clearImageProcessor();
         break;
     }
-    this._camera.setDetectorType(type);
+
     this._setListeners();
   }
 
@@ -385,10 +430,10 @@ export class MLKitView extends MLKitViewBase {
         });
       }
 
+      const scanner = IMAGE_PROCESSOR_Barcode();
       this._barcodeScannerOptions.setBarcodeFormat(formats);
+      scanner.setOptions(this._barcodeScannerOptions);
     }
-
-    this._camera.setBarcodeScannerOptions(this._barcodeScannerOptions);
   }
 
   [faceDetectionTrackingEnabledProperty.setNative](value) {
@@ -401,7 +446,8 @@ export class MLKitView extends MLKitViewBase {
 
     this._faceDetectionOptions.setFaceTracking(value);
 
-    this._camera.setFaceDetectionOptions(this._faceDetectionOptions);
+    const detector = IMAGE_PROCESSOR_Face();
+    detector.setOptions(this._faceDetectionOptions);
   }
 
   [faceDetectionMinFaceSizeProperty.setNative](value) {
@@ -414,7 +460,9 @@ export class MLKitView extends MLKitViewBase {
     }
 
     this._faceDetectionOptions.setMinimumFaceSize(value);
-    this._camera.setFaceDetectionOptions(this._faceDetectionOptions);
+
+    const detector = IMAGE_PROCESSOR_Face();
+    detector.setOptions(this._faceDetectionOptions);
   }
 
   [faceDetectionPerformanceModeProperty.setNative](value) {
@@ -427,7 +475,9 @@ export class MLKitView extends MLKitViewBase {
     }
 
     this._faceDetectionOptions.setMinimumFaceSize(value);
-    this._camera.setFaceDetectionOptions(this._faceDetectionOptions);
+
+    const detector = IMAGE_PROCESSOR_Face();
+    detector.setOptions(this._faceDetectionOptions);
   }
 
   [imageLabelerConfidenceThresholdProperty.setNative](value) {
@@ -439,7 +489,9 @@ export class MLKitView extends MLKitViewBase {
     }
 
     this._imageLabelerOptions.setConfidenceThreshold(value);
-    this._camera.setImageLabelingOptions(this._imageLabelerOptions);
+
+    const detector = IMAGE_PROCESSOR_Image();
+    detector.setOptions(this._imageLabelerOptions);
   }
 
   [objectDetectionClassifyProperty.setNative](value) {
@@ -452,7 +504,9 @@ export class MLKitView extends MLKitViewBase {
     }
 
     this._objectDetectionOptions.setClassification(value);
-    this._camera.setObjectDetectionOptions(this._objectDetectionOptions);
+
+    const detector = IMAGE_PROCESSOR_Object();
+    detector.setOptions(this._objectDetectionOptions);
   }
 
   [objectDetectionMultipleProperty.setNative](value) {
@@ -465,7 +519,9 @@ export class MLKitView extends MLKitViewBase {
     }
 
     this._objectDetectionOptions.setMultiple(value);
-    this._camera.setObjectDetectionOptions(this._objectDetectionOptions);
+
+    const detector = IMAGE_PROCESSOR_Object();
+    detector.setOptions(this._objectDetectionOptions);
   }
 
   onLoaded() {
@@ -526,56 +582,44 @@ export function detectWithStillImage(image: any, options?: StillImageDetectionOp
       reject('Please use a valid Image');
     }
 
-    let type = 9; /* None */
+    let processors = []; /* None */
     switch (options?.detectorType) {
       case DetectionType.All:
-        type = 7;
+        processors = IMAGE_PROCESSOR_All();
         break;
       case DetectionType.Barcode:
-        type = 0;
+        processors = [IMAGE_PROCESSOR_Barcode()];
         break;
       case DetectionType.DigitalInk:
-        type = 1;
+        processors = [];
         break;
       case DetectionType.Face:
-        type = 2;
+        processors = [IMAGE_PROCESSOR_Face()];
         break;
       case DetectionType.Image:
-        type = 3;
+        processors = [IMAGE_PROCESSOR_Image()];
         break;
       case DetectionType.Object:
-        type = 4;
+        processors = [IMAGE_PROCESSOR_Object()];
         break;
       case DetectionType.Pose:
-        type = 5;
+        processors = [IMAGE_PROCESSOR_Pose()];
         break;
       case DetectionType.Text:
-        type = 6;
+        processors = [IMAGE_PROCESSOR_Text()];
         break;
       case DetectionType.Selfie:
-        type = 8;
+        processors = [IMAGE_PROCESSOR_Selfie()];
         break;
       default:
-        type = 9;
+        processors = [];
         break;
     }
 
-    (io as any).github.triniwiz.fancycamera.ML.processImage(
+    io.github.triniwiz.fancycamera.ML.processImage(
       nativeImage,
       rotation || 0,
-      JSON.stringify({
-        ...{
-          barcodeScanning: {
-            barcodeFormat: [0],
-          },
-          faceDetection: {},
-          imageLabeling: {},
-          objectDetection: {},
-          selfieSegmentation: {},
-        },
-        ...options,
-        ...{ detectorType: type },
-      }),
+      java.util.Arrays.asList(processors),
       new io.github.triniwiz.fancycamera.ImageAnalysisCallback({
         onSuccess(param0: any) {
           const results = {};

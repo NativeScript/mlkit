@@ -69,7 +69,6 @@ export class DemoModel extends DemoSharedMlkitCore {
     try {
       const src = await ImageSource.fromUrl('https://www.jqueryscript.net/images/jQuery-Plugin-To-Generate-International-Article-Number-Barcode-EAN13.jpg');
 
-      console.log(src.android);
       const result = await detectWithStillImage(src, {
         detectorType: DetectionType.Barcode,
       });
