@@ -6,31 +6,31 @@ import { StillImageDetectionOptions } from '.';
 const IMAGE_PROCESSOR_All = lazy(() => {
   const ret = [];
 
-  if (BARCODE_SCANNER_SUPPORTED) {
+  if (BARCODE_SCANNER_SUPPORTED()) {
     ret.push(IMAGE_PROCESSOR_Barcode());
   }
 
-  if (FACE_DETECTION_SUPPORTED) {
+  if (FACE_DETECTION_SUPPORTED()) {
     ret.push(IMAGE_PROCESSOR_Face());
   }
 
-  if (IMAGE_LABELING_SUPPORTED) {
+  if (IMAGE_LABELING_SUPPORTED()) {
     ret.push(IMAGE_PROCESSOR_Image());
   }
 
-  if (IMAGE_PROCESSOR_Object) {
+  if (IMAGE_PROCESSOR_Object()) {
     ret.push(IMAGE_PROCESSOR_Object());
   }
 
-  if (POSE_DETECTION_SUPPORTED) {
+  if (POSE_DETECTION_SUPPORTED()) {
     ret.push(IMAGE_PROCESSOR_Pose());
   }
 
-  if (TEXT_RECOGNITION_SUPPORTED) {
+  if (TEXT_RECOGNITION_SUPPORTED()) {
     ret.push(IMAGE_PROCESSOR_Text());
   }
 
-  if (SELFIE_SEGMENTATION_SUPPORTED) {
+  if (SELFIE_SEGMENTATION_SUPPORTED()) {
     ret.push(IMAGE_PROCESSOR_Selfie());
   }
 
