@@ -41,7 +41,8 @@
           "dependencies": true
         },
         {
-          "target": "build"
+          "target": "build",
+          "projects": "self"
         }
       ]
     },
