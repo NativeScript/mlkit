@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/mlkit-pose-detection",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "description": "NativeScript MLKit Pose Detection module",
   "main": "index",
   "typings": "index.d.ts",
