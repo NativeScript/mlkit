@@ -18,7 +18,7 @@ const IMAGE_PROCESSOR_All = lazy(() => {
     ret.push(IMAGE_PROCESSOR_Image());
   }
 
-  if (IMAGE_PROCESSOR_Object()) {
+  if (OBJECT_DETECTION_SUPPORTED()) {
     ret.push(IMAGE_PROCESSOR_Object());
   }
 
