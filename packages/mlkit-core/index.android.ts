@@ -536,7 +536,14 @@ export class MLKitView extends MLKitViewBase {
 
   disposeNativeView() {
     Application.android.off('activityRequestPermissions', this._permissionHandler);
+    this.releaseCamera();
     super.disposeNativeView();
+  }
+
+  private releaseCamera() {
+    if (this._camera) {
+      this._camera.release();
+    }
   }
 
   public stopPreview(): void {
