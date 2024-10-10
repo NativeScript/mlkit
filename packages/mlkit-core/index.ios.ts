@@ -1,5 +1,5 @@
 import { ImageSource, Utils } from '@nativescript/core';
-import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, pauseProperty, processEveryNthFrameProperty, torchOnProperty, aspectRatioProperty } from './common';
+import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, pauseProperty, processEveryNthFrameProperty, torchOnProperty, aspectRatioProperty, retrieveLatestImageProperty } from './common';
 import '@nativescript/core';
 import lazy from '@nativescript/core/utils/lazy';
 import { DetectionEvent, StillImageDetectionOptions } from '.';
@@ -85,15 +85,10 @@ export class MLKitView extends MLKitViewBase {
     return nativeView;
   }
 
-  //@ts-ignore
-  get retrieveLatestImage(): boolean {
+  [retrieveLatestImageProperty.setNative](value: boolean) {
     if (!this._mlkitHelper) {
-      return false;
+      return;
     }
-    return this._mlkitHelper.retrieveLatestImage;
-  }
-
-  set retrieveLatestImage(value: boolean) {
     this._mlkitHelper.retrieveLatestImage = value;
   }
 

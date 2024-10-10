@@ -1,4 +1,4 @@
-import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, pauseProperty, processEveryNthFrameProperty, torchOnProperty } from './common';
+import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, pauseProperty, processEveryNthFrameProperty, retrieveLatestImageProperty, torchOnProperty } from './common';
 import { Application, Device, Utils, AndroidActivityRequestPermissionsEventData, ImageSource } from '@nativescript/core';
 import lazy from '@nativescript/core/utils/lazy';
 import { StillImageDetectionOptions } from '.';
@@ -89,15 +89,10 @@ export class MLKitView extends MLKitViewBase {
     return this._camera;
   }
 
-  // @ts-ignore
-  get retrieveLatestImage(): boolean {
+  [retrieveLatestImageProperty.setNative](value: boolean) {
     if (!this._camera) {
-      return false;
+      return;
     }
-    return this._camera.getRetrieveLatestImage();
-  }
-
-  set retrieveLatestImage(value: boolean) {
     this._camera.setRetrieveLatestImage(value);
   }
 
@@ -354,8 +349,11 @@ export class MLKitView extends MLKitViewBase {
               data: JSON.parse(param0),
               type: DetectionType.Object,
             });
-          } catch (e) {}
+          } catch (e) {
+            /* empty */
+          }
         },
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         onError(param0: string, param1: java.lang.Exception) {},
       });
       this._camera.setOnObjectDetectedListener(this._onObjectListener);

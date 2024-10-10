@@ -156,3 +156,11 @@ export const processEveryNthFrameProperty = new Property<MLKitViewBase, number>(
 });
 
 processEveryNthFrameProperty.register(MLKitViewBase);
+
+export const retrieveLatestImageProperty = new Property<MLKitViewBase, boolean>({
+  name: 'retrieveLatestImage',
+  defaultValue: false,
+  valueConverter: booleanConverter,
+});
+
+pauseProperty.register(MLKitViewBase);
