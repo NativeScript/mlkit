@@ -163,4 +163,4 @@ export const retrieveLatestImageProperty = new Property<MLKitViewBase, boolean>(
   valueConverter: booleanConverter,
 });
 
-pauseProperty.register(MLKitViewBase);
+retrieveLatestImageProperty.register(MLKitViewBase);
