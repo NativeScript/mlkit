@@ -1,2 +1,2 @@
 platform :ios, '11.0'
-pod 'GoogleMLKit/BarcodeScanning', '4.0.0'
+pod 'GoogleMLKit/BarcodeScanning', '5.0.0'

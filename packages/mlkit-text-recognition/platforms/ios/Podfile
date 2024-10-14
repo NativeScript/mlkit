@@ -1,2 +1,2 @@
 platform :ios, '11.0'
-pod 'GoogleMLKit/TextRecognition','4.0.0'
+pod 'GoogleMLKit/TextRecognition','5.0.0'

@@ -172,9 +172,11 @@ struct TNSBarcodeScannerResult: Codable {
     var displayValue: String?
     var driverLicense: TNSDriverLicense?
     var email: TNSEmail?
-    var format: [BarcodeFormats]
+    var format: BarcodeFormats
     var phone: TNSPhone?
-    var rawBytes: Data?
+    var rawBytes: [UInt8]?
+
+
     var rawValue: String?
     var geoPoint: TNSGeo?
     var sms: TNSSms?
@@ -189,7 +191,16 @@ class TNSBarcodeScanner: NSObject {
     
     
     static func createBarcodeScannerResult(_ barcode: Barcode) -> TNSBarcodeScannerResult {
-        return TNSBarcodeScannerResult(calenderEvent: TNSBarcodeScanner.createCalenderEvent(barcode.calendarEvent), contactInfo: TNSBarcodeScanner.createContactInfo(barcode.contactInfo), bounds: createBounds(barcode.frame), points: createPoints(barcode.cornerPoints), displayValue: barcode.displayValue, driverLicense: createDriverLicense(barcode.driverLicense), email: createEmail(barcode.email), format: parseFormat(barcode.format), phone: createPhone(barcode.phone), rawBytes: barcode.rawData, rawValue: barcode.rawValue, geoPoint: createGeo(barcode.geoPoint), sms: createSMS(barcode.sms), url: createURL(barcode.url), valueType: createValueType(barcode.valueType), wifi: createWIFI(barcode.wifi))
+
+
+ var rawBytes: [UInt8]?
+        
+        if(barcode.rawData != nil){
+            var rawData = barcode.rawData! as NSData
+            rawBytes = [UInt8](rawData)
+        }
+
+        return TNSBarcodeScannerResult(calenderEvent: TNSBarcodeScanner.createCalenderEvent(barcode.calendarEvent), contactInfo: TNSBarcodeScanner.createContactInfo(barcode.contactInfo), bounds: createBounds(barcode.frame), points: createPoints(barcode.cornerPoints), displayValue: barcode.displayValue, driverLicense: createDriverLicense(barcode.driverLicense), email: createEmail(barcode.email), format: parseFormat(barcode.format), phone: createPhone(barcode.phone), rawBytes: rawBytes, rawValue: barcode.rawValue, geoPoint: createGeo(barcode.geoPoint), sms: createSMS(barcode.sms), url: createURL(barcode.url), valueType: createValueType(barcode.valueType), wifi: createWIFI(barcode.wifi))
     }
     
     static func createValueType(_ value: BarcodeValueType) -> String {
@@ -484,45 +495,41 @@ struct TNSDriverLicense: Codable {
 }
 
 
-func parseFormat(_ format: BarcodeFormat) -> [BarcodeFormats]{
-    var result: [BarcodeFormats] = []
-    
+func parseFormat(_ format: BarcodeFormat) -> BarcodeFormats {
+
     if (format == .all) {
-        result.append(.ALL)
-        return result
+        return BarcodeFormats.ALL
     }
     
     if ((format.rawValue & BarcodeFormat.aztec.rawValue) == BarcodeFormat.aztec.rawValue) {
-        result.append(.AZTEC)
+        return .AZTEC
     } else if ((format.rawValue & BarcodeFormat.codaBar.rawValue) == BarcodeFormat.codaBar.rawValue) {
-        result.append(.CODABAR)
+        return .CODABAR
     } else if ((format.rawValue & BarcodeFormat.code128.rawValue) == BarcodeFormat.code128.rawValue) {
-        result.append(.CODE_128)
+        return .CODE_128
     } else if ((format.rawValue & BarcodeFormat.code39.rawValue) == BarcodeFormat.code39.rawValue) {
-        result.append(.CODE_39)
+        return .CODE_39
     } else if ((format.rawValue & BarcodeFormat.code93.rawValue) == BarcodeFormat.code93.rawValue) {
-        result.append(.CODE_93)
+        return .CODE_93
     } else if ((format.rawValue & BarcodeFormat.dataMatrix.rawValue) == BarcodeFormat.dataMatrix.rawValue) {
-        result.append(.DATA_MATRIX)
+        return .DATA_MATRIX
     } else if ((format.rawValue & BarcodeFormat.EAN13.rawValue) == BarcodeFormat.EAN13.rawValue) {
-        result.append(.EAN_13)
+        return .EAN_13
     } else if ((format.rawValue & BarcodeFormat.EAN8.rawValue) == BarcodeFormat.EAN8.rawValue) {
-        result.append(BarcodeFormats.EAN_8)
+        return BarcodeFormats.EAN_8
     } else if ((format.rawValue & BarcodeFormat.ITF.rawValue) == BarcodeFormat.ITF.rawValue) {
-        result.append(BarcodeFormats.ITF)
+        return BarcodeFormats.ITF
     } else if ((format.rawValue & BarcodeFormat.PDF417.rawValue) == BarcodeFormat.PDF417.rawValue) {
-        result.append(BarcodeFormats.PDF417)
+        return BarcodeFormats.PDF417
     } else if ((format.rawValue & BarcodeFormat.qrCode.rawValue) == BarcodeFormat.qrCode.rawValue) {
-        result.append(BarcodeFormats.QR_CODE)
+        return BarcodeFormats.QR_CODE
     } else if ((format.rawValue & BarcodeFormat.UPCA.rawValue) == BarcodeFormat.UPCA.rawValue) {
-        result.append(BarcodeFormats.UPC_A)
+        return BarcodeFormats.UPC_A
     } else if ((format.rawValue & BarcodeFormat.UPCE.rawValue) == BarcodeFormat.UPCE.rawValue) {
-        result.append(BarcodeFormats.UPC_E)
+        return BarcodeFormats.UPC_E
     }
-    if (format.rawValue == 0) {
-        result.append(.UNKOWN)
-    }
-    return result
+    
+    return .UNKOWN
     
 }
 

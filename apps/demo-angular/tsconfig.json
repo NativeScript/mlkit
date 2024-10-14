@@ -13,7 +13,8 @@
       "@nativescript/mlkit-object-detection": ["packages/mlkit-object-detection/index.ts"],
       "@nativescript/mlkit-digital-ink-recognition": ["packages/mlkit-digital-ink-recognition/index.ts"],
       "@nativescript/mlkit-pose-detection": ["packages/mlkit-pose-detection/index.ts"],
-      "@nativescript/mlkit-selfie-segmentation": ["packages/mlkit-selfie-segmentation/index.ts"]
+      "@nativescript/mlkit-selfie-segmentation": ["packages/mlkit-selfie-segmentation/index.ts"],
+      "@nativescript/*": ["../../dist/packages/*"]
     }
   },
   "files": ["./references.d.ts", "./src/main.ts", "./src/polyfills.ts"],
