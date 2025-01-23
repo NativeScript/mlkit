@@ -124,6 +124,13 @@ module.exports = {
           description: '@nativescript/mlkit-selfie-segmentation: Build',
         },
       },
+      // @nativescript/mlkit-custom-object-detection
+      'mlkit-custom-object-detection': {
+        build: {
+          script: 'nx run mlkit-custom-object-detection:build.all',
+          description: '@nativescript/mlkit-custom-object-detection: Build',
+        },
+      },
       'build-all': {
         script: 'nx run-many --target=build.all --all',
         description: 'Build all packages',
@@ -169,6 +176,10 @@ module.exports = {
       'mlkit-selfie-segmentation': {
         script: 'nx run mlkit-selfie-segmentation:focus',
         description: 'Focus on @nativescript/mlkit-selfie-segmentation',
+      },
+      'mlkit-custom-object-detection': {
+        script: 'nx run mlkit-custom-object-detection:focus',
+        description: 'Focus on @nativescript/mlkit-custom-object-detection',
       },
       reset: {
         script: 'nx g @nativescript/plugin-tools:focus-packages',

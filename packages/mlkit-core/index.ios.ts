@@ -1,5 +1,33 @@
-import { ImageSource, Utils } from '@nativescript/core';
-import { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, detectionTypeProperty, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty, MLKitViewBase, objectDetectionClassifyProperty, objectDetectionMultipleProperty, pauseProperty, processEveryNthFrameProperty, torchOnProperty, aspectRatioProperty, retrieveLatestImageProperty } from './common';
+import { ImageSource, Utils, File, Color } from '@nativescript/core';
+import {
+  BarcodeFormats,
+  barcodeFormatsProperty,
+  CameraPosition,
+  cameraPositionProperty,
+  DetectionType,
+  detectionTypeProperty,
+  faceDetectionMinFaceSizeProperty,
+  faceDetectionPerformanceModeProperty,
+  faceDetectionTrackingEnabledProperty,
+  imageLabelerConfidenceThresholdProperty,
+  MLKitViewBase,
+  objectDetectionClassifyProperty,
+  objectDetectionMultipleProperty,
+  pauseProperty,
+  processEveryNthFrameProperty,
+  torchOnProperty,
+  aspectRatioProperty,
+  retrieveLatestImageProperty,
+  customObjectDetectionMaximumNumLabelsProperty,
+  customObjectDetectionConfidenceThresholdProperty,
+  customObjectDetectionModelNameProperty,
+  customObjectDetectionClassifyProperty,
+  customObjectDetectionMultipleProperty,
+  TNSObjectDetectionResult,
+  BoundingBoxSettings,
+  boundingBoxSettingsProperty,
+  DEFAULT_BOUNDING_BOX_SETTINGS,
+} from './common';
 import '@nativescript/core';
 import lazy from '@nativescript/core/utils/lazy';
 import { DetectionEvent, StillImageDetectionOptions } from '.';
@@ -13,7 +41,7 @@ const POSE_DETECTION_SUPPORTED = lazy(() => typeof MLKPoseDetector !== 'undefine
 const DIGITALINK_RECOGNITION_SUPPORTED = lazy(() => typeof MLKDigitalInkRecognizer !== 'undefined');
 const SELFIE_SEGMENTATION_SUPPORTED = lazy(() => typeof MLKSegmenter !== 'undefined');
 
-export { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty as imageLablerConfidenceThresholdProperty, objectDetectionClassifyProperty, objectDetectionMultipleProperty } from './common';
+export { BarcodeFormats, barcodeFormatsProperty, CameraPosition, cameraPositionProperty, DetectionType, faceDetectionMinFaceSizeProperty, faceDetectionPerformanceModeProperty, faceDetectionTrackingEnabledProperty, imageLabelerConfidenceThresholdProperty as imageLablerConfidenceThresholdProperty, objectDetectionClassifyProperty, objectDetectionMultipleProperty, customObjectDetectionMaximumNumLabelsProperty, customObjectDetectionConfidenceThresholdProperty, customObjectDetectionModelNameProperty, customObjectDetectionClassifyProperty, customObjectDetectionMultipleProperty } from './common';
 
 declare const TNSMLKitHelper, TNSMLKitHelperCameraPosition;
 
@@ -38,14 +66,19 @@ export class MLKitView extends MLKitViewBase {
   _faceDetector: MLKFaceDetector;
   _imageLabeler: MLKImageLabeler;
   _objectDetector: MLKObjectDetector;
+  _customObjectDetector: MLKObjectDetector;
+  _localModel: MLKLocalModel;
   _poseDetector: MLKPoseDetector;
   _selfieSegmentor: MLKSegmenter;
   _barcodeScannerOptions: MLKBarcodeScannerOptions;
   _faceDetectorOptions: MLKFaceDetectorOptions;
   _imageLabelerOptions: MLKImageLabelerOptions;
   _objectDetectionOptions: MLKObjectDetectorOptions;
+  _customObjectDetectionOptions: MLKCustomObjectDetectorOptions;
   _poseDetectionOptions: MLKPoseDetectorOptions;
   _selfieSegmentationOptions: MLKSelfieSegmenterOptions;
+  _overlayLayer: CALayer;
+  _boundingBoxSettings: BoundingBoxSettings;
 
   _mlkitHelper: TNSMLKitHelper;
   _onScanCallback: (result: any, type) => void;
@@ -62,7 +95,12 @@ export class MLKitView extends MLKitViewBase {
           return;
         }
         try {
-          const data = JSON.parse(result);
+          let data = JSON.parse(result);
+          if (owner.detectionType === DetectionType.Object || owner.detectionType === DetectionType.CustomObject) {
+            if (owner._boundingBoxSettings.drawBBoxes || owner._boundingBoxSettings.drawEdgeMarks) {
+              owner.drawBoundingBoxes(data);
+            }
+          }
           owner.notify(<DetectionEvent>{
             eventName: MLKitView.detectionEvent,
             object: owner,
@@ -82,6 +120,11 @@ export class MLKitView extends MLKitViewBase {
     this._preview = AVCaptureVideoPreviewLayer.layerWithSession(this._mlkitHelper.session);
     this._preview.videoGravity = getGravity(this.aspectRatio) ?? AVLayerVideoGravityResizeAspect;
     nativeView.layer.insertSublayerAtIndex(this._preview, 0);
+
+    this._overlayLayer = CALayer.layer();
+    this._overlayLayer.frame = nativeView.bounds;
+    nativeView.layer.addSublayer(this._overlayLayer);
+
     return nativeView;
   }
 
@@ -159,10 +202,10 @@ export class MLKitView extends MLKitViewBase {
   }
 
   [detectionTypeProperty.setNative](value) {
-    let type = 9; /* None */
+    let type = 10; /* None */
     switch (value) {
       case DetectionType.All:
-        type = 7;
+        type = 8;
         break;
       case DetectionType.Barcode:
         type = 0;
@@ -179,20 +222,22 @@ export class MLKitView extends MLKitViewBase {
       case DetectionType.Object:
         type = 4;
         break;
-      case DetectionType.Pose:
+      case DetectionType.CustomObject:
         type = 5;
         break;
-      case DetectionType.Text:
+      case DetectionType.Pose:
         type = 6;
         break;
-      case DetectionType.Selfie:
-        type = 8;
+      case DetectionType.Text:
+        type = 7;
         break;
-      default:
+      case DetectionType.Selfie:
         type = 9;
         break;
+      default:
+        type = 10;
+        break;
     }
-
     this._setupDetectors();
     this._mlkitHelper.detectorType = type;
   }
@@ -230,6 +275,10 @@ export class MLKitView extends MLKitViewBase {
 
     if (!this._objectDetector && (this.detectionType === DetectionType.Object || this.detectionType === DetectionType.All)) {
       this._setupObjectDetection();
+    }
+
+    if (!this._customObjectDetector && (this.detectionType === DetectionType.CustomObject || this.detectionType === DetectionType.All)) {
+      this._setupCustomObjectDetection();
     }
 
     if (!this._poseDetector && (this.detectionType === DetectionType.Pose || this.detectionType === DetectionType.All)) {
@@ -396,6 +445,59 @@ export class MLKitView extends MLKitViewBase {
     this._mlkitHelper.objectDetector = this._objectDetector;
   }
 
+  [customObjectDetectionModelNameProperty.setNative](value) {
+    this._setupCustomObjectDetection();
+  }
+
+  [customObjectDetectionClassifyProperty.setNative](value) {
+    this._setupCustomObjectDetection();
+  }
+
+  [customObjectDetectionMultipleProperty.setNative](value) {
+    this._setupCustomObjectDetection();
+  }
+
+  [customObjectDetectionMaximumNumLabelsProperty.setNative](value) {
+    this._setupCustomObjectDetection();
+  }
+
+  [customObjectDetectionConfidenceThresholdProperty.setNative](value) {
+    this._setupCustomObjectDetection();
+  }
+
+  [boundingBoxSettingsProperty.setNative](value) {
+    this._boundingBoxSettings = { ...DEFAULT_BOUNDING_BOX_SETTINGS, ...(value as BoundingBoxSettings) };
+  }
+
+  _setupCustomObjectDetection() {
+    if (!OBJECT_DETECTION_SUPPORTED()) {
+      return;
+    }
+
+    if (this.customObjectDetectionModelName !== this.customObjectDetectionLoadedModel) {
+      // Construct the model file path
+      const modelFilePath = NSBundle.mainBundle.pathForResourceOfType(this.customObjectDetectionModelName, 'tflite');
+      if (File.exists(modelFilePath)) {
+        this._localModel = MLKLocalModel.alloc().initWithPath(modelFilePath);
+        this.customObjectDetectionLoadedModel = this.customObjectDetectionModelName;
+        this._customObjectDetectionOptions = MLKCustomObjectDetectorOptions.alloc().initWithLocalModel(this._localModel);
+      } else {
+        console.error('TFLite model file not found.');
+      }
+    }
+    if (this._customObjectDetectionOptions) {
+      this._customObjectDetectionOptions.detectorMode = MLKObjectDetectorModeStream;
+      this._customObjectDetectionOptions.shouldEnableMultipleObjects = this.customObjectDetectionMultiple;
+      this._customObjectDetectionOptions.shouldEnableClassification = this.customObjectDetectionClassify;
+      if (this.customObjectDetectionConfidenceThreshold != null) {
+        this._customObjectDetectionOptions.classificationConfidenceThreshold = this.customObjectDetectionConfidenceThreshold;
+      }
+      this._customObjectDetectionOptions.maxPerObjectLabelCount = this.customObjectDetectionMaximumNumLabels;
+      this._customObjectDetector = MLKObjectDetector.objectDetectorWithOptions(this._customObjectDetectionOptions);
+      this._mlkitHelper.customObjectDetector = this._customObjectDetector;
+    }
+  }
+
   _setPoseDetection() {
     if (!POSE_DETECTION_SUPPORTED()) {
       return;
@@ -440,6 +542,9 @@ export class MLKitView extends MLKitViewBase {
     if (this._preview) {
       this._preview.frame = this.nativeView.bounds;
     }
+    if (this._overlayLayer) {
+      this._overlayLayer.frame = this.nativeView.bounds;
+    }
   }
 
   public onMeasure(widthMeasureSpec: number, heightMeasureSpec: number) {
@@ -463,6 +568,286 @@ export class MLKitView extends MLKitViewBase {
 
   hasCameraPermission(): boolean {
     return AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo) === AVAuthorizationStatus.Authorized;
+  }
+
+  private adjustBoundingBoxForVideoGravity(x: number, y: number, width: number, height: number, imageWidth: number, imageHeight: number, imageOrientation: number, displayedWidth: number, displayedHeight: number, videoGravity: string): { x: number; y: number; width: number; height: number } {
+    let scaleX = 1;
+    let scaleY = 1;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    // Handle orientation-specific adjustments
+    let adjustedImageWidth = imageWidth;
+    let adjustedImageHeight = imageHeight;
+
+    if ([2, 3, 6, 7].includes(imageOrientation)) {
+      adjustedImageWidth = imageHeight;
+      adjustedImageHeight = imageWidth;
+    }
+
+    // Determine scaling and offsets based on video gravity
+    const imageAspectRatio = adjustedImageWidth / adjustedImageHeight;
+    const viewAspectRatio = displayedWidth / displayedHeight;
+
+    switch (videoGravity) {
+      case 'AVLayerVideoGravityResizeAspect': {
+        // 'aspect'
+        if (imageAspectRatio > viewAspectRatio) {
+          // Letterboxing on the top and bottom
+          scaleX = displayedWidth / adjustedImageWidth;
+          scaleY = scaleX;
+          offsetY = (displayedHeight - adjustedImageHeight * scaleY) / 2;
+        } else {
+          // Letterboxing on the left and right
+          scaleY = displayedHeight / adjustedImageHeight;
+          scaleX = scaleY;
+          offsetX = (displayedWidth - adjustedImageWidth * scaleX) / 2;
+        }
+        break;
+      }
+      case 'AVLayerVideoGravityResizeAspectFill': {
+        // 'aspectFill'
+        if (imageAspectRatio > viewAspectRatio) {
+          // Cropping on the left and right
+          scaleY = displayedHeight / adjustedImageHeight;
+          scaleX = scaleY;
+          offsetX = (displayedWidth - adjustedImageWidth * scaleX) / 2;
+        } else {
+          // Cropping on the top and bottom
+          scaleX = displayedWidth / adjustedImageWidth;
+          scaleY = scaleX;
+          offsetY = (displayedHeight - adjustedImageHeight * scaleY) / 2;
+        }
+        break;
+      }
+      case 'AVLayerVideoGravityResize': {
+        // 'fill'
+        scaleX = displayedWidth / adjustedImageWidth;
+        scaleY = displayedHeight / adjustedImageHeight;
+        break;
+      }
+    }
+
+    // Adjust coordinates and dimensions for orientation
+    const adjusted = this.adjustBoundingBox(x, y, width, height, imageWidth, imageHeight, imageOrientation);
+
+    // Scale and shift the bounding box for display
+    return {
+      x: adjusted.x * scaleX + offsetX,
+      y: adjusted.y * scaleY + offsetY,
+      width: adjusted.width * scaleX,
+      height: adjusted.height * scaleY,
+    };
+  }
+
+  private adjustBoundingBox(x: number, y: number, width: number, height: number, imageWidth: number, imageHeight: number, imageOrientation: number): { x: number; y: number; width: number; height: number } {
+    let adjustedX = x;
+    let adjustedY = y;
+    let adjustedWidth = width;
+    let adjustedHeight = height;
+
+    switch (imageOrientation) {
+      case 1: // Down
+        adjustedX = imageWidth - x - width;
+        adjustedY = imageHeight - y - height;
+        break;
+      case 2: // Left
+        adjustedX = y;
+        adjustedY = imageWidth - x - width;
+        adjustedWidth = height;
+        adjustedHeight = width;
+        break;
+      case 3: // Right
+        adjustedX = imageHeight - y - height;
+        adjustedY = x;
+        adjustedWidth = height;
+        adjustedHeight = width;
+        break;
+      case 4: // Up Mirrored
+        adjustedX = imageWidth - x - width;
+        break;
+      case 5: // Down Mirrored
+        adjustedY = imageHeight - y - height;
+        break;
+      case 6: // Left Mirrored
+        adjustedX = imageHeight - y - height;
+        adjustedY = imageWidth - x - width;
+        adjustedWidth = height;
+        adjustedHeight = width;
+        break;
+      case 7: // Right Mirrored
+        adjustedX = y;
+        adjustedY = x;
+        adjustedWidth = height;
+        adjustedHeight = width;
+        break;
+      default: // Up
+        break;
+    }
+    console.log(`adjusted: ${adjustedX} ${adjustedY} ${adjustedWidth} ${adjustedHeight} imgwidth: ${imageWidth} imgheight:${imageHeight}`);
+    return { x: adjustedX, y: adjustedY, width: adjustedWidth, height: adjustedHeight };
+  }
+
+  private getOrientationText(orientationId: number): string {
+    switch (orientationId) {
+      case 0: // UIImage.Orientation.up
+        return 'up';
+      case 1: // UIImage.Orientation.down
+        return 'down';
+      case 2: // UIImage.Orientation.left
+        return 'left';
+      case 3: // UIImage.Orientation.right
+        return 'right';
+      case 4: // UIImage.Orientation.upMirrored
+        return 'up mirrored';
+      case 5: // UIImage.Orientation.downMirrored
+        return 'down mirrored';
+      case 6: // UIImage.Orientation.leftMirrored
+        return 'left mirrored';
+      case 7: // UIImage.Orientation.rightMirrored
+        return 'right mirrored';
+      default:
+        return 'unknown orientation';
+    }
+  }
+  public drawBoundingBoxes(objects: TNSObjectDetectionResult[]) {
+    if (!this._overlayLayer) return;
+
+    // const img_info_string = (this._mlkitHelper as any).getCaptureInfo() as string; FIXME debug
+    const img_info_string = '{ "width": 1920, "height": 1080, "orientation": 3 }';
+    const img_info = JSON.parse(img_info_string) as { width: number; height: number; orientation: number };
+    // console.log('w=' + img_info.width + 'h=' + img_info.height + ' orientation=' + this.getOrientationText(img_info.orientation));
+
+    // Clear previous bounding boxes
+    if (this._overlayLayer.sublayers) {
+      this._overlayLayer.sublayers = null;
+    }
+
+    if (objects) {
+      // console.log('##################### numObjects' + objects.length);
+      // console.log(objects);
+      // const bbox = {
+      //   x: 0,
+      //   y: 0,
+      //   width: 400,
+      //   height: 400,
+      // };
+      // //const tbbox = this.adjustBoundingBox(bbox.x, bbox.y, bbox.width, bbox.height, img_info.width, img_info.height, img_info.orientation);
+      // const tbbox = this.adjustBoundingBoxForVideoGravity(bbox.x, bbox.y, bbox.width, bbox.height, img_info.width, img_info.height, img_info.orientation, this._preview.bounds.size.width, this._preview.bounds.size.height, this._preview.videoGravity);
+      // console.log('bx=' + tbbox.x + ' by=' + tbbox.y + ' bwidth=' + tbbox.width + ' bheight=' + tbbox.height);
+
+      // Draw bounding boxes for each detected object
+      objects.forEach((object) => {
+        const bbox = object.bounds; // Extract the bounds property
+        if (!bbox) {
+          console.warn('No bounds found for object:', object);
+          return;
+        }
+
+        let bestLabel = null;
+        if (object.labels && object.labels.length > 0) {
+          // Take the most confident label, MLKit seems to ignore threshold value
+          bestLabel = object.labels.reduce((maxLabel, label) => (label.confidence > maxLabel.confidence ? label : maxLabel));
+          if (bestLabel.confidence < this.customObjectDetectionConfidenceThreshold) {
+            return;
+          }
+        }
+        const tbbox = this.adjustBoundingBoxForVideoGravity(bbox.x, bbox.y, bbox.width, bbox.height, img_info.width, img_info.height, img_info.orientation, this._preview.bounds.size.width, this._preview.bounds.size.height, this._preview.videoGravity);
+
+        console.log(`adjusted for gravity: ${tbbox.x} ${tbbox.y} ${tbbox.width} ${tbbox.height}`);
+
+        if (this._boundingBoxSettings.drawBBoxes) {
+          const boxLayer = CALayer.layer();
+          boxLayer.frame = CGRectMake(tbbox.x, tbbox.y, tbbox.width, tbbox.height);
+
+          boxLayer.borderWidth = this._boundingBoxSettings.bBoxLineWidth;
+          boxLayer.borderColor = new Color(this._boundingBoxSettings.bBoxLineColor).ios.CGColor;
+          boxLayer.backgroundColor = UIColor.clearColor.CGColor;
+          boxLayer.cornerRadius = this._boundingBoxSettings.bBoxCornerness;
+          this._overlayLayer.addSublayer(boxLayer);
+        }
+
+        // Draw edge marks with rounded corners
+        const edgeMarkLength = Math.min(tbbox.width, tbbox.height) * this._boundingBoxSettings.edgeMarkLengthFactor;
+        const lineWidth = this._boundingBoxSettings.edgeMarkLineWidth; // Thickness of edge marks
+
+        // Create layers for each edge mark
+        if (this._boundingBoxSettings.drawEdgeMarks) {
+          const createEdgeLayer = (x: number, y: number, width: number, height: number) => {
+            const layer = CALayer.layer();
+            layer.frame = CGRectMake(x, y, width, height);
+            layer.cornerRadius = this._boundingBoxSettings.bBoxCornerness;
+            layer.backgroundColor = UIColor.redColor.CGColor;
+            return layer;
+          };
+          // Top-left corner
+          this._overlayLayer.addSublayer(createEdgeLayer(tbbox.x, tbbox.y, edgeMarkLength, lineWidth));
+          this._overlayLayer.addSublayer(createEdgeLayer(tbbox.x, tbbox.y, lineWidth, edgeMarkLength));
+
+          // Top-right corner
+          this._overlayLayer.addSublayer(createEdgeLayer(tbbox.x + tbbox.width - edgeMarkLength, tbbox.y, edgeMarkLength, lineWidth));
+          this._overlayLayer.addSublayer(createEdgeLayer(tbbox.x + tbbox.width - lineWidth, tbbox.y, lineWidth, edgeMarkLength));
+
+          // Bottom-left corner
+          this._overlayLayer.addSublayer(createEdgeLayer(tbbox.x, tbbox.y + tbbox.height - edgeMarkLength, lineWidth, edgeMarkLength));
+          this._overlayLayer.addSublayer(createEdgeLayer(tbbox.x, tbbox.y + tbbox.height - lineWidth, edgeMarkLength, lineWidth));
+
+          // Bottom-right corner
+          this._overlayLayer.addSublayer(createEdgeLayer(tbbox.x + tbbox.width - edgeMarkLength, tbbox.y + tbbox.height - lineWidth, edgeMarkLength, lineWidth));
+          this._overlayLayer.addSublayer(createEdgeLayer(tbbox.x + tbbox.width - lineWidth, tbbox.y + tbbox.height - edgeMarkLength, lineWidth, edgeMarkLength));
+        }
+
+        // draw label
+        if (this._boundingBoxSettings.drawLabels) {
+          const textLayer = this.drawText(tbbox, bestLabel);
+          this._overlayLayer.addSublayer(textLayer); // Add the text layer
+        }
+      });
+    }
+  }
+  private drawText(bbox: { x: number; y: number; width: number; height: number }, label: { text: string; confidence: number; index?: number }): CATextLayer {
+    const textLayer = CATextLayer.layer();
+    const mappedLabelText = this._boundingBoxSettings.labelMappings[label.text] ?? label.text;
+    const labelText = this._boundingBoxSettings.showConfidence ? `${mappedLabelText} ${label.confidence.toFixed(2)}` : `${mappedLabelText}`;
+    textLayer.string = labelText;
+
+    const fontSize = 14;
+    textLayer.fontSize = fontSize;
+    textLayer.foregroundColor = new Color(this._boundingBoxSettings.labelTextColor).ios.CGColor;
+    textLayer.backgroundColor = new Color(this._boundingBoxSettings.labelBackgroundColor).ios.CGColor;
+
+    let mode = kCAAlignmentNatural;
+    switch (this._boundingBoxSettings.labelAlignment) {
+      case 'left':
+        mode = kCAAlignmentLeft;
+        break;
+      case 'center':
+        mode = kCAAlignmentCenter;
+        break;
+      case 'right':
+        mode = kCAAlignmentRight;
+        break;
+    }
+    textLayer.alignmentMode = mode;
+    textLayer.cornerRadius = this._boundingBoxSettings.labelCornerness;
+    textLayer.masksToBounds = true;
+
+    // Calculate text width to ensure it fits the content
+    const textAttributes = NSDictionary.dictionaryWithObjectForKey(UIFont.systemFontOfSize(fontSize), NSFontAttributeName);
+    const textSize = NSString.stringWithString(labelText).sizeWithAttributes(textAttributes);
+
+    // Ensure the label width is at least as wide as the bounding box
+    const labelWidth = Math.max(textSize.width + 10, bbox.width); // Add padding to text size
+    const labelHeight = textSize.height + 8; // Add padding to text height
+
+    // Position the label above the bounding box, centered horizontally
+    const padding = 4; // Space between the text and the bounding box
+    const labelX = bbox.x + (bbox.width - labelWidth) / 2; // Center horizontally above the bounding box
+    const labelY = bbox.y - labelHeight - padding; // Position above the bounding box
+
+    textLayer.frame = CGRectMake(labelX, labelY, labelWidth, labelHeight);
+    textLayer.bounds = CGRectMake(0, -textLayer.fontSize / 4, labelWidth, labelHeight);
+    return textLayer;
   }
 }
 

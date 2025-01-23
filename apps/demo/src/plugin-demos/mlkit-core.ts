@@ -1,4 +1,4 @@
-import { Observable, EventData, Page, Dialogs, ImageSource } from '@nativescript/core';
+import { Observable, EventData, Page, Dialogs, ImageSource, Frame, Image } from '@nativescript/core';
 import { DemoSharedMlkitCore } from '@demo/shared';
 import { DetectionType, MLKitView, DetectionEvent, detectWithStillImage } from '@nativescript/mlkit-core';
 import { BarcodeResult } from '@nativescript/mlkit-barcode-scanning';
@@ -7,6 +7,7 @@ import { ImageLabelingResult } from '@nativescript/mlkit-image-labeling';
 import { ObjectResult } from '@nativescript/mlkit-object-detection';
 import { PoseResult } from '@nativescript/mlkit-pose-detection';
 import { TextResult } from '@nativescript/mlkit-text-recognition';
+import { BoundingBoxSettings, TNSObjectDetectionResult } from '@nativescript/mlkit-core/common';
 
 export function navigatingTo(args: EventData) {
   const page = <Page>args.object;
@@ -18,6 +19,23 @@ export class DemoModel extends DemoSharedMlkitCore {
   detectorType = DetectionType.Barcode;
   isPaused = false;
   torchOn = false;
+  _bbox: { x: number; y: number; width: number; height: number };
+  bboxSettings: BoundingBoxSettings = {
+    drawBBoxes: true,
+    drawEdgeMarks: true,
+    drawLabels: true,
+    bBoxLineColor: '#FF0000FF',
+    bBoxLineWidth: 1,
+    bBoxCornerness: 7,
+    edgeMarkLengthFactor: 0.2,
+    edgeMarkLineWidth: 5,
+    showConfidence: true,
+    labelTextColor: '#FFFFFFFF',
+    labelBackgroundColor: '#00000090',
+    labelCornerness: 5,
+    labelAlignment: 'center',
+    labelMappings: { apple: 'Apple' },
+  };
 
   onLoaded(args) {
     this.camera = args.object;
@@ -30,6 +48,48 @@ export class DemoModel extends DemoSharedMlkitCore {
     if (event.type === DetectionType.Barcode) {
       const first = event.data[0] as BarcodeResult;
       console.log('bounds', first.bounds);
+    }
+    if (event.type === DetectionType.CustomObject) {
+      const first = event.data[0] as TNSObjectDetectionResult;
+      if (first?.bounds) {
+        this._bbox = first.bounds;
+      }
+    }
+  }
+
+  public drawBBox(args: EventData) {
+    const page = Frame.topmost()?.currentPage;
+    const imgView = page.getViewById('imageView') as Image;
+    const mlkitview = page.getViewById('mlKitView') as MLKitView;
+    imgView.visibility = 'visible';
+    if (this._bbox && mlkitview.latestImage) {
+      imgView.src = this.extractRectFromImageBuffer(mlkitview.latestImage, this._bbox);
+    }
+  }
+
+  private extractRectFromImageBuffer(imageSource: ImageSource, rect: { x: number; y: number; width: number; height: number }): ImageSource | null {
+    if (global.isIOS) {
+      const uiImage = imageSource.ios; // Get the UIImage
+      const buffer = uiImage.CIImage?.extent || uiImage.CGImage;
+      if (!buffer) {
+        console.error("UIImage doesn't have a valid buffer representation");
+        return null;
+      }
+      const context = CIContext.context();
+      const scale = uiImage.scale || 1;
+      // CGImage origin is not at top right but bottom left, we therefore have to adopt y axis and bbox ref. point
+      const y_inCGImageCoords = buffer.size.height - rect.y - rect.height;
+      const scaledRect = CGRectMake(rect.x * scale, y_inCGImageCoords * scale, rect.width * scale, rect.height * scale);
+      const croppedCGImage = context.createCGImageFromRect(uiImage.CIImage, scaledRect);
+
+      if (!croppedCGImage) {
+        console.error('Failed to crop CGImage from buffer');
+        return null;
+      }
+      const croppedUIImage = UIImage.alloc().initWithCGImageScaleOrientation(croppedCGImage, scale, uiImage.imageOrientation);
+      const croppedImageSource = new ImageSource();
+      croppedImageSource.setNativeSource(croppedUIImage);
+      return croppedImageSource;
     }
   }
 
@@ -47,7 +107,8 @@ export class DemoModel extends DemoSharedMlkitCore {
   }
 
   changeType(args) {
-    Dialogs.action('Change Detector Type', 'Cancel', ['all', 'barcode', 'digitalInk (unsupport atm)', 'face', 'image', 'object', 'pose', 'text', 'none']).then((value) => {
+    (Frame.topmost()?.currentPage.getViewById('imageView') as Image).visibility = 'hidden';
+    Dialogs.action('Change Detector Type', 'Cancel', ['all', 'barcode', 'digitalInk (unsupport atm)', 'face', 'image', 'object', 'customObject', 'pose', 'text', 'none']).then((value) => {
       if (value === 'Cancel') {
         return;
       }
@@ -61,6 +122,7 @@ export class DemoModel extends DemoSharedMlkitCore {
   }
 
   togglePause(args) {
+    (Frame.topmost()?.currentPage.getViewById('imageView') as Image).visibility = 'hidden';
     this.camera.pause = !this.camera.pause;
     this.set('isPaused', this.camera.pause);
   }

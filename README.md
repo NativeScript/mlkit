@@ -1,5 +1,6 @@
 - [@nativescript/mlkit-barcode-scanning](packages/mlkit-barcode-scanning/README.md)
 - [@nativescript/mlkit-core](packages/mlkit-core/README.md)
+- [@nativescript/mlkit-custom-object-detection](packages/mlkit-custom-object-detection/README.md)
 - [@nativescript/mlkit-digital-ink-recognition](packages/mlkit-digital-ink-recognition/README.md)
 - [@nativescript/mlkit-face-detection](packages/mlkit-face-detection/README.md)
 - [@nativescript/mlkit-image-labeling](packages/mlkit-image-labeling/README.md)

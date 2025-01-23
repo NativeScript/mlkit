@@ -196,7 +196,7 @@ class TNSBarcodeScanner: NSObject {
  var rawBytes: [UInt8]?
         
         if(barcode.rawData != nil){
-            var rawData = barcode.rawData! as NSData
+            let rawData = barcode.rawData! as NSData
             rawBytes = [UInt8](rawData)
         }
 

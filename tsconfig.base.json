@@ -31,6 +31,7 @@
       "@nativescript/mlkit-pose-detection": ["packages/mlkit-pose-detection/index.ts"],
       "@nativescript/mlkit-selfie-segmentation": ["packages/mlkit-selfie-segmentation/index.ts"],
       "@nativescript/mlkit-text-recognition": ["packages/mlkit-text-recognition/index.ts"],
+      "@nativescript/mlkit-custom-object-detection": ["packages/mlkit-custom-object-detection/index.d.ts"],
       "@nativescript/*": ["packages/*"]
     }
   },

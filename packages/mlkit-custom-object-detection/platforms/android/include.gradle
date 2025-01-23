@@ -1,0 +1,3 @@
+dependencies {
+    implementation 'com.google.mlkit:object-detection-custom:17.0.2'
+}

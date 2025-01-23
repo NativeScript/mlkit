@@ -13,7 +13,8 @@
     "@nativescript/mlkit-object-detection": "file:../../packages/mlkit-object-detection",
     "@nativescript/mlkit-pose-detection": "file:../../packages/mlkit-pose-detection",
     "@nativescript/mlkit-selfie-segmentation": "file:../../packages/mlkit-selfie-segmentation",
-    "@nativescript/mlkit-text-recognition": "file:../../packages/mlkit-text-recognition"
+    "@nativescript/mlkit-text-recognition": "file:../../packages/mlkit-text-recognition",
+    "@nativescript/mlkit-custom-object-detection": "file:../../packages/mlkit-custom-object-detection"
   },
   "devDependencies": {
     "@nativescript/android": "8.8.0-alpha.8",
