@@ -576,7 +576,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
             }
         }
     }
-    
+
     private func getVideoDevice() -> AVCaptureDevice? {
         var captureDevice: AVCaptureDevice?
         var position = AVCaptureDevice.Position.back
@@ -584,7 +584,11 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
             position = .front
         }
         if #available(iOS 10.0, *){
-            captureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position)
+            // close range autofocus requires a virtual camera as the minimum focus distance of WideAngleCamera
+            // is to far away to allow for good quality barcode scanning 
+            captureDevice = AVCaptureDevice.default(.builtInTripleCamera, for: .video, position: position) ??
+                              AVCaptureDevice.default(.builtInDualWideCamera, for: .video, position: position) ??
+                              AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position) 
             
         }else {
             let devices = AVCaptureDevice.devices(for: .video)

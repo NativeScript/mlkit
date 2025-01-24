@@ -34,7 +34,7 @@ export class DemoModel extends DemoSharedMlkitCore {
     labelBackgroundColor: '#00000090',
     labelCornerness: 5,
     labelAlignment: 'center',
-    labelMappings: { apple: 'Apple' },
+    labelMappings: { laptop: 'Laptop' },
   };
 
   onLoaded(args) {

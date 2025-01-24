@@ -89,7 +89,7 @@ export class MLKitView extends MLKitViewBase {
 
     const ref = new WeakRef(this);
     const _onScanCallback = (result: any, type) => {
-      const owner = ref.get?.();
+      const owner = ref.deref();
       if (owner) {
         if (owner.detectionType === DetectionType.None || !owner.hasListeners?.(MLKitView.detectionEvent)) {
           return;
@@ -687,28 +687,6 @@ export class MLKitView extends MLKitViewBase {
     return { x: adjustedX, y: adjustedY, width: adjustedWidth, height: adjustedHeight };
   }
 
-  private getOrientationText(orientationId: number): string {
-    switch (orientationId) {
-      case 0: // UIImage.Orientation.up
-        return 'up';
-      case 1: // UIImage.Orientation.down
-        return 'down';
-      case 2: // UIImage.Orientation.left
-        return 'left';
-      case 3: // UIImage.Orientation.right
-        return 'right';
-      case 4: // UIImage.Orientation.upMirrored
-        return 'up mirrored';
-      case 5: // UIImage.Orientation.downMirrored
-        return 'down mirrored';
-      case 6: // UIImage.Orientation.leftMirrored
-        return 'left mirrored';
-      case 7: // UIImage.Orientation.rightMirrored
-        return 'right mirrored';
-      default:
-        return 'unknown orientation';
-    }
-  }
   public drawBoundingBoxes(objects: TNSObjectDetectionResult[]) {
     if (!this._overlayLayer) return;
     const img_info_string = (this._mlkitHelper as any).getCaptureInfo() as string;
@@ -722,7 +700,7 @@ export class MLKitView extends MLKitViewBase {
     if (objects) {
       // Draw bounding boxes for each detected object
       objects.forEach((object) => {
-        const bbox = object.bounds; // Extract the bounds property
+        const bbox = object.bounds;
         if (!bbox) {
           console.warn('No bounds found for object:', object);
           return;
