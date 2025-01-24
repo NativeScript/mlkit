@@ -4,6 +4,10 @@
   "description": "NativeScript MLKit Core",
   "main": "index",
   "typings": "index.d.ts",
+  "files": [
+    "*",
+    "angular/package.json"
+  ],
   "nativescript": {
     "platforms": {
       "ios": "6.0.0",
