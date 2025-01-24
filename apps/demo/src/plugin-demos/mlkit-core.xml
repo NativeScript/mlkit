@@ -5,17 +5,16 @@
     </ActionBar>
   </Page.actionBar>
   <GridLayout rows="*,auto,auto,auto,auto,auto,auto,auto,auto" columns="*,*" height="100%">
-  <!--   customObjectDetectionMaximumNumLabels="3"  fill aspectFill customObjectDetectionMultiple="false"  -->
     <ui:MLKitView processEveryNthFrame="1" pause="true" height="100%" rowSpan="2" colSpan="2" loaded="{{ onLoaded }}" 
                   aspectRatio="aspect"
                   cameraPosition="back" detectionType="{{ detectorType }}" detection="{{ onDetection }}"
                   objectDetectionClassify="true" 
                   objectDetectionMultiple="false"
-                  customObjectDetectionModelName="tfl-effnetlite-b0-quantized" 
+                  customObjectDetectionModelName="imagenet_large" 
                   customObjectDetectionClassify="true" 
                   customObjectDetectionMultiple="false" 
                   customObjectDetectionMaximumNumLabels="4" 
-                  customObjectDetectionConfidenceThreshold="0.5"
+                  customObjectDetectionConfidenceThreshold="0.0"
                   retrieveLatestImage="true"
                   boundingBoxSettings="{{ bboxSettings }}"
                   iosOverflowSafeArea="false" id="mlKitView"/>

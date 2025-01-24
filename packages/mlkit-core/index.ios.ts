@@ -684,7 +684,6 @@ export class MLKitView extends MLKitViewBase {
       default: // Up
         break;
     }
-    console.log(`adjusted: ${adjustedX} ${adjustedY} ${adjustedWidth} ${adjustedHeight} imgwidth: ${imageWidth} imgheight:${imageHeight}`);
     return { x: adjustedX, y: adjustedY, width: adjustedWidth, height: adjustedHeight };
   }
 
@@ -712,11 +711,8 @@ export class MLKitView extends MLKitViewBase {
   }
   public drawBoundingBoxes(objects: TNSObjectDetectionResult[]) {
     if (!this._overlayLayer) return;
-
-    // const img_info_string = (this._mlkitHelper as any).getCaptureInfo() as string; FIXME debug
-    const img_info_string = '{ "width": 1920, "height": 1080, "orientation": 3 }';
+    const img_info_string = (this._mlkitHelper as any).getCaptureInfo() as string;
     const img_info = JSON.parse(img_info_string) as { width: number; height: number; orientation: number };
-    // console.log('w=' + img_info.width + 'h=' + img_info.height + ' orientation=' + this.getOrientationText(img_info.orientation));
 
     // Clear previous bounding boxes
     if (this._overlayLayer.sublayers) {
@@ -724,18 +720,6 @@ export class MLKitView extends MLKitViewBase {
     }
 
     if (objects) {
-      // console.log('##################### numObjects' + objects.length);
-      // console.log(objects);
-      // const bbox = {
-      //   x: 0,
-      //   y: 0,
-      //   width: 400,
-      //   height: 400,
-      // };
-      // //const tbbox = this.adjustBoundingBox(bbox.x, bbox.y, bbox.width, bbox.height, img_info.width, img_info.height, img_info.orientation);
-      // const tbbox = this.adjustBoundingBoxForVideoGravity(bbox.x, bbox.y, bbox.width, bbox.height, img_info.width, img_info.height, img_info.orientation, this._preview.bounds.size.width, this._preview.bounds.size.height, this._preview.videoGravity);
-      // console.log('bx=' + tbbox.x + ' by=' + tbbox.y + ' bwidth=' + tbbox.width + ' bheight=' + tbbox.height);
-
       // Draw bounding boxes for each detected object
       objects.forEach((object) => {
         const bbox = object.bounds; // Extract the bounds property
@@ -753,8 +737,6 @@ export class MLKitView extends MLKitViewBase {
           }
         }
         const tbbox = this.adjustBoundingBoxForVideoGravity(bbox.x, bbox.y, bbox.width, bbox.height, img_info.width, img_info.height, img_info.orientation, this._preview.bounds.size.width, this._preview.bounds.size.height, this._preview.videoGravity);
-
-        console.log(`adjusted for gravity: ${tbbox.x} ${tbbox.y} ${tbbox.width} ${tbbox.height}`);
 
         if (this._boundingBoxSettings.drawBBoxes) {
           const boxLayer = CALayer.layer();
