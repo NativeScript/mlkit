@@ -25,6 +25,12 @@
     "name": "Christoph John",
     "email": "cjohn@my-nutri-diary.org"
   },
+  "contributors": [
+    {
+      "name": "NativeScript",
+      "email": "oss@nativescript.org"
+    }
+  ],
   "bugs": {
     "url": "https://github.com/NativeScript/mlkit/issues"
   },

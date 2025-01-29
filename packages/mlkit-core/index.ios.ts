@@ -27,7 +27,7 @@ import {
   boundingBoxSettingsProperty,
   DEFAULT_BOUNDING_BOX_SETTINGS,
 } from './common';
-import '@nativescript/core';
+import { Color, File, ImageSource, Utils } from '@nativescript/core';
 import lazy from '@nativescript/core/utils/lazy';
 import { DetectionEvent, StillImageDetectionOptions } from '.';
 
@@ -171,6 +171,7 @@ export class MLKitView extends MLKitViewBase {
     }
   }
 
+  // @ts-ignore
   [cameraPositionProperty.setNative](value: CameraPosition) {
     switch (value) {
       case CameraPosition.FRONT:
@@ -303,6 +304,7 @@ export class MLKitView extends MLKitViewBase {
     this._mlkitHelper.selfieSegmentor = this._selfieSegmentor;
   }
 
+  // @ts-ignore
   [barcodeFormatsProperty.setNative](value: BarcodeFormats[]) {
     this._setupBarcodeScanner(value);
   }

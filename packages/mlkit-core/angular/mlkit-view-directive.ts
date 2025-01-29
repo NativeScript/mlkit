@@ -1,6 +1,7 @@
 import { Directive } from '@angular/core';
 
 @Directive({
-    selector: 'MLKitView',
+  selector: 'MLKitView',
+  standalone: false,
 })
-export class MLKitViewDirective { }
+export class MLKitViewDirective {}
