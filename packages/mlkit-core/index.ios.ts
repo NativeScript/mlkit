@@ -1,4 +1,3 @@
-import { ImageSource, Utils, File, Color } from '@nativescript/core';
 import {
   BarcodeFormats,
   barcodeFormatsProperty,
