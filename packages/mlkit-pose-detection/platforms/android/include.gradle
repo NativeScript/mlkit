@@ -1,4 +1,4 @@
 dependencies {
-    implementation 'io.github.triniwiz.fancycamera:poseDetection:1.0.1'
-    implementation 'com.google.mlkit:pose-detection:18.0.0-beta3'
+    implementation 'io.github.triniwiz:pose-detection:4.0.0-alpha.13'
+    implementation 'com.google.mlkit:pose-detection:18.0.0-beta4'
 }

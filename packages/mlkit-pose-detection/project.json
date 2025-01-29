@@ -5,7 +5,7 @@
   "sourceRoot": "packages/mlkit-pose-detection",
   "targets": {
     "build": {
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nx/js:tsc",
       "options": {
         "outputPath": "dist/packages/mlkit-pose-detection",
         "tsConfig": "packages/mlkit-pose-detection/tsconfig.json",
@@ -24,7 +24,7 @@
       "dependsOn": [
         {
           "target": "build.all",
-          "projects": "dependencies"
+          "dependencies": true
         }
       ]
     },
@@ -38,11 +38,10 @@
       "dependsOn": [
         {
           "target": "build.all",
-          "projects": "dependencies"
+          "dependencies": true
         },
         {
-          "target": "build",
-          "projects": "self"
+          "target": "build"
         }
       ]
     },
@@ -54,10 +53,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["packages/mlkit-pose-detection/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     }
   }
 }

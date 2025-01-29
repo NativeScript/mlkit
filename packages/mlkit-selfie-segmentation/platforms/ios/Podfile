@@ -1,1 +1,2 @@
-pod 'GoogleMLKit/SegmentationSelfie', '4.0.0'
+platform :ios, '15.5.0'
+pod 'GoogleMLKit/SegmentationSelfie', '7.0.0'

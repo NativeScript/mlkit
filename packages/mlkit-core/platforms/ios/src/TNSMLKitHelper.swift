@@ -325,11 +325,37 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
             return _output
         }
     }
+    var autoFocus = true
     let session = AVCaptureSession()
     let encoder = JSONEncoder()
     var detectorType = TNSMLKitDetectionType.All
     var processEveryNthFrame = 0
     private var currentFrame = 0
+    
+    private func updateAutoFocus(_ videoInput: AVCaptureDeviceInput?){
+        if(!session.isRunning){
+            return
+        }
+        do {
+            guard let videoInput = videoInput else {
+                return
+            }
+            
+            try videoInput.device.lockForConfiguration()
+            
+            defer {
+                videoInput.device.unlockForConfiguration()
+            }
+            
+            if videoInput.device.isFocusModeSupported(.continuousAutoFocus) {
+                videoInput.device.focusMode = .continuousAutoFocus
+                if videoInput.device.isSmoothAutoFocusSupported {
+                    videoInput.device.isSmoothAutoFocusEnabled = true
+                }
+            }
+         
+        }catch {}
+    }
     
     
     private func updateTorchMode(_ videoInput: AVCaptureDeviceInput?){
@@ -386,6 +412,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                     
                     if(!self.pause && !self.session.isRunning){
                         self.session.startRunning()
+                        self.updateAutoFocus(self.videoInput)
                         self.updateTorchMode(self.videoInput)
                     }
                 }
@@ -446,6 +473,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
         sessionQueue.async {
             if(self.isSessionSetup && !self.session.isRunning && !self.pause){
                 self.session.startRunning()
+                self.updateAutoFocus(self.videoInput)
                 self.updateTorchMode(self.videoInput)
             }
         }
@@ -507,6 +535,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                 }
                 if(wasRunning && !self.pause){
                     self.session.startRunning()
+                    updateAutoFocus(videoInput)
                     updateTorchMode(videoInput)
                 }
             }
@@ -569,6 +598,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
             
             guard self.videoInput != nil else {return}
             
+            self.updateAutoFocus(self.videoInput)
             self.updateTorchMode(self.videoInput)
             
             self.session.beginConfiguration()
