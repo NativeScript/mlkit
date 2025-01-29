@@ -21,6 +21,7 @@
     ],
     "paths": {
       "@demo/shared": ["tools/demo/index.ts"],
+      "@nativescript/*": ["packages/*"],
       "@nativescript/mlkit-barcode-scanning": ["packages/mlkit-barcode-scanning/index.ts"],
       "@nativescript/mlkit-core": ["packages/mlkit-core/index.d.ts"],
       "@nativescript/mlkit-core/angular": ["packages/mlkit-core/angular/index.ts"],
@@ -31,8 +32,7 @@
       "@nativescript/mlkit-object-detection": ["packages/mlkit-object-detection/index.ts"],
       "@nativescript/mlkit-pose-detection": ["packages/mlkit-pose-detection/index.ts"],
       "@nativescript/mlkit-selfie-segmentation": ["packages/mlkit-selfie-segmentation/index.ts"],
-      "@nativescript/mlkit-text-recognition": ["packages/mlkit-text-recognition/index.ts"],
-      "@nativescript/*": ["packages/*"]
+      "@nativescript/mlkit-text-recognition": ["packages/mlkit-text-recognition/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
