@@ -1,20 +1,34 @@
-<Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:ui="@nativescript/mlkit-core" navigatingTo="navigatingTo"
-      class="page">
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:ui="@nativescript/mlkit-core" navigatingTo="navigatingTo" navigatedTo="navigatedTo"
+      class="page" >
   <Page.actionBar>
     <ActionBar title="mlkit-core" icon="" class="action-bar">
     </ActionBar>
   </Page.actionBar>
-  <GridLayout rows="*,auto,auto,auto,auto,auto,auto,auto,auto,auto" height="100%">
-    <ui:MLKitView processEveryNthFrame="5" pause="true" height="100%" rowSpan="3" loaded="{{ onLoaded }}"
-                  cameraPosition="back" detectionType="{{ detectorType }}" detection="{{ onDetection }}"/>
-    <Button row="1" height="40" text="Toggle Camera" tap="{{ toggleCamera }}"/>
-    <Label color="red" row="2" text="{{'TorchOn ' + torchOn }}"/>
-    <Button row="3" height="40" text="Toggle Torch" tap="{{ toggleTorch }}"/>
-    <Button row="4" height="40" text="Request Camera Permission" tap="{{ requestPermission }}"/>
-    <Label row="5" text="{{'Detecting ' + detectorType }}"/>
-    <Button row="6" height="40" text="Change Detector Type" tap="{{ changeType }}"/>
-    <Label row="7" text="{{'isPaused : ' + isPaused }}"/>
-    <Button row="8" height="40" text="Toggle Pause" tap="{{ togglePause }}"/>
-    <Button row="9" height="40" text="Process Still imAGE" tap="{{ processStill }}"/>
+  <GridLayout rows="*,auto,auto,auto,auto,auto,auto,auto,auto" columns="*,*" height="100%">
+    <ui:MLKitView processEveryNthFrame="1" pause="true" height="100%" rowSpan="2" colSpan="2" loaded="{{ onLoaded }}" 
+                  aspectRatio="aspect"
+                  cameraPosition="back" detectionType="{{ detectorType }}" detection="{{ onDetection }}"
+                  objectDetectionClassify="true" 
+                  objectDetectionMultiple="false"
+                  customObjectDetectionModelName="imagenet_large" 
+                  customObjectDetectionClassify="true" 
+                  customObjectDetectionMultiple="false" 
+                  customObjectDetectionMaximumNumLabels="4" 
+                  customObjectDetectionConfidenceThreshold="0.0"
+                  retrieveLatestImage="true"
+                  boundingBoxSettings="{{ bboxSettings }}"
+                  iosOverflowSafeArea="false" id="mlKitView"/>
+    <Image id="imageView" row="1" colSpan="2" width="100" height="100" backgroundColor="transparent" horizontalAlignment="center" stretch="aspectFit"/>
+    <Button row="2" col="0" height="40" text="Toggle Camera" tap="{{ toggleCamera }}" class="btn btn-primary view-demo"/>
+    <Button row="2" col="1" height="40" text="Get Permission" tap="{{ requestPermission }}" class="btn btn-primary view-demo" />
+    <Label  row="3" col="0" color="red" text="{{'TorchOn ' + torchOn }}"/>
+    <Button row="3" col="1" height="40" text="Toggle Torch" tap="{{ toggleTorch }}" class="btn btn-primary view-demo" />
+    
+    <Label row="5" colSpan="2" text="{{'Detecting ' + detectorType }}" horizontalAlignment="center"/>
+    <Button row="6" colSpan="2" height="40" text="Change Detector Type" tap="{{ changeType }}" class="btn btn-primary view-demo"/>
+    <Label row="7" col="0" text="{{'isPaused : ' + isPaused }}" horizontalAlignment="center"/>
+    <Button row="7" col="1" height="40" text="Toggle Pause" tap="{{ togglePause }}" class="btn btn-primary view-demo" />
+    <Button row="8" col="0" height="40" text="BBox From Img" tap="{{ drawBBox }}" class="btn btn-primary view-demo"/>
+    <Button row="8" col="1" height="40" text="Process Still Img" tap="{{ processStill }}" class="btn btn-primary view-demo" />
   </GridLayout>
 </Page>

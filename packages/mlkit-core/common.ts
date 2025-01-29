@@ -1,11 +1,60 @@
 import { booleanConverter, ContainerView, CSSType, ImageSource, Property } from '@nativescript/core';
 
+export interface BoundingBoxSettings {
+  drawBBoxes?: boolean;
+  drawEdgeMarks?: boolean;
+  drawLabels?: boolean;
+  bBoxLineWidth?: number;
+  bBoxLineColor?: string;
+  bBoxCornerness?: number;
+  edgeMarkLengthFactor?: number;
+  edgeMarkLineWidth?: number;
+  showConfidence?: boolean;
+  labelTextColor?: string;
+  labelBackgroundColor?: string;
+  labelCornerness?: number;
+  labelAlignment?: 'natural' | 'left' | 'center' | 'right';
+  labelMappings?: { [key: string]: string };
+}
+export const DEFAULT_BOUNDING_BOX_SETTINGS: Required<BoundingBoxSettings> = {
+  drawBBoxes: false,
+  drawEdgeMarks: false,
+  drawLabels: false,
+  bBoxLineWidth: 2,
+  bBoxLineColor: '#FF0000FF',
+  bBoxCornerness: 5,
+  edgeMarkLengthFactor: 0.2,
+  edgeMarkLineWidth: 4,
+  showConfidence: false,
+  labelTextColor: '#FFFFFFFF',
+  labelBackgroundColor: '#00000090',
+  labelCornerness: 5,
+  labelAlignment: 'center',
+  labelMappings: {},
+};
+
+export interface TNSObjectDetectionResult {
+  bounds: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+  trackingId?: number;
+  labels?: {
+    text: string;
+    confidence: number;
+    index?: number;
+  }[];
+}
+
 export enum DetectionType {
   Barcode = 'barcode',
   DigitalInk = 'digitalInk',
   Face = 'face',
   Image = 'image',
   Object = 'object',
+  CustomObject = 'customObject',
   Pose = 'pose',
   Text = 'text',
   All = 'all',
@@ -53,6 +102,13 @@ export class MLKitViewBase extends ContainerView {
   imageLabelerConfidenceThreshold: number;
   objectDetectionMultiple: boolean;
   objectDetectionClassify: boolean;
+  customObjectDetectionMultiple: boolean;
+  customObjectDetectionClassify: boolean;
+  customObjectDetectionModelName: string;
+  customObjectDetectionLoadedModel: string;
+  customObjectDetectionConfidenceThreshold: number | null;
+  customObjectDetectionMaximumNumLabels: number;
+  boundingBoxSettings: BoundingBoxSettings;
   torchOn: boolean;
   pause: boolean;
   processEveryNthFrame: number;
@@ -133,6 +189,66 @@ export const objectDetectionClassifyProperty = new Property<MLKitViewBase, boole
 });
 
 objectDetectionClassifyProperty.register(MLKitViewBase);
+
+export const customObjectDetectionMultipleProperty = new Property<MLKitViewBase, boolean>({
+  name: 'customObjectDetectionMultiple',
+  defaultValue: false,
+  valueConverter: booleanConverter,
+});
+
+customObjectDetectionMultipleProperty.register(MLKitViewBase);
+
+export const customObjectDetectionClassifyProperty = new Property<MLKitViewBase, boolean>({
+  name: 'customObjectDetectionClassify',
+  defaultValue: false,
+  valueConverter: booleanConverter,
+});
+
+customObjectDetectionClassifyProperty.register(MLKitViewBase);
+
+export const customObjectDetectionModelNameProperty = new Property<MLKitViewBase, string>({
+  name: 'customObjectDetectionModelName',
+  defaultValue: 'customModel',
+});
+
+customObjectDetectionModelNameProperty.register(MLKitViewBase);
+
+export const customObjectDetectionConfidenceThresholdProperty = new Property<MLKitViewBase, number | null>({
+  name: 'customObjectDetectionConfidenceThreshold',
+  defaultValue: null,
+  valueConverter: (value: string) => {
+    return value === null ? null : +value;
+  },
+});
+
+customObjectDetectionConfidenceThresholdProperty.register(MLKitViewBase);
+
+export const customObjectDetectionMaximumNumLabelsProperty = new Property<MLKitViewBase, number>({
+  name: 'customObjectDetectionMaximumNumLabels',
+  defaultValue: 10,
+  valueConverter: (value: string) => {
+    return +value;
+  },
+});
+
+customObjectDetectionMaximumNumLabelsProperty.register(MLKitViewBase);
+
+export const boundingBoxSettingsProperty = new Property<MLKitViewBase, BoundingBoxSettings>({
+  name: 'boundingBoxSettings',
+  defaultValue: DEFAULT_BOUNDING_BOX_SETTINGS,
+  valueConverter: (value: string): BoundingBoxSettings => {
+    if (typeof value === 'string') {
+      try {
+        const parsed = JSON.parse(value);
+        return { ...DEFAULT_BOUNDING_BOX_SETTINGS, ...parsed };
+      } catch (e) {
+        throw new Error(`Invalid boundingBoxSettings property value: ${value}`);
+      }
+    }
+  },
+});
+
+boundingBoxSettingsProperty.register(MLKitViewBase);
 
 export const torchOnProperty = new Property<MLKitViewBase, boolean>({
   name: 'torchOn',

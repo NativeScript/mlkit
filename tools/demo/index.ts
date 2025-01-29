@@ -1,6 +1,7 @@
 export * from './utils';
 export * from './mlkit-barcode-scanning';
 export * from './mlkit-core';
+export * from './mlkit-custom-object-detection';
 export * from './mlkit-digital-ink-recognition';
 export * from './mlkit-face-detection';
 export * from './mlkit-image-labeling';

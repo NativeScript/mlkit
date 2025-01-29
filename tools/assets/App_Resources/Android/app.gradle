@@ -16,5 +16,6 @@ android {
   }
   aaptOptions {
     additionalParameters "--no-version-vectors"
+    noCompress "tflite"
   }
 }

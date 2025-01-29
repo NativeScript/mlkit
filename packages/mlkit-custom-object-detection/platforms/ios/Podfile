@@ -1,0 +1,2 @@
+platform :ios, '15.5'
+pod 'GoogleMLKit/ObjectDetectionCustom', '7.0.0'

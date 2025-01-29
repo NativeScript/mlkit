@@ -1,0 +1,65 @@
+{
+  "name": "mlkit-custom-object-detection",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "packages/mlkit-custom-object-detection",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "options": {
+        "outputPath": "dist/packages/mlkit-custom-object-detection",
+        "tsConfig": "packages/mlkit-custom-object-detection/tsconfig.json",
+        "packageJson": "packages/mlkit-custom-object-detection/package.json",
+        "main": "packages/mlkit-custom-object-detection/index.d.ts",
+        "assets": [
+          "packages/mlkit-custom-object-detection/*.md",
+          "packages/mlkit-custom-object-detection/index.d.ts",
+          "LICENSE",
+          {
+            "glob": "**/*",
+            "input": "packages/mlkit-custom-object-detection/platforms/",
+            "output": "./platforms/"
+          }
+        ],
+        "dependsOn": [
+          {
+            "target": "build.all",
+            "projects": "dependencies"
+          }
+        ]
+      }
+    },
+    "build.all": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["node tools/scripts/build-finish.ts mlkit-custom-object-detection"],
+        "parallel": false
+      },
+      "outputs": ["{workspaceRoot}/dist/packages/mlkit-custom-object-detection"],
+      "dependsOn": [
+        {
+          "target": "build.all",
+          "projects": "dependencies"
+        },
+        {
+          "target": "build",
+          "projects": "self"
+        }
+      ]
+    },
+    "focus": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["nx g @nativescript/plugin-tools:focus-packages mlkit-custom-object-detection"],
+        "parallel": false
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:eslint",
+      "options": {
+        "lintFilePatterns": ["packages/mlkit-custom-object-detection/**/*.ts"]
+      }
+    }
+  },
+  "tags": []
+}

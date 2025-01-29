@@ -26,6 +26,10 @@ import MLKitImageLabeling
 import MLKitObjectDetection
 #endif
 
+#if canImport(MLKitObjectDetectionCustom)
+import MLKitObjectDetectionCustom
+#endif
+
 #if canImport(MLKitPoseDetection)
 import MLKitPoseDetection
 #endif
@@ -121,6 +125,7 @@ enum TNSMLKitDetectionType: Int, RawRepresentable {
     case Face
     case Image
     case Object
+    case CustomObject
     case Pose
     case Text
     case All
@@ -140,16 +145,18 @@ enum TNSMLKitDetectionType: Int, RawRepresentable {
             return 3
         case .Object:
             return 4
-        case .Pose:
+        case .CustomObject:
             return 5
-        case .Text:
+        case .Pose:
             return 6
-        case .All:
+        case .Text:
             return 7
-        case .Selfie:
+        case .All:
             return 8
-        case .None:
+        case .Selfie:
             return 9
+        case .None:
+            return 10
         }
     }
     
@@ -167,14 +174,16 @@ enum TNSMLKitDetectionType: Int, RawRepresentable {
         case 4:
             self = .Object
         case 5:
-            self = .Pose
+            self = .CustomObject
         case 6:
-            self = .Text
+            self = .Pose
         case 7:
-            self = .All
+            self = .Text
         case 8:
-            self = .Selfie
+            self = .All
         case 9:
+            self = .Selfie
+        case 10:
             self = .None
         default:
             return nil
@@ -194,6 +203,8 @@ enum TNSMLKitDetectionType: Int, RawRepresentable {
             self = .Image
         case "object":
             self = .Object
+        case "customObject":
+            self = .CustomObject
         case "pose":
             self = .Pose
         case  "text":
@@ -210,7 +221,8 @@ enum TNSMLKitDetectionType: Int, RawRepresentable {
     }
     
     func string() -> String {
-        switch(self){case .Barcode:
+        switch(self){
+        case .Barcode:
             return "barcode"
         case .DigitalInk:
             return "digitalInk"
@@ -220,6 +232,8 @@ enum TNSMLKitDetectionType: Int, RawRepresentable {
             return "image"
         case .Object:
             return "object"
+        case .CustomObject:
+            return "customObject"
         case .Pose:
             return "pose"
         case .Text:
@@ -298,6 +312,24 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
     private var videoInput: AVCaptureDeviceInput?
     private var _latestImage: UIImage? = nil
     
+    public func getCaptureInfo() -> String? {
+        guard let videoInput = self.videoInput else { return nil }
+        let formatDescription = videoInput.device.activeFormat.formatDescription
+        let orientation = getOrientation(deviceOrientation: UIDevice.current.orientation, 
+                                         cameraPosition: videoInput.device.position)      
+        let dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription)
+        let imageInfo = [
+            "width": Int(dimensions.width),
+            "height": Int(dimensions.height),
+            "orientation": orientation.rawValue
+        ]
+        let encoder = JSONEncoder()
+        if let jsonData = try? encoder.encode(imageInfo) {
+            return String(data: jsonData, encoding: .utf8)
+        }
+        return nil
+    }
+
     var retrieveLatestImage = false {
         didSet {
             if(_latestImage != nil){
@@ -305,7 +337,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
             }
         }
     }
-    
+
     var latestImage: UIImage? {
         get {
             return _latestImage
@@ -449,7 +481,10 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
 #if canImport(MLKitObjectDetection)
     var objectDetector: ObjectDetector?
 #endif
-    
+
+#if canImport(MLKitObjectDetectionCustom)
+    var customObjectDetector: ObjectDetector?
+#endif    
     
 #if canImport(MLKitPoseDetection)
     var poseDetector: PoseDetector?
@@ -541,7 +576,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
             }
         }
     }
-    
+
     private func getVideoDevice() -> AVCaptureDevice? {
         var captureDevice: AVCaptureDevice?
         var position = AVCaptureDevice.Position.back
@@ -549,7 +584,11 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
             position = .front
         }
         if #available(iOS 10.0, *){
-            captureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position)
+            // close range autofocus requires a virtual camera as the minimum focus distance of WideAngleCamera
+            // is to far away to allow for good quality barcode scanning 
+            captureDevice = AVCaptureDevice.default(.builtInTripleCamera, for: .video, position: position) ??
+                              AVCaptureDevice.default(.builtInDualWideCamera, for: .video, position: position) ??
+                              AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position) 
             
         }else {
             let devices = AVCaptureDevice.devices(for: .video)
@@ -562,7 +601,6 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
         }
         return captureDevice
     }
-    
     
     public func hasCameraPermission() -> Bool {
         return AVCaptureDevice.authorizationStatus(for: .video) == .authorized
@@ -642,8 +680,7 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
             if cameraPosition == .front {
                 return .leftMirrored
             }
-            return .right
-            
+            return .right   
         case .landscapeLeft:
             if cameraPosition == .front {
                 return .downMirrored
@@ -689,26 +726,17 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
         autoreleasepool {
             let buffer = CMSampleBufferGetImageBuffer(sampleBuffer)
             guard buffer != nil else {return}
-            
+                 
             if(self.currentFrame != self.processEveryNthFrame){
                 self.incrementCurrentFrame()
                 return
             }
-            
+
             let image = VisionImage(buffer: sampleBuffer)
             
             let orientation = getOrientation(deviceOrientation: UIDevice.current.orientation, cameraPosition: videoInput!.device.position)
             
-            image.orientation = orientation
-            
-            if retrieveLatestImage {
-                let ciimage = CIImage(cvImageBuffer: buffer!)
-                
-                self._latestImage = UIImage(ciImage: ciimage, scale: 1.0, orientation: orientation)
-            } else {
-                self._latestImage = nil
-            }
-            
+            image.orientation = orientation  
             
 #if canImport(MLKitBarcodeScanning)
             if(detectorType == .Barcode || detectorType == .All){
@@ -816,7 +844,27 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
             }
 #endif
             
-            
+ #if canImport(MLKitObjectDetectionCustom)
+            if(detectorType == .CustomObject || detectorType == .All){
+                do {
+                    let result = try self.customObjectDetector?.results(in: image)
+                    if(result != nil){
+                        let objects = handleObjectDetection(result!) 
+                        if(!objects.isEmpty) {
+                            let response = toJSON(objects)
+                            if response != nil {
+                                DispatchQueue.main.async {
+                                    self.onScanCallback!(response!, TNSMLKitDetectionType.CustomObject.string())
+                                }
+                            }
+                        }
+                    }
+                } catch let error {
+                  print("Failed to detect object with error \(error.localizedDescription).")
+                  return
+                }
+            }
+#endif           
             
             
 #if canImport(MLKitTextRecognition)
@@ -869,7 +917,14 @@ public class TNSMLKitHelper: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
                 }catch {}
             }
 #endif
-            
+            // latest image should be updated only after last plugin finished processing, this ensures that 
+            // image will be available till next scan result
+            if retrieveLatestImage {
+                let ciimage = CIImage(cvImageBuffer: buffer!)            
+                self._latestImage = UIImage(ciImage: ciimage, scale: 1.0, orientation: orientation)
+            } else {
+                self._latestImage = nil
+            }
             
             self.resetCurrentFrame()
         }
