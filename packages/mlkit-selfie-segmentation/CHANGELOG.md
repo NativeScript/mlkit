@@ -3,7 +3,6 @@
 ### 🚀 Features
 
 - iOS SDK 5+ and Android SDK updates ([#63](https://github.com/NativeScript/mlkit/pull/63))
-- v2 ([#46](https://github.com/NativeScript/mlkit/pull/46))
 - **core:** allow aspectRatio configuration ([10fea40](https://github.com/NativeScript/mlkit/commit/10fea40))
 - allow retrieval of last processed image ([f98e08d](https://github.com/NativeScript/mlkit/commit/f98e08d))
 - still image detection, pause & torch ([c7ee498](https://github.com/NativeScript/mlkit/commit/c7ee498))

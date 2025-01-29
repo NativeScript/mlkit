@@ -4,12 +4,10 @@
 
 - custom object detectors + fix related to automatic zooming on ios ([#71](https://github.com/NativeScript/mlkit/pull/71))
 - iOS SDK 5+ and Android SDK updates ([#63](https://github.com/NativeScript/mlkit/pull/63))
-- v2 ([#46](https://github.com/NativeScript/mlkit/pull/46))
 - **core:** allow aspectRatio configuration ([10fea40](https://github.com/NativeScript/mlkit/commit/10fea40))
 - allow retrieval of last processed image ([f98e08d](https://github.com/NativeScript/mlkit/commit/f98e08d))
 - still image detection, pause & torch ([c7ee498](https://github.com/NativeScript/mlkit/commit/c7ee498))
 - pause & torch ([a39ac7e](https://github.com/NativeScript/mlkit/commit/a39ac7e))
-- alpha.0 ([1458313](https://github.com/NativeScript/mlkit/commit/1458313))
 
 ### 🩹 Fixes
 
