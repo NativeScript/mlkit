@@ -540,10 +540,10 @@ export class MLKitView extends MLKitViewBase {
   }
 
   public onLayout(left: number, top: number, right: number, bottom: number) {
-    if (this._preview) {
+    if (this._preview && this.nativeView) {
       this._preview.frame = this.nativeView.bounds;
     }
-    if (this._overlayLayer) {
+    if (this._overlayLayer && this.nativeView) {
       this._overlayLayer.frame = this.nativeView.bounds;
     }
   }
