@@ -96,7 +96,7 @@ export class MLKitView extends MLKitViewBase {
         try {
           let data = JSON.parse(result);
           if (owner.detectionType === DetectionType.Object || owner.detectionType === DetectionType.CustomObject) {
-            if (owner._boundingBoxSettings.drawBBoxes || owner._boundingBoxSettings.drawEdgeMarks) {
+            if (owner._boundingBoxSettings?.drawBBoxes || owner._boundingBoxSettings?.drawEdgeMarks) {
               owner.drawBoundingBoxes(data);
             }
           }
