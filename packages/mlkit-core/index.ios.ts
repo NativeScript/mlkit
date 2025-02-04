@@ -96,7 +96,7 @@ export class MLKitView extends MLKitViewBase {
         try {
           let data = JSON.parse(result);
           if (owner.detectionType === DetectionType.Object || owner.detectionType === DetectionType.CustomObject) {
-            if (owner._boundingBoxSettings.drawBBoxes || owner._boundingBoxSettings.drawEdgeMarks) {
+            if (owner._boundingBoxSettings?.drawBBoxes || owner._boundingBoxSettings?.drawEdgeMarks) {
               owner.drawBoundingBoxes(data);
             }
           }
@@ -540,10 +540,10 @@ export class MLKitView extends MLKitViewBase {
   }
 
   public onLayout(left: number, top: number, right: number, bottom: number) {
-    if (this._preview) {
+    if (this._preview && this.nativeView) {
       this._preview.frame = this.nativeView.bounds;
     }
-    if (this._overlayLayer) {
+    if (this._overlayLayer && this.nativeView) {
       this._overlayLayer.frame = this.nativeView.bounds;
     }
   }
