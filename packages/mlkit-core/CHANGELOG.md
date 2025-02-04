@@ -1,3 +1,13 @@
+## 3.0.1 (2025-02-04)
+
+### 🩹 Fixes
+
+- check if bbox params are set ([#72](https://github.com/NativeScript/mlkit/pull/72))
+
+### ❤️ Thank You
+
+- cjohn001 @cjohn001
+
 # 3.0.0 (2025-01-29)
 
 ### 🚀 Features
