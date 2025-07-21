@@ -1,4 +1,4 @@
 dependencies {
     implementation 'io.github.triniwiz:face-detection:4.0.0-alpha.13'
-    implementation 'com.google.mlkit:face-detection:16.1.6'
+    implementation 'com.google.mlkit:face-detection:16.1.7'
 }
