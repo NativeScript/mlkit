@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/mlkit-selfie-segmentation",
-  "version": "3.0.1",
+  "version": "3.0.0",
   "description": "NativeScript MLKit Self Segmentation module",
   "main": "index",
   "typings": "index.d.ts",
