@@ -1,7 +1,7 @@
 platform :ios, '15.5.0'
 
  if defined?($NSMLKitPoseDetectionAccurate)
-    pod 'GoogleMLKit/PoseDetectionAccurate', '7.0.0'
+    pod 'GoogleMLKit/PoseDetectionAccurate', '8.0.0'
   else
-    pod 'GoogleMLKit/PoseDetection', '7.0.0'
+    pod 'GoogleMLKit/PoseDetection', '8.0.0'
   end

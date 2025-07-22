@@ -1,2 +1,2 @@
 platform :ios, '15.5.0'
-pod 'GoogleMLKit/FaceDetection', '7.0.0'
+pod 'GoogleMLKit/FaceDetection', '8.0.0'

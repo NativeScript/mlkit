@@ -1,2 +1,2 @@
 platform :ios, '15.5.0'
-pod 'GoogleMLKit/ImageLabeling', '7.0.0'
+pod 'GoogleMLKit/ImageLabeling', '8.0.0'
