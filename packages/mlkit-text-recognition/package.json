@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/mlkit-text-recognition",
-  "version": "3.0.1",
+  "version": "3.0.0",
   "description": "NativeScript MLKit Text Recognition module",
   "main": "index",
   "typings": "index.d.ts",
