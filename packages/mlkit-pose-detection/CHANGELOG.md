@@ -1,3 +1,13 @@
+## 3.0.1 (2025-07-22)
+
+### 🚀 Features
+
+- SDK updates for Android and IOS ([#83](https://github.com/NativeScript/mlkit/pull/83))
+
+### ❤️ Thank You
+
+- cjohn001 @cjohn001
+
 # 3.0.0 (2025-01-29)
 
 ### 🚀 Features

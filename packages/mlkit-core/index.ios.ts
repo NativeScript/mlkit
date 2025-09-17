@@ -56,6 +56,33 @@ function getGravity(value) {
   return null;
 }
 
+function detectionTypeToNative(detectionType: DetectionType) {
+  switch (detectionType) {
+    case DetectionType.All:
+      return TNSMLKitDetectionType.All;
+    case DetectionType.Barcode:
+      return TNSMLKitDetectionType.Barcode;
+    case DetectionType.DigitalInk:
+      return TNSMLKitDetectionType.DigitalInk;
+    case DetectionType.Face:
+      return TNSMLKitDetectionType.Face;
+    case DetectionType.Image:
+      return TNSMLKitDetectionType.Image;
+    case DetectionType.Object:
+      return TNSMLKitDetectionType.Object;
+    case DetectionType.CustomObject:
+      return TNSMLKitDetectionType.CustomObject;
+    case DetectionType.Pose:
+      return TNSMLKitDetectionType.Pose;
+    case DetectionType.Text:
+      return TNSMLKitDetectionType.Text;
+    case DetectionType.Selfie:
+      return TNSMLKitDetectionType.Selfie;
+    default:
+      return TNSMLKitDetectionType.None;
+  }
+}
+
 export class MLKitView extends MLKitViewBase {
   _device: AVCaptureDevice;
   _preview: AVCaptureVideoPreviewLayer;
@@ -202,42 +229,7 @@ export class MLKitView extends MLKitViewBase {
   }
 
   [detectionTypeProperty.setNative](value) {
-    let type = 10; /* None */
-    switch (value) {
-      case DetectionType.All:
-        type = 8;
-        break;
-      case DetectionType.Barcode:
-        type = 0;
-        break;
-      case DetectionType.DigitalInk:
-        type = 1;
-        break;
-      case DetectionType.Face:
-        type = 2;
-        break;
-      case DetectionType.Image:
-        type = 3;
-        break;
-      case DetectionType.Object:
-        type = 4;
-        break;
-      case DetectionType.CustomObject:
-        type = 5;
-        break;
-      case DetectionType.Pose:
-        type = 6;
-        break;
-      case DetectionType.Text:
-        type = 7;
-        break;
-      case DetectionType.Selfie:
-        type = 9;
-        break;
-      default:
-        type = 10;
-        break;
-    }
+    const type = detectionTypeToNative(value);
     this._setupDetectors();
     this._mlkitHelper.detectorType = type;
   }
@@ -823,39 +815,7 @@ export function detectWithStillImage(image: any, options?: StillImageDetectionOp
       reject('Please use a valid Image');
     }
 
-    let type = 9; /* None */
-    switch (options?.detectorType) {
-      case DetectionType.All:
-        type = 7;
-        break;
-      case DetectionType.Barcode:
-        type = 0;
-        break;
-      case DetectionType.DigitalInk:
-        type = 1;
-        break;
-      case DetectionType.Face:
-        type = 2;
-        break;
-      case DetectionType.Image:
-        type = 3;
-        break;
-      case DetectionType.Object:
-        type = 4;
-        break;
-      case DetectionType.Pose:
-        type = 5;
-        break;
-      case DetectionType.Text:
-        type = 6;
-        break;
-      case DetectionType.Selfie:
-        type = 8;
-        break;
-      default:
-        type = 9;
-        break;
-    }
+    const type = detectionTypeToNative(options?.detectorType);
 
     TNSML.processImage(
       nativeImage,
@@ -881,7 +841,7 @@ export function detectWithStillImage(image: any, options?: StillImageDetectionOp
           } catch (e) {}
         }
         resolve(result);
-      }
+      },
     );
   });
 }
