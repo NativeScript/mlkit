@@ -17,7 +17,7 @@
     "@nativescript/mlkit-custom-object-detection": "file:../../packages/mlkit-custom-object-detection"
   },
   "devDependencies": {
-    "@nativescript/android": "~8.8.0",
-    "@nativescript/ios": "~8.8.0"
+    "@nativescript/android": "~8.9.1",
+    "@nativescript/ios": "~8.9.4"
   }
 }
