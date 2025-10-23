@@ -1,2 +1,7 @@
 platform :ios, '15.5.0'
-pod 'GoogleMLKit/FaceDetection', '8.0.0'
+
+if ENV.key?('NSSkipMLKitFromIOSSimulator')
+  puts '⏭️  Skipping GoogleMLKit/FaceDetection (simulator build)'
+else
+  pod 'GoogleMLKit/FaceDetection'
+end

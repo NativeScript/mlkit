@@ -9,6 +9,13 @@
 - [@nativescript/mlkit-selfie-segmentation](packages/mlkit-selfie-segmentation/README.md)
 - [@nativescript/mlkit-text-recognition](packages/mlkit-text-recognition/README.md)
 
+# How to run it with IOS simulator?
+
+Since Xcode 26 also older IOS emulators (till 17.5) crash when MLKit libs are included in the binary. You can now 
+therefore control inclusion of the libs via a command line switch.
+
+NSSkipMLKitFromIOSSimulator=1 ns prepare ios
+
 # How to use?
 
 This workspace manages the suite of plugins listed above. 

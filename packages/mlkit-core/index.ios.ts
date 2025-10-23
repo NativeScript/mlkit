@@ -841,7 +841,7 @@ export function detectWithStillImage(image: any, options?: StillImageDetectionOp
           } catch (e) {}
         }
         resolve(result);
-      }
+      },
     );
   });
 }
