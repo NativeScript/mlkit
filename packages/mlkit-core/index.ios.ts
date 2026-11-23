@@ -27,7 +27,7 @@ import {
   boundingBoxSettingsProperty,
   DEFAULT_BOUNDING_BOX_SETTINGS,
 } from './common';
-import { Color, File, ImageSource, Utils } from '@nativescript/core';
+import { Application, Color, File, ImageSource, Utils } from '@nativescript/core';
 import lazy from '@nativescript/core/utils/lazy';
 import { DetectionEvent, StillImageDetectionOptions } from '.';
 
@@ -108,6 +108,7 @@ export class MLKitView extends MLKitViewBase {
 
   _mlkitHelper: TNSMLKitHelper;
   _onScanCallback: (result: any, type) => void;
+  _orientationHandler: () => void;
 
   constructor() {
     super();
@@ -509,9 +510,17 @@ export class MLKitView extends MLKitViewBase {
   onLoaded() {
     super.onLoaded();
     this.startPreview();
+    this._syncPreviewOrientation();
+
+    this._orientationHandler = () => this._syncPreviewOrientation();
+    Application.on('orientationChanged', this._orientationHandler);
   }
 
   onUnloaded() {
+    if (this._orientationHandler) {
+      Application.off('orientationChanged', this._orientationHandler);
+      this._orientationHandler = null;
+    }
     this.stopPreview();
     super.onUnloaded();
   }
@@ -520,8 +529,34 @@ export class MLKitView extends MLKitViewBase {
     this._mlkitHelper.stopPreview();
   }
 
+  private _syncPreviewOrientation(): void {
+    if (!this._preview) return;
+
+    // The capture session connection may not be established immediately
+    // after startPreview(); defer to allow the session to start.
+    setTimeout(() => {
+      const conn = this._preview?.connection;
+      if (!conn) return;
+
+      const windowScene = UIApplication.sharedApplication.connectedScenes?.allObjects?.firstObject;
+      if (!windowScene || !(windowScene instanceof UIWindowScene)) return;
+      const orientation = (windowScene as UIWindowScene).interfaceOrientation;
+      if (orientation < 1 || orientation > 4) return;
+
+      // iOS 17+ uses videoRotationAngle (degrees); older versions use
+      // the deprecated videoOrientation enum.
+      if (typeof conn.videoRotationAngle !== 'undefined') {
+        const angleMap = { 1: 90, 2: 270, 3: 0, 4: 180 };
+        conn.videoRotationAngle = angleMap[orientation] ?? 90;
+      } else {
+        conn.videoOrientation = orientation;
+      }
+    }, 100);
+  }
+
   public toggleCamera(): void {
     this._mlkitHelper.toggleCamera();
+    this._syncPreviewOrientation();
   }
 
   public startPreview(): void {
